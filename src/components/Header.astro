@@ -1,0 +1,160 @@
+---
+import type { Translation, LanguageCode } from '../i18n';
+import { languages, withLanguagePrefix, stripLangFromPath } from '../i18n';
+import HamburgerMenu from './HamburgerMenu.astro';
+import { createIsActiveChecker } from '../utils/navigation';
+
+interface Props {
+  lang: LanguageCode;
+  translation: Translation;
+}
+
+const { lang, translation } = Astro.props;
+const currentPath = Astro.url.pathname;
+const base = withLanguagePrefix(lang, '/');
+const isActive = createIsActiveChecker(currentPath, base);
+const isRtl = translation.dir === 'rtl';
+
+const pathWithoutLang = stripLangFromPath(currentPath);
+const currentLanguage = languages.find((language) => language.code === lang)?.nativeName ?? lang.toUpperCase();
+const languagePanelAlign = isRtl ? 'left-0' : 'right-0';
+
+// const brandMark = 
+//   translation.labels.brand
+//     .split(/\s+/)
+//     .filter(Boolean)
+//     .map((word) => word[0]?.toUpperCase() ?? '')
+//     .join('')
+//     .slice(0, 2) || 'BR';
+
+const links = [
+  { href: base, label: translation.labels.nav.home },
+  { href: withLanguagePrefix(lang, '/products'), label: translation.labels.nav.products },
+  { href: withLanguagePrefix(lang, '/logistics'), label: translation.labels.nav.solutions },
+  { href: withLanguagePrefix(lang, '/quality'), label: translation.labels.nav.resources },
+  { href: withLanguagePrefix(lang, '/about'), label: translation.labels.nav.about },
+  { href: withLanguagePrefix(lang, '/contact'), label: translation.labels.nav.contact },
+  { href: withLanguagePrefix(lang, '/trade-map'), label: translation.labels.nav.tradeMap },
+];
+
+const desktopClasses = (href: string) =>
+  `rounded-full px-4 py-2 text-sm font-semibold transition ${
+    isActive(href)
+      ? 'bg-white text-brand shadow-sm'
+      : 'text-white/80 hover:text-white hover:bg-white/10'
+  }`;
+
+---
+
+<header class="sticky top-0 z-50 bg-gradient-to-r from-brand-dark via-brand to-brand-dark text-white shadow-lg backdrop-blur">
+  <div class="border-b border-white/10 bg-brand-dark/90">
+    <div class="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-brand-light/80 sm:px-6">
+      <div class="flex flex-wrap items-center gap-4">
+        <span class="inline-flex items-center gap-2">
+          <span class="inline-flex h-5 w-8 items-center justify-center overflow-hidden rounded-sm bg-white/10 ring-1 ring-white/20">
+            <img src="/images/iran-flag.jpg" alt="Iran flag" class="h-full w-full object-cover" loading="lazy" />
+          </span>
+          {translation.pages.home.eyebrow}
+        </span>
+        <span class="hidden items-center gap-2 sm:inline-flex">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-brand-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8m-18 8h18" />
+          </svg>
+          {translation.pages.contact.email} 
+        </span>
+        <span class="hidden items-center gap-2 md:inline-flex">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-brand-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M3 5h18v14H3z" />
+          </svg>
+          {translation.pages.contact.phone}
+        </span>
+      </div>
+      <div class="hidden items-center gap-2 sm:flex">
+        <!-- <a class="rounded-full border border-white/20 px-3 py-1 text-[11px] font-semibold text-white/80 transition hover:bg-white/10" href={withLanguagePrefix(lang, '/products')}>
+          {translation.pages.home.ctaSecondary}
+        </a> -->
+        <a class="rounded-full bg-brand-gold px-3 py-1 text-[11px] font-semibold text-brand-dark transition hover:-translate-y-0.5" href={withLanguagePrefix(lang, '/contact')}>
+          {translation.pages.home.ctaPrimary}
+        </a>
+      </div>
+    </div>
+  </div>
+  <div class="mx-auto flex w-full max-w-6xl flex-col gap-3 px-4 py-4 sm:px-6">
+    <div class="flex items-center justify-between">
+      <a href={base} class="flex items-center gap-3">
+        <div class="brand-mark">
+          <img
+            src="/logo.png"
+            alt={translation.labels.brand}
+            class="company-logo"
+          />
+        </div>
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-[0.28em] text-white/60">{translation.labels.subbrand}</p>
+          <p class="text-lg font-semibold leading-tight">{translation.labels.brand}</p>
+        </div>
+      </a>
+
+      <HamburgerMenu
+        links={links}
+        languages={languages}
+        lang={lang}
+        currentPath={currentPath}
+        homeHref={base}
+        translation={translation}
+      />
+    </div>
+
+    <nav class="hidden sm:block">
+      <ul class="flex flex-wrap items-center gap-2">
+        {links.map((link) => (
+          <li>
+            <a href={link.href} class={desktopClasses(link.href)}>
+              {link.label}
+            </a>
+          </li>
+        ))}
+        <li class:list={[isRtl ? 'mr-auto' : 'ml-auto']}>
+          <a
+            href={withLanguagePrefix(lang, '/contact')}
+            class="pill-link bg-brand-gold text-brand-dark shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg"
+          >
+            {translation.pages.home.ctaPrimary}
+          </a>
+        </li>
+        <li class="relative">
+          <details class="group relative">
+            <summary class="flex cursor-pointer list-none items-center gap-2 rounded-full px-3 py-2 text-xs font-semibold text-white/85 ring-1 ring-white/20 transition hover:bg-white/10">
+              <span>{currentLanguage}</span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-4 w-4 transition group-open:rotate-180"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M19 9l-7 7-7-7" />
+              </svg>
+            </summary>
+            <div class={`absolute ${languagePanelAlign} mt-3 w-52 rounded-2xl bg-white p-2 text-brand-dark shadow-xl ring-1 ring-brand-light`}>
+              <div class="flex flex-col gap-1">
+                {languages.map((language) => (
+                  <a
+                    href={withLanguagePrefix(language.code as LanguageCode, pathWithoutLang)}
+                    class={`rounded-xl px-3 py-2 text-sm font-semibold transition ${
+                      lang === language.code
+                        ? 'bg-brand-light text-brand-dark shadow-sm'
+                        : 'text-slate-700 hover:bg-slate-100'
+                    }`}
+                  >
+                    {language.nativeName}
+                  </a>
+                ))}
+              </div>
+            </div>
+          </details>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>

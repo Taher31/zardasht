@@ -1,0 +1,121 @@
+---
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import type { Translation, LanguageCode } from '../i18n';
+import { languages, withLanguagePrefix, stripLangFromPath, defaultLang } from '../i18n';
+import '../styles/global.css';
+import CallButton from "../components/CallButton.astro";
+interface Props {
+  title: string;
+  lang: LanguageCode;
+  translation: Translation;
+}
+
+const { title, lang, translation } = Astro.props;
+const dir = translation.dir;
+const description = translation.pages.home.heroSubtitle;
+const brand = translation.labels.brand;
+const metaTitle = `${title} - ${brand}`;
+const localeMap: Record<LanguageCode, string> = { en: 'en_US', fa: 'fa_IR', ar: 'ar', ru: 'ru_RU' };
+const ogLocale = localeMap[lang] ?? lang;
+const alternateOgLocales = languages
+  .filter((language) => language.code !== lang)
+  .map((language) => localeMap[language.code] ?? language.code);
+const { pathname } = Astro.url;
+const origin = (Astro.site ?? Astro.url).origin;
+const keywords = [
+  'Zardasht Mahd Binaloud Trading',
+  'Iran pulses exporter',
+  'chickpeas supplier Iran',
+  'lentils exporter',
+  'beans exporter',
+  'peas supplier',
+  'bulk legumes',
+  'Middle East pulses import',
+];
+
+const pathWithoutLang = stripLangFromPath(pathname);
+const canonicalPath = lang === defaultLang ? pathWithoutLang : pathname;
+const canonical = `${origin}${canonicalPath}`;
+const alternateLinks = languages.map((language) => ({
+  href: `${origin}${withLanguagePrefix(language.code, pathWithoutLang)}`,
+  hreflang: language.code,
+}));
+const xDefault = `${origin}${withLanguagePrefix(defaultLang, pathWithoutLang)}`;
+const ogImage = `${origin}/images/pulses-7.jpg`;
+
+const organizationSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: brand,
+  url: origin,
+  logo: `${origin}/logo.png`,
+  sameAs: [] as string[],
+};
+
+const websiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: brand,
+  url: origin,
+  inLanguage: lang,
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: `${origin}/search?q={search_term_string}`,
+    'query-input': 'required name=search_term_string',
+  },
+};
+---
+
+<!DOCTYPE html>
+<html lang={lang} dir={dir} class:list={{ 'rtl': dir === 'rtl' }}>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="/logo.png" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <title>{metaTitle}</title>
+  <meta name="description" content={description}>
+  <meta name="keywords" content={keywords.join(', ')}>
+  <meta name="robots" content="index,follow">
+  <meta name="language" content={lang}>
+  <meta name="theme-color" content="#0b2f5b">
+  <link rel="canonical" href={canonical} />
+  <link rel="stylesheet" href="/fonts/vazirmatn.css">
+  {alternateLinks.map((link) => (
+    <link rel="alternate" href={link.href} hreflang={link.hreflang} />
+  ))}
+  <link rel="alternate" href={xDefault} hreflang="x-default" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content={metaTitle} />
+  <meta property="og:description" content={description} />
+  <meta property="og:url" content={canonical} />
+  <meta property="og:site_name" content={brand} />
+  <meta property="og:locale" content={ogLocale} />
+  {alternateOgLocales.map((locale) => (
+    <meta property="og:locale:alternate" content={locale} />
+  ))}
+  <meta property="og:image" content={ogImage} />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={metaTitle} />
+  <meta name="twitter:description" content={description} />
+  <meta name="twitter:image" content={ogImage} />
+
+  <script type="application/ld+json" set:html={JSON.stringify(organizationSchema)}></script>
+  <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)}></script>
+</head>
+<body class:list={[dir === 'rtl' ? 'rtl' : 'ltr', 'min-h-screen bg-slate-50 text-slate-900 flex flex-col']}>
+  <Header lang={lang} translation={translation} />
+
+  <main class="flex-1">
+    <slot />
+  </main>
+
+  <Footer lang={lang} translation={translation} />
+   <CallButton />
+</body>
+</html>

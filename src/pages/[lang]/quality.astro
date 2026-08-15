@@ -1,0 +1,70 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getTranslation, resolveLang, localizedLanguages } from '../../i18n';
+
+export function getStaticPaths() {
+  return localizedLanguages.map((language) => ({ params: { lang: language.code } }));
+}
+
+const lang = resolveLang(Astro.props.lang ?? Astro.params.lang);
+const t = getTranslation(lang);
+const trustBadges = t.pages.home.trustBadges;
+const qualityGallery = [
+  '/images/pulses-3.jpg',
+  '/images/pulses-10.jpg',
+  '/images/logestic3.jpg',
+  '/images/pulses-7.jpg',
+];
+---
+
+<Layout title={t.pages.resources.title} lang={lang} translation={t}>
+  <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16">
+    <div class="text-center">
+      <p class="text-sm font-semibold uppercase tracking-[0.28em] text-brand-dark/80">{t.pages.resources.eyebrow}</p>
+      <h1 class="section-title">{t.pages.resources.title}</h1>
+      <p class="mt-3 text-base text-slate-600 sm:text-lg">
+        {t.pages.resources.intro}
+      </p>
+    </div>
+
+    <div class="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      {qualityGallery.map((image) => (
+        <div class="card overflow-hidden p-0">
+          <img src={image} alt={t.pages.home.heroImageAlt} class="h-40 w-full object-cover" loading="lazy" />
+        </div>
+      ))}
+    </div>
+
+    <div class="mt-10 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+      {t.pages.resources.cards.map((card) => (
+        <div class="card space-y-4 p-6">
+          <div class="flex items-center justify-between">
+            <h2 class="text-xl font-semibold text-brand-dark">{card.title}</h2>
+            <span class="rounded-full bg-brand-light px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-brand-dark">{card.badge}</span>
+          </div>
+          <p class="text-slate-600">{card.description}</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="pill-link border border-brand-gold/40 bg-brand-light text-brand-dark">{card.badge}</span>
+            <span class="pill-link border border-brand-gold/30 bg-white text-brand-dark">Inspection-ready</span>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <div class="mt-10 rounded-3xl bg-brand-dark px-6 py-10 text-white shadow-2xl shadow-brand-dark/40 sm:px-10">
+      <div class="text-center">
+        <p class="text-sm font-semibold uppercase tracking-[0.28em] text-brand-gold/90">{t.pages.home.trustTitle}</p>
+        <h2 class="text-2xl font-semibold text-white sm:text-3xl">{t.pages.resources.title}</h2>
+        <p class="mt-3 text-white/75">{t.pages.resources.intro}</p>
+      </div>
+      <div class="mt-8 grid grid-cols-1 gap-4 md:grid-cols-3">
+        {trustBadges.map((badge) => (
+          <div class="rounded-2xl bg-white/10 p-4 ring-1 ring-white/15">
+            <p class="text-sm font-semibold uppercase tracking-[0.18em] text-brand-gold/90">{badge.title}</p>
+            <p class="mt-2 text-sm text-white/80">{badge.description}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</Layout>

@@ -1,0 +1,100 @@
+---
+import type { LanguageCode, Translation } from '../i18n';
+import { withLanguagePrefix, stripLangFromPath } from '../i18n';
+import { createIsActiveChecker } from '../utils/navigation';
+
+interface Link {
+  href: string;
+  label: string;
+}
+
+interface Language {
+  code: LanguageCode;
+  nativeName: string;
+}
+
+interface Props {
+  links: Link[];
+  languages: Language[];
+  lang: LanguageCode;
+  currentPath: string;
+  homeHref: string;
+  translation: Translation;
+}
+
+const { links, languages, lang, currentPath, homeHref, translation } = Astro.props;
+const pathWithoutLang = stripLangFromPath(currentPath);
+
+const isActive = createIsActiveChecker(currentPath, homeHref);
+
+const uiLabels: Record<LanguageCode, { menu: string; close: string; toggle: string }> = {
+  en: { menu: 'Menu', close: 'Close', toggle: 'Toggle navigation' },
+  fa: { menu: 'منو', close: 'بستن', toggle: 'باز و بسته کردن منو' },
+  ar: { menu: 'القائمة', close: 'إغلاق', toggle: 'تبديل التنقل' },
+  ru: { menu: 'Меню', close: 'Закрыть', toggle: 'Переключить навигацию' },
+};
+
+const ui = uiLabels[lang] ?? uiLabels.en;
+---
+
+<details class="group relative sm:hidden">
+  <summary class="flex h-11 w-11 cursor-pointer list-none items-center justify-center rounded-full border border-white/20 bg-white/10 text-white transition hover:bg-white/20 group-open:fixed group-open:right-4 group-open:top-4 group-open:z-60 group-open:bg-white group-open:text-brand-dark shadow-sm">
+    <span class="sr-only">{ui.toggle}</span>
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 transition group-open:rotate-45" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 7h16M4 12h16M4 17h16" />
+    </svg>
+  </summary>
+
+  <div class="pointer-events-none fixed inset-0 z-50 opacity-0 transition duration-200 group-open:pointer-events-auto group-open:opacity-100">
+    <div class="absolute inset-0 bg-slate-900/70"></div>
+    <div class="absolute inset-0 flex min-h-screen w-screen max-w-none flex-col gap-6 overflow-y-auto bg-white px-6 py-16 text-slate-900 shadow-2xl shadow-brand-dark/15 opacity-0 translate-y-6 transition duration-200 ease-out group-open:opacity-100 group-open:translate-y-0">
+      <div class="flex items-center justify-between">
+        <p class="text-lg font-semibold text-brand-dark">{ui.menu}</p>
+        <button
+          type="button"
+          class="flex items-center gap-2 rounded-full bg-brand-light px-3 py-2 text-sm font-semibold text-brand-dark shadow-sm ring-1 ring-brand-light transition hover:bg-brand-light/80"
+          onclick="this.closest('details')?.removeAttribute('open')"
+        >
+          {ui.close}
+        </button>
+      </div>
+
+      <ul class="grid gap-3 text-lg font-semibold">
+        {links.map((link) => (
+          <li>
+            <a
+              href={link.href}
+              class={`block rounded-2xl px-4 py-4 transition ${
+                isActive(link.href)
+                  ? 'bg-brand-light text-brand-dark shadow-lg'
+                  : 'bg-slate-100 text-slate-900 hover:bg-slate-200'
+              }`}
+            >
+              {link.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+
+      <div class="grid grid-cols-2 gap-2 sm:grid-cols-3">
+        {languages.map((language) => (
+          <a
+            href={withLanguagePrefix(language.code, pathWithoutLang)}
+            class={`rounded-xl px-3 py-3 text-center text-sm font-semibold transition ${
+              lang === language.code ? 'bg-brand-light text-brand-dark shadow-sm' : 'bg-slate-100 text-slate-900 hover:bg-slate-200'
+            }`}
+          >
+            {language.nativeName}
+          </a>
+        ))}
+      </div>
+
+      <a
+        href={withLanguagePrefix(lang, '/contact')}
+        class="pill-link border border-brand-gold/30 bg-brand-gold text-brand-dark shadow-lg shadow-brand-gold/40 transition hover:-translate-y-0.5 hover:shadow-xl"
+      >
+        {translation.pages.home.ctaPrimary}
+      </a>
+    </div>
+  </div>
+</details>

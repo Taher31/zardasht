@@ -1,0 +1,109 @@
+---
+import type { Translation, LanguageCode } from '../i18n';
+import { withLanguagePrefix } from '../i18n';
+import { WHATSAPP_URL } from '../config/contact';
+
+interface Props {
+  lang: LanguageCode;
+  translation: Translation;
+}
+
+const { lang, translation } = Astro.props;
+const currentYear = new Date().getFullYear();
+
+const contactLabels: Record<LanguageCode, { email: string; phone: string; address: string }> = {
+  en: { email: 'Email', phone: 'Phone', address: 'Address' },
+  fa: { email: 'ایمیل', phone: 'تلفن', address: 'آدرس' },
+  ar: { email: 'البريد الإلكتروني', phone: 'الهاتف', address: 'العنوان' },
+  ru: { email: 'Эл. почта', phone: 'Телефон', address: 'Адрес' },
+};
+
+const contactLabel = contactLabels[lang] ?? contactLabels.en;
+const socialLinks = translation.labels.footer.social.map((item, index) => ({
+  item,
+  // WhatsApp is the second item in every locale's social-links list.
+  href: index === 1 ? WHATSAPP_URL : '#',
+}));
+
+const brandMark =
+  translation.labels.brand
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((word) => word[0]?.toUpperCase() ?? '')
+    .join('')
+    .slice(0, 2) || 'BR';
+
+const companyLinks = [
+  { label: translation.labels.nav.about, href: withLanguagePrefix(lang, '/about') },
+  { label: translation.labels.nav.solutions, href: withLanguagePrefix(lang, '/logistics') },
+  { label: translation.labels.nav.products, href: withLanguagePrefix(lang, '/products') },
+  { label: translation.labels.nav.resources, href: withLanguagePrefix(lang, '/quality') },
+];
+
+const supportLinks = [
+  { label: translation.labels.nav.contact, href: withLanguagePrefix(lang, '/contact') },
+  { label: translation.labels.footer.privacy, href: '#' },
+  { label: translation.labels.footer.terms, href: '#' },
+];
+---
+
+<footer dir={translation.dir} class:list={["mt-16 bg-brand-dark text-brand-light", { 'rtl-footer': translation.dir === 'rtl' }]}>
+  <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:py-14">
+    <div class="grid grid-cols-1 gap-10 text-start lg:grid-cols-4 lg:text-start">
+      <div class="space-y-4">
+        <div class="flex items-center justify-start gap-3">
+          <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 text-lg font-bold uppercase tracking-[0.14em]">
+            {brandMark}
+          </div>
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-[0.28em] text-brand-gold">{translation.labels.subbrand}</p>
+            <p class="text-lg font-semibold leading-tight text-white">{translation.labels.brand}</p>
+          </div>
+        </div>
+        <p class="text-sm leading-relaxed text-brand-light/80">
+          {translation.pages.home.heroSubtitle}
+        </p>
+      </div>
+
+      <div>
+        <h4 class="text-sm font-semibold uppercase tracking-[0.22em] text-brand-gold">{translation.labels.footer.company}</h4>
+        <ul class="mt-4 space-y-2 text-sm text-brand-light/80">
+          {companyLinks.map((item) => (
+            <li>
+              <a class="transition hover:text-white" href={item.href}>{item.label}</a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="text-sm font-semibold uppercase tracking-[0.22em] text-brand-gold">{translation.labels.footer.support}</h4>
+        <ul class="mt-4 space-y-2 text-sm text-brand-light/80">
+          {supportLinks.map((item) => (
+            <li>
+              <a class="transition hover:text-white" href={item.href}>{item.label}</a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div class="space-y-4">
+        <h4 class="text-sm font-semibold uppercase tracking-[0.22em] text-brand-gold">{translation.labels.footer.contact}</h4>
+        <ul class="space-y-2 text-sm text-brand-light/80">
+          <li><strong class="text-white">{contactLabel.email}:</strong> <span dir="ltr" class="inline-block">{translation.pages.contact.email}</span></li>
+          <li><strong class="text-white">{contactLabel.phone}:</strong> <a href={WHATSAPP_URL} target="_blank" rel="noreferrer" dir="ltr" class="inline-block transition hover:text-white">{translation.pages.contact.phone}</a></li>
+          <li><strong class="text-white">{contactLabel.address}:</strong> {translation.pages.contact.address}</li>
+        </ul>
+        <div class="flex flex-wrap justify-start gap-2">
+          {socialLinks.map(({ item, href }) => (
+            <a class="pill-link bg-white/10 text-white hover:bg-white/20" href={href} target={href === WHATSAPP_URL ? '_blank' : undefined} rel={href === WHATSAPP_URL ? 'noreferrer' : undefined} aria-label={item}>{item}</a>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-12 border-t border-white/10 pt-6 text-sm text-brand-light/80">
+      <p>&copy; {currentYear} {translation.labels.footer.copyright}</p>
+    </div>
+  </div>
+</footer>

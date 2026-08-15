@@ -1,0 +1,145 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getTranslation, resolveLang, withLanguagePrefix, localizedLanguages } from '../../i18n';
+
+export function getStaticPaths() {
+  return localizedLanguages.map((language) => ({ params: { lang: language.code } }));
+}
+
+const lang = resolveLang(Astro.props.lang ?? Astro.params.lang);
+const t = getTranslation(lang);
+const aboutGallery = [
+  '/images/pulses-4.jpg',
+  '/images/pulses-9.jpg',
+  '/images/logestic2.jpg',
+];
+const mapUrl = 'https://www.google.com/maps/place/%D8%B2%D8%B1%D8%AF%D8%B4%D8%AA+%D9%85%D9%87%D8%AF+%D8%A8%DB%8C%D9%86%D8%A7%D9%84%D9%88%D8%AF%E2%80%AD/data=!4m2!3m1!1s0x0:0x82a8217a57d18731?sa=X&ved=1t:2428&ictx=111';
+const mapEmbedUrl = 'https://www.google.com/maps?q=%D8%B2%D8%B1%D8%AF%D8%B4%D8%AA%20%D9%85%D9%87%D8%AF%20%D8%A8%DB%8C%D9%86%D8%A7%D9%84%D9%88%D8%AF&output=embed&z=14';
+---
+
+<Layout title={t.pages.about.title} lang={lang} translation={t}>
+  <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16">
+    <div class="mb-10 grid grid-cols-1 gap-4 lg:grid-cols-[1.2fr,0.8fr]">
+      <div class="overflow-hidden rounded-3xl border border-brand-light bg-white/90 shadow-xl">
+        <img src={aboutGallery[0]} alt={t.pages.home.heroImageAlt} class="h-56 w-full object-cover sm:h-72 lg:h-80" loading="lazy" />
+      </div>
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-1">
+        {aboutGallery.slice(1).map((image) => (
+          <div class="overflow-hidden rounded-3xl border border-brand-light bg-white/90 shadow-xl">
+            <img src={image} alt={t.pages.home.heroImageAlt} class="h-40 w-full object-cover sm:h-48 lg:h-44" loading="lazy" />
+          </div>
+        ))}
+      </div>
+    </div>
+    <div class="text-center">
+      <div class="mb-4 flex justify-center">
+        <span class="inline-flex h-10 w-16 items-center justify-center overflow-hidden rounded-xl bg-white/90 ring-1 ring-brand-light">
+          <img src="/images/iran-flag.jpg" alt="Iran flag" class="h-full w-full object-cover" loading="lazy" />
+        </span>
+      </div>
+      <p class="text-sm font-semibold uppercase tracking-[0.28em] text-brand-dark/80">{t.pages.about.eyebrow}</p>
+      <h1 class="section-title">{t.pages.about.title}</h1>
+      <p class="mt-3 text-base text-slate-600 sm:text-lg">
+        {t.pages.about.intro}
+      </p>
+    </div>
+
+    <div class="mt-10 grid grid-cols-1 gap-6 lg:grid-cols-[1.1fr,0.9fr]">
+      <div class="card space-y-5 p-6">
+        <div class="space-y-2">
+          <h2 class="text-xl font-semibold text-brand-dark">{t.pages.about.missionTitle}</h2>
+          <p class="text-slate-600">
+            {t.pages.about.missionBody}
+          </p>
+        </div>
+
+        <div class="space-y-2">
+          <h2 class="text-xl font-semibold text-brand-dark">{t.pages.about.storyTitle}</h2>
+          <p class="text-slate-600">
+            {t.pages.about.storyBody}
+          </p>
+        </div>
+
+        <div class="space-y-2">
+          <h2 class="text-xl font-semibold text-brand-dark">{t.pages.about.valuesTitle}</h2>
+          <ul class="space-y-2 text-slate-600">
+            {t.pages.about.values.map((value) => (
+              <li class="flex items-start gap-2">
+                <span class="mt-1 h-2.5 w-2.5 rounded-full bg-brand-gold"></span>
+                {value}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+
+      <div class="card flex flex-col justify-between gap-4 p-6">
+        <div class="space-y-2">
+          <h2 class="text-xl font-semibold text-brand-dark">{t.pages.about.leadershipTitle}</h2>
+          <p class="text-slate-600">
+            {t.pages.about.leadershipBody}
+          </p>
+        </div>
+        <div class="grid grid-cols-1 gap-3 rounded-xl bg-brand-light p-4 ring-1 ring-brand-light">
+          {t.pages.about.metrics.map((metric) => (
+            <div class="flex items-center justify-between text-sm font-semibold text-brand-dark">
+              <span>{metric.label}</span>
+              <span>{metric.value}</span>
+            </div>
+          ))}
+        </div>
+        <a class="pill-link w-full border border-brand-gold/40 bg-white text-brand-dark shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg" href={withLanguagePrefix(lang, '/contact')}>
+          {t.pages.about.cta}
+        </a>
+      </div>
+    </div>
+
+    <section class="mt-10 grid grid-cols-1 gap-6 overflow-hidden rounded-3xl bg-white/90 p-4 shadow-xl ring-1 ring-brand-light sm:p-6 lg:grid-cols-[0.85fr,1.15fr]">
+      <div class="flex flex-col justify-center gap-4 p-2 sm:p-4">
+        <div class="space-y-2">
+          <p class="text-sm font-semibold uppercase tracking-[0.2em] text-brand-dark/75">{t.pages.about.mapTitle}</p>
+          <h2 class="text-2xl font-semibold tracking-tight text-brand-dark sm:text-3xl">{t.pages.about.mapAddress}</h2>
+          <p class="text-slate-600">{t.pages.contact.address}</p>
+        </div>
+        <a class="pill-link w-full border border-brand-gold/40 bg-brand-gold text-brand-dark shadow-lg shadow-brand-gold/30 transition hover:-translate-y-0.5 hover:shadow-xl sm:w-fit" href={mapUrl} target="_blank" rel="noreferrer">
+          {t.pages.about.mapCta}
+          <svg xmlns="http://www.w3.org/2000/svg" class="ms-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M5 12h14m-7-7 7 7-7 7" />
+          </svg>
+        </a>
+      </div>
+      <div class="relative min-h-72 overflow-hidden rounded-2xl bg-brand-light ring-1 ring-brand-light sm:min-h-96">
+        <iframe
+          id="about-map-frame"
+          title={t.pages.about.mapTitle}
+          src={mapEmbedUrl}
+          class="h-full min-h-72 w-full border-0 sm:min-h-96"
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          allowfullscreen
+        ></iframe>
+
+      </div>
+    </section>
+  </div>
+</Layout>
+
+<script>
+  const mapFrame = document.querySelector<HTMLIFrameElement>('#about-map-frame');
+  const zoomInButton = document.querySelector<HTMLButtonElement>('#map-zoom-in');
+  const zoomOutButton = document.querySelector<HTMLButtonElement>('#map-zoom-out');
+  let mapZoom = 14;
+
+  const updateMapZoom = (nextZoom: number) => {
+    if (!mapFrame || nextZoom < 5 || nextZoom > 5) return;
+    mapZoom = nextZoom;
+    const mapUrl = new URL(mapFrame.src);
+    mapUrl.searchParams.set('z', String(mapZoom));
+    mapFrame.src = mapUrl.toString();
+    if (zoomInButton) zoomInButton.disabled = mapZoom >= 19;
+    if (zoomOutButton) zoomOutButton.disabled = mapZoom <= 10;
+  };
+
+  zoomInButton?.addEventListener('click', () => updateMapZoom(mapZoom + 1));
+  zoomOutButton?.addEventListener('click', () => updateMapZoom(mapZoom - 1));
+</script>

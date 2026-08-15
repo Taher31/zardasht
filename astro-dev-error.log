@@ -1,0 +1,53 @@
+npm notice run zdl@0.0.1 dev
+npm notice run astro dev --host 127.0.0.1
+Browserslist: browsers data (caniuse-lite) is 8 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+[31m[1m۰۷:۲۶:۳۴[22m [ERROR][39m [31m[UnhandledRejection][39m Astro detected an unhandled rejection. Here's the stack trace:
+Error: EBUSY: resource busy or locked, watch 'C:\STY\projects\Zardasht Mahd Binaloud Trading\src\pages\trade-map\[code].astro'
+    at FSWatcher.<computed> (node:internal/fs/watchers:323:19)
+    at Object.watch (node:fs:3062:36)
+    at createFsWatchInstance (file:///C:/STY/projects/Zardasht%20Mahd%20Binaloud%20Trading/node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:22195:17)
+    at setFsWatchListener (file:///C:/STY/projects/Zardasht%20Mahd%20Binaloud%20Trading/node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:22242:15)
+    at NodeFsHandler._watchWithNodeFs (file:///C:/STY/projects/Zardasht%20Mahd%20Binaloud%20Trading/node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:22397:14)
+    at NodeFsHandler._handleFile (file:///C:/STY/projects/Zardasht%20Mahd%20Binaloud%20Trading/node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:22461:23)
+    at NodeFsHandler._addToNodeFs (file:///C:/STY/projects/Zardasht%20Mahd%20Binaloud%20Trading/node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:22703:21)
+  [1mHint:[22m
+[33m    Make sure your promises all have an `await` or a `.catch()` handler.[39m
+  [1mError reference:[22m
+    [36m[4mhttps://docs.astro.build/en/reference/errors/unhandled-rejection/[24m[39m
+  [1mStack trace:[22m
+[2m    at FSWatcher.<computed> (node:internal/fs/watchers:323:19)
+    [...] See full stack trace in the browser, or rerun with --verbose.[22m
+[31m[1m۰۷:۲۶:۴۱[22m [ERROR][39m [31m[UnhandledRejection][39m Astro detected an unhandled rejection. Here's the stack trace:
+Error: EBUSY: resource busy or locked, watch 'C:\STY\projects\Zardasht Mahd Binaloud Trading\src\pages\[lang]\trade-map\[code].astro'
+    at FSWatcher.<computed> (node:internal/fs/watchers:323:19)
+    at Object.watch (node:fs:3062:36)
+    at createFsWatchInstance (file:///C:/STY/projects/Zardasht%20Mahd%20Binaloud%20Trading/node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:22195:17)
+    at setFsWatchListener (file:///C:/STY/projects/Zardasht%20Mahd%20Binaloud%20Trading/node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:22242:15)
+    at NodeFsHandler._watchWithNodeFs (file:///C:/STY/projects/Zardasht%20Mahd%20Binaloud%20Trading/node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:22397:14)
+    at NodeFsHandler._handleFile (file:///C:/STY/projects/Zardasht%20Mahd%20Binaloud%20Trading/node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:22461:23)
+    at NodeFsHandler._addToNodeFs (file:///C:/STY/projects/Zardasht%20Mahd%20Binaloud%20Trading/node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:22703:21)
+  [1mHint:[22m
+[33m    Make sure your promises all have an `await` or a `.catch()` handler.[39m
+  [1mError reference:[22m
+    [36m[4mhttps://docs.astro.build/en/reference/errors/unhandled-rejection/[24m[39m
+  [1mStack trace:[22m
+[2m    at FSWatcher.<computed> (node:internal/fs/watchers:323:19)
+    [...] See full stack trace in the browser, or rerun with --verbose.[22m
+[31m[1m۰۷:۳۲:۱۸[22m [ERROR][39m [31m[UnhandledRejection][39m Astro detected an unhandled rejection. Here's the stack trace:
+Error: EBUSY: resource busy or locked, watch 'C:\STY\projects\Zardasht Mahd Binaloud Trading\public\ChatGPT Image Aug 15, 2026, 07_32_05 AM.png'
+    at FSWatcher.<computed> (node:internal/fs/watchers:323:19)
+    at Object.watch (node:fs:3062:36)
+    at createFsWatchInstance (file:///C:/STY/projects/Zardasht%20Mahd%20Binaloud%20Trading/node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:22195:17)
+    at setFsWatchListener (file:///C:/STY/projects/Zardasht%20Mahd%20Binaloud%20Trading/node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:22242:15)
+    at NodeFsHandler._watchWithNodeFs (file:///C:/STY/projects/Zardasht%20Mahd%20Binaloud%20Trading/node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:22397:14)
+    at NodeFsHandler._handleFile (file:///C:/STY/projects/Zardasht%20Mahd%20Binaloud%20Trading/node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:22461:23)
+    at NodeFsHandler._addToNodeFs (file:///C:/STY/projects/Zardasht%20Mahd%20Binaloud%20Trading/node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:22703:21)
+  [1mHint:[22m
+[33m    Make sure your promises all have an `await` or a `.catch()` handler.[39m
+  [1mError reference:[22m
+    [36m[4mhttps://docs.astro.build/en/reference/errors/unhandled-rejection/[24m[39m
+  [1mStack trace:[22m
+[2m    at FSWatcher.<computed> (node:internal/fs/watchers:323:19)
+    [...] See full stack trace in the browser, or rerun with --verbose.[22m

@@ -1,0 +1,3 @@
+# Redirect legacy English URLs to root (Netlify/Cloudflare Pages style)
+/en/*  /:splat  301!
+/en    /        301!
