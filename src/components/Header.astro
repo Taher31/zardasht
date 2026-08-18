@@ -19,131 +19,218 @@ const pathWithoutLang = stripLangFromPath(currentPath);
 const currentLanguage = languages.find((language) => language.code === lang)?.nativeName ?? lang.toUpperCase();
 const languagePanelAlign = isRtl ? 'left-0' : 'right-0';
 
-// const brandMark = 
-//   translation.labels.brand
-//     .split(/\s+/)
-//     .filter(Boolean)
-//     .map((word) => word[0]?.toUpperCase() ?? '')
-//     .join('')
-//     .slice(0, 2) || 'BR';
+const ui = {
+  en: {
+    home: 'Home',
+    products: 'Products',
+    markets: 'Markets',
+    logistics: 'Trade & Logistics',
+    about: 'About Us',
+    contact: 'Contact',
+    inquiry: 'Send Trade Inquiry',
+    tradeLine: 'International Commodity Trading · Central Asia · Russia',
+    productGroups: 'Product Groups',
+    energy: 'Energy & Bitumen',
+    metals: 'Metals & Steel',
+    agriculture: 'Agricultural Commodities',
+    textile: 'Textile Raw Materials',
+    viewAll: 'View all products',
+  },
+  fa: {
+    home: 'خانه',
+    products: 'محصولات',
+    markets: 'بازارها',
+    logistics: 'تجارت و لجستیک',
+    about: 'درباره ما',
+    contact: 'تماس با ما',
+    inquiry: 'ارسال درخواست تجاری',
+    tradeLine: 'بازرگانی بین‌المللی کالا · آسیای مرکزی · روسیه',
+    productGroups: 'گروه‌های کالایی',
+    energy: 'انرژی و قیر',
+    metals: 'فلزات و فولاد',
+    agriculture: 'محصولات کشاورزی',
+    textile: 'مواد اولیه نساجی',
+    viewAll: 'مشاهده همه محصولات',
+  },
+  ar: {
+    home: 'الرئيسية',
+    products: 'المنتجات',
+    markets: 'الأسواق',
+    logistics: 'التجارة والخدمات اللوجستية',
+    about: 'من نحن',
+    contact: 'اتصل بنا',
+    inquiry: 'إرسال استفسار تجاري',
+    tradeLine: 'تجارة السلع الدولية · آسيا الوسطى · روسيا',
+    productGroups: 'فئات المنتجات',
+    energy: 'الطاقة والبيتومين',
+    metals: 'المعادن والصلب',
+    agriculture: 'السلع الزراعية',
+    textile: 'مواد النسيج الخام',
+    viewAll: 'عرض جميع المنتجات',
+  },
+  ru: {
+    home: 'Главная',
+    products: 'Продукция',
+    markets: 'Рынки',
+    logistics: 'Торговля и логистика',
+    about: 'О компании',
+    contact: 'Контакты',
+    inquiry: 'Отправить торговый запрос',
+    tradeLine: 'Международная торговля товарами · Центральная Азия · Россия',
+    productGroups: 'Товарные группы',
+    energy: 'Энергия и битум',
+    metals: 'Металлы и сталь',
+    agriculture: 'Сельхозпродукция',
+    textile: 'Текстильное сырьё',
+    viewAll: 'Все продукты',
+  },
+} as const;
 
+const labels = ui[lang] ?? ui.en;
+
+const productsHref = withLanguagePrefix(lang, '/products');
 const links = [
-  { href: base, label: translation.labels.nav.home },
-  { href: withLanguagePrefix(lang, '/products'), label: translation.labels.nav.products },
-  { href: withLanguagePrefix(lang, '/logistics'), label: translation.labels.nav.solutions },
-  { href: withLanguagePrefix(lang, '/quality'), label: translation.labels.nav.resources },
-  { href: withLanguagePrefix(lang, '/about'), label: translation.labels.nav.about },
-  { href: withLanguagePrefix(lang, '/contact'), label: translation.labels.nav.contact },
-  { href: withLanguagePrefix(lang, '/trade-map'), label: translation.labels.nav.tradeMap },
+  { href: base, label: labels.home },
+  { href: productsHref, label: labels.products },
+  { href: withLanguagePrefix(lang, '/markets'), label: labels.markets },
+  { href: withLanguagePrefix(lang, '/logistics'), label: labels.logistics },
+  { href: withLanguagePrefix(lang, '/about'), label: labels.about },
+  { href: withLanguagePrefix(lang, '/contact'), label: labels.contact },
+];
+
+const productGroups = [
+  { href: withLanguagePrefix(lang, '/products/energy-bitumen'), label: labels.energy },
+  { href: withLanguagePrefix(lang, '/products/metals-steel'), label: labels.metals },
+  { href: withLanguagePrefix(lang, '/products/agricultural-commodities'), label: labels.agriculture },
+  { href: withLanguagePrefix(lang, '/products/textile-raw-materials'), label: labels.textile },
 ];
 
 const desktopClasses = (href: string) =>
-  `rounded-full px-4 py-2 text-sm font-semibold transition ${
-    isActive(href)
-      ? 'bg-white text-brand shadow-sm'
-      : 'text-white/80 hover:text-white hover:bg-white/10'
-  }`;
-
+  `trade-nav-link ${isActive(href) ? 'trade-nav-link--active' : ''}`;
 ---
 
-<header class="sticky top-0 z-50 bg-gradient-to-r from-brand-dark via-brand to-brand-dark text-white shadow-lg backdrop-blur">
-  <div class="border-b border-white/10 bg-brand-dark/90">
-    <div class="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-brand-light/80 sm:px-6">
-      <div class="flex flex-wrap items-center gap-4">
-        <span class="inline-flex items-center gap-2">
-          <span class="inline-flex h-5 w-8 items-center justify-center overflow-hidden rounded-sm bg-white/10 ring-1 ring-white/20">
-            <img src="/images/iran-flag.jpg" alt="Iran flag" class="h-full w-full object-cover" loading="lazy" />
-          </span>
-          {translation.pages.home.eyebrow}
-        </span>
-        <span class="hidden items-center gap-2 sm:inline-flex">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-brand-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8m-18 8h18" />
-          </svg>
-          {translation.pages.contact.email} 
-        </span>
-        <span class="hidden items-center gap-2 md:inline-flex">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-brand-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M3 5h18v14H3z" />
-          </svg>
-          {translation.pages.contact.phone}
-        </span>
+<header class="sticky top-0 z-50 border-b border-[#19266A]/10 bg-white/95 shadow-[0_12px_30px_-24px_rgba(25,38,106,.55)] backdrop-blur-xl">
+  <div class="bg-[#10184A] text-white">
+    <div class="mx-auto flex w-full max-w-7xl items-center justify-between gap-4 px-4 py-2 sm:px-6 lg:px-8">
+      <div class="flex min-w-0 items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-white/75">
+        <span class="hidden h-1.5 w-1.5 shrink-0 rounded-full bg-[#F3C623] sm:inline-block"></span>
+        <span class="truncate">{labels.tradeLine}</span>
       </div>
-      <div class="hidden items-center gap-2 sm:flex">
-        <!-- <a class="rounded-full border border-white/20 px-3 py-1 text-[11px] font-semibold text-white/80 transition hover:bg-white/10" href={withLanguagePrefix(lang, '/products')}>
-          {translation.pages.home.ctaSecondary}
-        </a> -->
-        <a class="rounded-full bg-brand-gold px-3 py-1 text-[11px] font-semibold text-brand-dark transition hover:-translate-y-0.5" href={withLanguagePrefix(lang, '/contact')}>
-          {translation.pages.home.ctaPrimary}
+
+      <div class="flex shrink-0 items-center gap-3">
+        <a
+          href={withLanguagePrefix(lang, '/contact')}
+          class="hidden text-[11px] font-semibold text-white/75 transition hover:text-white md:inline"
+        >
+          {translation.pages.contact.email}
+        </a>
+        <span class="hidden h-3 w-px bg-white/20 md:block"></span>
+        <a
+          href={withLanguagePrefix(lang, '/contact')}
+          class="text-[11px] font-bold uppercase tracking-[0.12em] text-[#F3C623] transition hover:text-white"
+        >
+          {labels.inquiry}
         </a>
       </div>
     </div>
   </div>
-  <div class="mx-auto flex w-full max-w-6xl flex-col gap-3 px-4 py-4 sm:px-6">
-    <div class="flex items-center justify-between">
-      <a href={base} class="flex items-center gap-3">
-        <div class="brand-mark">
-          <img
-            src="/logo.png"
-            alt={translation.labels.brand}
-            class="company-logo"
-          />
-        </div>
-        <div>
-          <p class="text-xs font-semibold uppercase tracking-[0.28em] text-white/60">{translation.labels.subbrand}</p>
-          <p class="text-lg font-semibold leading-tight">{translation.labels.brand}</p>
-        </div>
-      </a>
 
-      <HamburgerMenu
-        links={links}
-        languages={languages}
-        lang={lang}
-        currentPath={currentPath}
-        homeHref={base}
-        translation={translation}
+  <div class="mx-auto flex w-full max-w-7xl items-center justify-between gap-6 px-4 py-3 sm:px-6 lg:px-8">
+    <a href={base} class="flex min-w-0 items-center gap-3" aria-label={translation.labels.brand}>
+      <img
+        src="/logo.png"
+        alt={translation.labels.brand}
+        class="company-logo shrink-0"
       />
-    </div>
+      <div class="min-w-0">
+        <p class="truncate text-[10px] font-bold uppercase tracking-[0.22em] text-[#19266A]/55">
+          {translation.labels.subbrand}
+        </p>
+        <p class="truncate text-base font-bold leading-tight text-[#19266A] sm:text-lg">
+          {translation.labels.brand}
+        </p>
+      </div>
+    </a>
 
-    <nav class="hidden sm:block">
-      <ul class="flex flex-wrap items-center gap-2">
-        {links.map((link) => (
-          <li>
-            <a href={link.href} class={desktopClasses(link.href)}>
-              {link.label}
-            </a>
-          </li>
-        ))}
-        <li class:list={[isRtl ? 'mr-auto' : 'ml-auto']}>
-          <a
-            href={withLanguagePrefix(lang, '/contact')}
-            class="pill-link bg-brand-gold text-brand-dark shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg"
-          >
-            {translation.pages.home.ctaPrimary}
-          </a>
+    <nav class="hidden flex-1 items-center justify-end lg:flex" aria-label="Primary navigation">
+      <ul class="flex items-center gap-1">
+        <li>
+          <a href={base} class={desktopClasses(base)}>{labels.home}</a>
         </li>
+
         <li class="relative">
           <details class="group relative">
-            <summary class="flex cursor-pointer list-none items-center gap-2 rounded-full px-3 py-2 text-xs font-semibold text-white/85 ring-1 ring-white/20 transition hover:bg-white/10">
-              <span>{currentLanguage}</span>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-4 w-4 transition group-open:rotate-180"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M19 9l-7 7-7-7" />
+            <summary class:list={[
+              'trade-nav-link flex cursor-pointer list-none items-center gap-1.5',
+              isActive(productsHref) && 'trade-nav-link--active',
+            ]}>
+              <span>{labels.products}</span>
+              <svg class="h-3.5 w-3.5 transition group-open:rotate-180" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
               </svg>
             </summary>
-            <div class={`absolute ${languagePanelAlign} mt-3 w-52 rounded-2xl bg-white p-2 text-brand-dark shadow-xl ring-1 ring-brand-light`}>
+
+            <div class:list={[
+              'absolute top-full z-50 mt-3 w-72 rounded-2xl border border-[#19266A]/10 bg-white p-2 shadow-[0_24px_60px_-22px_rgba(16,24,74,.45)]',
+              isRtl ? 'right-0' : 'left-0',
+            ]}>
+              <p class="px-3 pb-2 pt-2 text-[10px] font-bold uppercase tracking-[0.2em] text-[#19266A]/45">
+                {labels.productGroups}
+              </p>
+              <div class="grid gap-1">
+                {productGroups.map((group) => (
+                  <a
+                    href={group.href}
+                    class="rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-[#19266A]/5 hover:text-[#19266A]"
+                  >
+                    {group.label}
+                  </a>
+                ))}
+              </div>
+              <div class="mt-2 border-t border-slate-100 pt-2">
+                <a
+                  href={productsHref}
+                  class="flex items-center justify-between rounded-xl px-3 py-2 text-xs font-bold text-[#19266A] transition hover:bg-[#F3C623]/15"
+                >
+                  <span>{labels.viewAll}</span>
+                  <span aria-hidden="true">→</span>
+                </a>
+              </div>
+            </div>
+          </details>
+        </li>
+
+        {links.slice(2).map((link) => (
+          <li>
+            <a href={link.href} class={desktopClasses(link.href)}>{link.label}</a>
+          </li>
+        ))}
+
+        <li class:list={[isRtl ? 'mr-2' : 'ml-2']}>
+          <a
+            href={withLanguagePrefix(lang, '/contact')}
+            class="inline-flex min-h-10 items-center justify-center rounded-full bg-[#F3C623] px-5 text-xs font-extrabold text-[#10184A] shadow-sm transition hover:-translate-y-0.5 hover:bg-[#ffd85f] hover:shadow-lg"
+          >
+            {labels.inquiry}
+          </a>
+        </li>
+
+        <li class:list={['relative', isRtl ? 'mr-1' : 'ml-1']}>
+          <details class="group relative">
+            <summary class="flex cursor-pointer list-none items-center gap-2 rounded-full border border-[#19266A]/10 px-3 py-2 text-xs font-bold text-[#19266A] transition hover:bg-[#19266A]/5">
+              <span>{currentLanguage}</span>
+              <svg class="h-3.5 w-3.5 transition group-open:rotate-180" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </summary>
+            <div class={`absolute ${languagePanelAlign} top-full mt-3 w-52 rounded-2xl border border-[#19266A]/10 bg-white p-2 text-[#19266A] shadow-xl`}>
               <div class="flex flex-col gap-1">
                 {languages.map((language) => (
                   <a
                     href={withLanguagePrefix(language.code as LanguageCode, pathWithoutLang)}
                     class={`rounded-xl px-3 py-2 text-sm font-semibold transition ${
                       lang === language.code
-                        ? 'bg-brand-light text-brand-dark shadow-sm'
+                        ? 'bg-[#F3C623]/15 text-[#19266A]'
                         : 'text-slate-700 hover:bg-slate-100'
                     }`}
                   >
@@ -156,5 +243,16 @@ const desktopClasses = (href: string) =>
         </li>
       </ul>
     </nav>
+
+    <div class="lg:hidden">
+      <HamburgerMenu
+        links={links}
+        languages={languages}
+        lang={lang}
+        currentPath={currentPath}
+        homeHref={base}
+        translation={translation}
+      />
+    </div>
   </div>
 </header>
