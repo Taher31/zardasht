@@ -1,4 +1,4 @@
-﻿(async () => {
+(async () => {
   if (window.innerWidth < 640) return;
   const svgNS = 'http://www.w3.org/2000/svg';
   const tradeEl = document.getElementById('trade-data');
@@ -16,11 +16,11 @@
   const tradeData = JSON.parse(tradeEl.textContent || '[]');
   const mapLocale = JSON.parse(localeEl.textContent || '{}');
   const tradedMap = new Map(tradeData.map((c) => [c.country_code, c]));
-  const dash = '\u2014';
+  const dash = '—';
 
   const defaultStroke = '#94a3b8';
-  const hoverStroke = '#0b2f5b';
-  const selectedStroke = '#c8961a';
+  const hoverStroke = '#19266A';
+  const selectedStroke = '#F3C623';
   const defaultStrokeWidth = 0.4;
   const hoverStrokeWidth = 0.9;
   const selectedStrokeWidth = 1.3;
@@ -51,20 +51,61 @@
   container.appendChild(svg);
 
   const defs = document.createElementNS(svgNS, 'defs');
-  const pattern = document.createElementNS(svgNS, 'pattern');
-  pattern.setAttribute('id', 'flag-ir');
-  pattern.setAttribute('patternUnits', 'objectBoundingBox');
-  pattern.setAttribute('width', '1');
-  pattern.setAttribute('height', '1');
 
-  const img = document.createElementNS(svgNS, 'image');
-  img.setAttributeNS('http://www.w3.org/1999/xlink', 'href', '/images/iran-flag.jpg');
-  img.setAttribute('width', '400');
-  img.setAttribute('height', '240');
-  img.setAttribute('preserveAspectRatio', 'xMidYMid slice');
-  pattern.appendChild(img);
-  defs.appendChild(pattern);
+  // Iran: ships as a photo-based pattern (existing brand asset).
+  const irPattern = document.createElementNS(svgNS, 'pattern');
+  irPattern.setAttribute('id', 'flag-ir');
+  irPattern.setAttribute('patternUnits', 'objectBoundingBox');
+  irPattern.setAttribute('width', '1');
+  irPattern.setAttribute('height', '1');
+  const irImg = document.createElementNS(svgNS, 'image');
+  irImg.setAttributeNS('http://www.w3.org/1999/xlink', 'href', '/images/iran-flag.jpg');
+  irImg.setAttribute('width', '400');
+  irImg.setAttribute('height', '240');
+  irImg.setAttribute('preserveAspectRatio', 'xMidYMid slice');
+  irPattern.appendChild(irImg);
+  defs.appendChild(irPattern);
+
+  // Active markets: hand-drawn flag patterns so no extra image assets are needed.
+  const stripe = (pattern, y, h, fill) => {
+    const rect = document.createElementNS(svgNS, 'rect');
+    rect.setAttribute('x', '0');
+    rect.setAttribute('y', `${y}`);
+    rect.setAttribute('width', '1');
+    rect.setAttribute('height', `${h}`);
+    rect.setAttribute('fill', fill);
+    pattern.appendChild(rect);
+  };
+
+  const makePattern = (id) => {
+    const pattern = document.createElementNS(svgNS, 'pattern');
+    pattern.setAttribute('id', id);
+    pattern.setAttribute('patternUnits', 'objectBoundingBox');
+    pattern.setAttribute('patternContentUnits', 'objectBoundingBox');
+    pattern.setAttribute('width', '1');
+    pattern.setAttribute('height', '1');
+    return pattern;
+  };
+
+  // Uzbekistan: blue / white / green, thin red fimbriations.
+  const uzPattern = makePattern('flag-uz');
+  stripe(uzPattern, 0, 0.3, '#0099B5');
+  stripe(uzPattern, 0.3, 0.03, '#CE1126');
+  stripe(uzPattern, 0.33, 0.34, '#FFFFFF');
+  stripe(uzPattern, 0.67, 0.03, '#CE1126');
+  stripe(uzPattern, 0.7, 0.3, '#1EB53A');
+  defs.appendChild(uzPattern);
+
+  // Russia: white / blue / red, equal thirds.
+  const ruPattern = makePattern('flag-ru');
+  stripe(ruPattern, 0, 0.3333, '#FFFFFF');
+  stripe(ruPattern, 0.3333, 0.3334, '#0039A6');
+  stripe(ruPattern, 0.6667, 0.3333, '#D52B1E');
+  defs.appendChild(ruPattern);
+
   svg.appendChild(defs);
+
+  const flagFill = { IR: 'url(#flag-ir)', UZ: 'url(#flag-uz)', RU: 'url(#flag-ru)' };
 
   const world = await fetch('/data/countries.geojson').then((r) => r.json());
   const projection = geoNaturalEarth1().fitSize([width, height], world);
@@ -130,7 +171,7 @@
     p.setAttribute('tabindex', '0');
     p.setAttribute('aria-label', `${countryName} ${traded ? mapLocale.statusTraded : mapLocale.statusNotTraded}`);
     p.classList.add('transition', 'duration-150', 'ease-out');
-    p.style.fill = code === 'IR' ? 'url(#flag-ir)' : traded ? 'var(--brand-fill, #c8961a)' : '#e5e7eb';
+    p.style.fill = flagFill[code] ?? (traded ? 'var(--brand-fill, #F3C623)' : '#e5e7eb');
     p.style.stroke = defaultStroke;
     p.style.strokeWidth = `${defaultStrokeWidth}`;
     p.style.cursor = traded ? 'pointer' : 'default';
@@ -160,19 +201,17 @@
     const showTooltip = () => {
       const td = tradedMap.get(code);
       const status = traded ? mapLocale.statusTraded : mapLocale.statusNotTraded;
-      const deals = td?.deals_count ?? dash;
-      const value = td?.total_value ?? dash;
-    tooltip.innerHTML = `
+      tooltip.innerHTML = `
         <div class="font-bold text-white">${countryName}</div>
-        <div class="text-brand-light/90">${mapLocale.statusLabel}: ${status}</div>
-        ${traded ? `<div class="text-white/80">${mapLocale.dealsLabel}: ${deals}</div><div class="text-white/80">${mapLocale.totalLabel}: ${value}</div>` : ''}
+        <div class="text-white/80">${mapLocale.statusLabel}: ${status}</div>
+        ${traded && td?.notes ? `<div class="mt-1 max-w-[220px] font-normal text-white/70">${td.notes}</div>` : ''}
       `;
-    const [cx, cy] = path.centroid(feature);
-    tooltip.classList.remove('hidden');
-    tooltip.style.opacity = '0';
-    positionTooltip(cx, cy);
-    tooltip.style.opacity = '';
-  };
+      const [cx, cy] = path.centroid(feature);
+      tooltip.classList.remove('hidden');
+      tooltip.style.opacity = '0';
+      positionTooltip(cx, cy);
+      tooltip.style.opacity = '';
+    };
 
     const hideTooltip = () => tooltip.classList.add('hidden');
 

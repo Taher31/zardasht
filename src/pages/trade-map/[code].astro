@@ -1,6 +1,5 @@
 ---
-import Layout from '../../layouts/Layout.astro';
-import { getTranslation } from '../../i18n';
+import Page from '../[lang]/trade-map/[code].astro';
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -16,98 +15,6 @@ export async function getStaticPaths() {
 }
 
 const { country } = Astro.props;
-const tEn = getTranslation('en');
-const title = `${country.country_name} - ${tEn.pages.tradeMap.title}`;
-const marketGallery = [
-  '/images/03_metals_steel.jpg',
-  '/images/01_global_shipping_port.jpg',
-  '/images/logestic2.jpg',
-];
 ---
 
-<Layout title={title} lang="en" translation={tEn}>
-  <section class="mx-auto max-w-5xl px-4 py-10 sm:px-6 sm:py-14">
-    <div class="mb-8 flex flex-wrap items-center gap-4">
-      <img
-        src={country.flag_url ?? `https://flagcdn.com/w320/${country.country_code.toLowerCase()}.png`}
-        alt={`${country.country_name} flag`}
-        class="h-12 w-auto rounded-md ring-1 ring-slate-200"
-        loading="lazy"
-      />
-      <div>
-        <p class="text-sm font-semibold uppercase tracking-[0.22em] text-brand-dark/70">{tEn.pages.tradeMap.statusTraded}</p>
-        <h1 class="text-3xl font-semibold text-brand-dark sm:text-4xl">{country.country_name}</h1>
-      </div>
-    </div>
-
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
-      <div class="stat-tile">
-        <span class="text-sm font-bold text-brand">{country.deals_count}</span>
-        <span class="text-xs uppercase tracking-[0.18em] text-slate-600">{tEn.pages.tradeMap.dealsLabel}</span>
-      </div>
-      <div class="stat-tile">
-        <span class="text-sm font-bold text-brand">{country.total_value}</span>
-        <span class="text-xs uppercase tracking-[0.18em] text-slate-600">{tEn.pages.tradeMap.totalLabel}</span>
-      </div>
-      <div class="stat-tile">
-        <span class="text-sm font-bold text-brand">{country.last_deal_date}</span>
-        <span class="text-xs uppercase tracking-[0.18em] text-slate-600">{tEn.pages.tradeMap.lastDealLabel}</span>
-      </div>
-    </div>
-
-    <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
-      <div class="stat-tile">
-        <span class="text-sm font-bold text-brand">{country.capital ?? '—'}</span>
-        <span class="text-xs uppercase tracking-[0.18em] text-slate-600">{tEn.pages.tradeMap.capitalLabel}</span>
-      </div>
-      <div class="stat-tile">
-        <span class="text-sm font-bold text-brand">{country.currency ?? '—'}</span>
-        <span class="text-xs uppercase tracking-[0.18em] text-slate-600">{tEn.pages.tradeMap.currencyLabel}</span>
-      </div>
-    </div>
-
-    <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
-      {marketGallery.map((image) => (
-        <div class="card overflow-hidden p-0">
-          <img src={image} alt={tEn.pages.home.heroImageAlt} class="h-full w-full object-cover sm:h-40" loading="lazy" />
-        </div>
-      ))}
-    </div>
-
-    <div class="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-[1.1fr,0.9fr]">
-      <div class="card space-y-4 p-6">
-        <h2 class="text-xl font-semibold text-brand-dark">{tEn.pages.tradeMap.summaryTitle}</h2>
-        <p class="text-slate-600">{country.notes}</p>
-        {country.compliance_notes && (
-          <div class="rounded-xl bg-brand-light/60 px-4 py-3 text-sm text-brand-dark ring-1 ring-brand-light">
-            <strong>{tEn.pages.tradeMap.complianceLabel}:</strong> {country.compliance_notes}
-          </div>
-        )}
-      </div>
-
-      <div class="card space-y-4 p-6">
-        <h2 class="text-xl font-semibold text-brand-dark">{tEn.pages.tradeMap.shipTitle}</h2>
-        <ul class="space-y-2 text-slate-600">
-          {country.main_exports.map((item) => (
-            <li class="flex items-start gap-2">
-              <span class="mt-1 h-2 w-2 rounded-full bg-brand-gold"></span>
-              {item}
-            </li>
-          ))}
-        </ul>
-      </div>
-    </div>
-
-    <div class="mt-8 flex flex-wrap gap-3">
-      <a
-        class="pill-link bg-brand-gold text-brand-dark shadow-lg shadow-brand-gold/40 transition hover:-translate-y-0.5 hover:shadow-xl"
-        href="/contact"
-      >
-        {tEn.pages.home.ctaPrimary}
-      </a>
-      <a class="pill-link border border-brand-gold/40 bg-white text-brand-dark hover:bg-brand-gold/10" href="/trade-map">
-        {tEn.pages.tradeMap.ctaBack}
-      </a>
-    </div>
-  </section>
-</Layout>
+<Page country={country} lang="en" />

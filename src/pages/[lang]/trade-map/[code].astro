@@ -20,167 +20,66 @@ export async function getStaticPaths() {
 const { country, lang } = Astro.props;
 const resolvedLang = resolveLang(lang);
 const t = getTranslation(resolvedLang);
+
 const countryLocale = {
   fa: {
     names: {
-      AE: 'امارات متحده عربی',
-      OM: 'عمان',
-      SA: 'عربستان سعودی',
-      QA: 'قطر',
-      IN: 'هند',
-      PK: 'پاکستان',
-      CN: 'چین',
-      EG: 'مصر',
-      KE: 'کنیا',
-      TR: 'ترکیه',
+      UZ: 'ازبکستان',
+      RU: 'روسیه',
     },
     notes: {
-      AE: 'ارسال منظم نخود کابلی و عدس قرمز به جبل علی.',
-      OM: 'کانتینرهای مخلوط به صحار و مسقط.',
-      SA: 'مشتریان خرده‌فروشی در دمام و جده.',
-      QA: 'توزیع‌کنندگان خدمات غذایی در دوحه.',
-      IN: 'خریداران صنعتی برای پوست‌گیری و کنسرو.',
-      PK: 'عدس سبز فله به کراچی.',
-      CN: 'حبوبات برای بسته‌بندی صادراتی.',
-      EG: 'لوبیا و نخودفرنگی برای عمده‌فروشان قاهره.',
-      KE: 'توزیع‌کنندگان خدمات غذایی در مومباسا و نایروبی.',
-      TR: 'کارخانه‌های فرآوری در مرسین و استانبول.',
+      UZ: 'صادرات قیر و واردات نخ ابریشم بر اساس مشخصات و شرایط تحویل توافق‌شده.',
+      RU: 'تأمین جو برای واردات در چارچوب سبد کالاهای کشاورزی.',
     },
-    exports: {
-      'Kabuli chickpeas 8-9mm': 'نخود کابلی ۸-۹ میلی‌متری',
-      'Kabuli chickpeas': 'نخود کابلی',
-      'Chickpeas': 'نخود',
-      'Red split lentils': 'عدس قرمز دال',
-      'Red lentils': 'عدس قرمز',
-      'Green lentils': 'عدس سبز',
-      'Green peas': 'نخودفرنگی سبز',
-      'Yellow peas': 'نخود زرد',
-      'White beans': 'لوبیا سفید',
-      'Kidney beans': 'لوبیا قرمز',
-      Beans: 'لوبیا',
-      'LSKB beans': 'لوبیا LSKB',
-      'Pinto beans': 'لوبیا پینتو',
+    items: {
+      Bitumen: 'قیر',
+      'Silk yarn': 'نخ ابریشم',
+      Barley: 'جو',
     },
     compliance: {
-      'Requires phytosanitary and fumigation certificates.': 'نیاز به گواهی بهداشت گیاهی و گازدهی دارد.',
-      'Pre-shipment inspection optional.': 'بازرسی پیش از حمل اختیاری است.',
-      'Labeling per SFDA; HS codes cleared via local broker.':
-        'برچسب‌گذاری مطابق SFDA؛ کدهای HS از طریق کارگزار محلی ترخیص می‌شود.',
-      'Fumigation cert typically requested.': 'معمولاً گواهی گازدهی درخواست می‌شود.',
-      'Phyto and fumigation per FSSAI.': 'گواهی بهداشت گیاهی و گازدهی طبق FSSAI.',
-      'Weight tickets and stuffing photos required.': 'بلیط وزن و عکس بارگیری الزامی است.',
-      'CIQ inspection; advance documentation.': 'بازرسی CIQ؛ مدارک از پیش ارسال شود.',
-      'Phyto required; Arabic labeling handled locally.': 'گواهی بهداشت گیاهی لازم است؛ برچسب عربی محلی انجام می‌شود.',
-      'Standard documents; SGS optional.': 'مدارک استاندارد؛ SGS اختیاری.',
-      'EU-style documentation accepted.': 'مدارک به سبک اتحادیه اروپا پذیرفته می‌شود.',
+      'Export and import documentation confirmed per shipment.': 'مدارک صادرات و واردات برای هر محموله تأیید می‌شود.',
+      'Quality specification and shipping documentation confirmed per shipment.':
+        'مشخصات کیفی و مدارک حمل برای هر محموله تأیید می‌شود.',
     },
   },
   ar: {
     names: {
-      AE: 'الإمارات العربية المتحدة',
-      OM: 'عُمان',
-      SA: 'المملكة العربية السعودية',
-      QA: 'قطر',
-      IN: 'الهند',
-      PK: 'باكستان',
-      CN: 'الصين',
-      EG: 'مصر',
-      KE: 'كينيا',
-      TR: 'تركيا',
+      UZ: 'أوزبكستان',
+      RU: 'روسيا',
     },
     notes: {
-      AE: 'شحنات منتظمة من حمص كبولي وعدس أحمر إلى جبل علي.',
-      OM: 'حاويات مختلطة إلى صحار ومسقط.',
-      SA: 'عملاء تجزئة في الدمام وجدة.',
-      QA: 'موزعو خدمات الطعام في الدوحة.',
-      IN: 'مشترو مصانع للتقشير والتعليب.',
-      PK: 'عدس أخضر سائب إلى كراتشي.',
-      CN: 'بقوليات لإعادة التعبئة والتصدير.',
-      EG: 'فاصوليا وبازلاء لتجار الجملة في القاهرة.',
-      KE: 'موزعو خدمات الطعام في مومباسا ونيروبي.',
-      TR: 'معالِجون في مرسين وإسطنبول.',
+      UZ: 'تصدير البيتومين واستيراد خيوط الحرير وفق المواصفات وشروط التسليم المتفق عليها.',
+      RU: 'توريد الشعير للاستيراد ضمن محفظة السلع الزراعية.',
     },
-    exports: {
-      'Kabuli chickpeas 8-9mm': 'حمص كبولي 8-9 مم',
-      'Kabuli chickpeas': 'حمص كبولي',
-      'Chickpeas': 'حمص',
-      'Red split lentils': 'عدس أحمر مجروش',
-      'Red lentils': 'عدس أحمر',
-      'Green lentils': 'عدس أخضر',
-      'Green peas': 'بازلاء خضراء',
-      'Yellow peas': 'بازلاء صفراء',
-      'White beans': 'فاصوليا بيضاء',
-      'Kidney beans': 'فاصوليا حمراء',
-      Beans: 'فاصوليا',
-      'LSKB beans': 'فاصوليا LSKB',
-      'Pinto beans': 'فاصوليا بينتو',
+    items: {
+      Bitumen: 'البيتومين',
+      'Silk yarn': 'خيوط الحرير',
+      Barley: 'الشعير',
     },
     compliance: {
-      'Requires phytosanitary and fumigation certificates.': 'يتطلب شهادتي الصحة النباتية والتبخير.',
-      'Pre-shipment inspection optional.': 'فحص ما قبل الشحن اختياري.',
-      'Labeling per SFDA; HS codes cleared via local broker.':
-        'وضع العلامات حسب هيئة الغذاء والدواء السعودية؛ تخليص رموز HS عبر وسيط محلي.',
-      'Fumigation cert typically requested.': 'يُطلب عادةً شهادة التبخير.',
-      'Phyto and fumigation per FSSAI.': 'شهادة صحية نباتية وتبخير حسب FSSAI.',
-      'Weight tickets and stuffing photos required.': 'مطلوب تذاكر الوزن وصور التحميل.',
-      'CIQ inspection; advance documentation.': 'فحص CIQ؛ إرسال المستندات مسبقاً.',
-      'Phyto required; Arabic labeling handled locally.': 'شهادة صحية نباتية مطلوبة؛ وضع العلامات بالعربية محلياً.',
-      'Standard documents; SGS optional.': 'مستندات قياسية؛ SGS اختياري.',
-      'EU-style documentation accepted.': 'تُقبل مستندات على النمط الأوروبي.',
+      'Export and import documentation confirmed per shipment.': 'تُؤكَّد مستندات التصدير والاستيراد لكل شحنة.',
+      'Quality specification and shipping documentation confirmed per shipment.':
+        'تُؤكَّد مواصفات الجودة ومستندات الشحن لكل شحنة.',
     },
   },
   ru: {
     names: {
-      AE: 'ОАЭ',
-      OM: 'Оман',
-      SA: 'Саудовская Аравия',
-      QA: 'Катар',
-      IN: 'Индия',
-      PK: 'Пакистан',
-      CN: 'Китай',
-      EG: 'Египет',
-      KE: 'Кения',
-      TR: 'Турция',
+      UZ: 'Узбекистан',
+      RU: 'Россия',
     },
     notes: {
-      AE: 'Регулярные поставки нута кабули и красной чечевицы в Джебель-Али.',
-      OM: 'Смешанные контейнеры в Сохар и Маскат.',
-      SA: 'Розничные клиенты в Даммаме и Джедде.',
-      QA: 'Оптовики HoReCa в Дохе.',
-      IN: 'Промышленные покупатели для лущения и консервов.',
-      PK: 'Зелёная чечевица навалом в Карачи.',
-      CN: 'Бобовые для реэкспортной фасовки.',
-      EG: 'Фасоль и горох для оптовиков Каира.',
-      KE: 'Дистрибьюторы HoReCa в Момбасе и Найроби.',
-      TR: 'Переработчики в Мерсине и Стамбуле.',
+      UZ: 'Экспорт битума и импорт шёлковой пряжи по согласованным спецификациям и условиям поставки.',
+      RU: 'Закупка ячменя для импорта в рамках сельскохозяйственного портфеля.',
     },
-    exports: {
-      'Kabuli chickpeas 8-9mm': 'Нут кабули 8–9 мм',
-      'Kabuli chickpeas': 'Нут кабули',
-      'Chickpeas': 'Нут',
-      'Red split lentils': 'Красная колотая чечевица',
-      'Red lentils': 'Красная чечевица',
-      'Green lentils': 'Зелёная чечевица',
-      'Green peas': 'Зелёный горох',
-      'Yellow peas': 'Жёлтый горох',
-      'White beans': 'Белая фасоль',
-      'Kidney beans': 'Красная фасоль',
-      Beans: 'Фасоль',
-      'LSKB beans': 'Фасоль LSKB',
-      'Pinto beans': 'Фасоль пинто',
+    items: {
+      Bitumen: 'Битум',
+      'Silk yarn': 'Шёлковая пряжа',
+      Barley: 'Ячмень',
     },
     compliance: {
-      'Requires phytosanitary and fumigation certificates.': 'Требуются фитосанитарный и фумигационный сертификаты.',
-      'Pre-shipment inspection optional.': 'Прединспекция перед отгрузкой по желанию.',
-      'Labeling per SFDA; HS codes cleared via local broker.':
-        'Маркировка по требованиям SFDA; коды HS оформляет местный брокер.',
-      'Fumigation cert typically requested.': 'Обычно запрашивают сертификат фумигации.',
-      'Phyto and fumigation per FSSAI.': 'Фито и фумигация по требованиям FSSAI.',
-      'Weight tickets and stuffing photos required.': 'Нужны весовые талоны и фото загрузки.',
-      'CIQ inspection; advance documentation.': 'Инспекция CIQ; документы заранее.',
-      'Phyto required; Arabic labeling handled locally.': 'Нужен фито; арабскую маркировку делаем на месте.',
-      'Standard documents; SGS optional.': 'Стандартные документы; SGS по желанию.',
-      'EU-style documentation accepted.': 'Принимают документы в стиле ЕС.',
+      'Export and import documentation confirmed per shipment.': 'Документы на экспорт и импорт подтверждаются по каждой поставке.',
+      'Quality specification and shipping documentation confirmed per shipment.':
+        'Спецификация качества и отгрузочные документы подтверждаются по каждой поставке.',
     },
   },
 };
@@ -191,20 +90,24 @@ const localizedNotes = localePack?.notes?.[country.country_code] ?? country.note
 const localizedCompliance = country.compliance_notes
   ? localePack?.compliance?.[country.compliance_notes] ?? country.compliance_notes
   : '';
-const localizedExports = country.main_exports.map((item) => localePack?.exports?.[item] ?? item);
+const localizedExports = (country.main_exports ?? []).map((item) => localePack?.items?.[item] ?? item);
+const localizedImports = (country.main_imports ?? []).map((item) => localePack?.items?.[item] ?? item);
+const hasExports = localizedExports.length > 0;
+const hasImports = localizedImports.length > 0;
 const title = `${localizedName} - ${t.pages.tradeMap.title}`;
-const marketGallery = [
-  '/images/pulses-1.jpg',
-  '/images/pulses-6.jpg',
-  '/images/logestic2.jpg',
-];
+
+const galleryByCountry: Record<string, string[]> = {
+  UZ: ['/images/02_bitumen.jpg', '/images/05_textile_yarn.jpg', '/images/01_global_shipping_port.jpg'],
+  RU: ['/images/04_agricultural_grain.jpg', '/images/07_rail_logistics.jpg', '/images/01_global_shipping_port.jpg'],
+};
+const marketGallery = galleryByCountry[country.country_code] ?? ['/images/01_global_shipping_port.jpg'];
 ---
 
 <Layout title={title} lang={resolvedLang} translation={t}>
   <section class="mx-auto max-w-5xl px-4 py-10 sm:px-6 sm:py-14">
     <div class="mb-8 flex flex-wrap items-center gap-4">
       <img
-        src={country.flag_url ?? `https://flagcdn.com/w320/${country.country_code.toLowerCase()}.png`}
+        src={`https://flagcdn.com/w320/${country.country_code.toLowerCase()}.png`}
         alt={`${localizedName} flag`}
         class="h-12 w-auto rounded-md ring-1 ring-slate-200"
         loading="lazy"
@@ -215,22 +118,7 @@ const marketGallery = [
       </div>
     </div>
 
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
-      <div class="stat-tile">
-        <span class="text-sm font-bold text-brand">{country.deals_count}</span>
-        <span class="text-xs uppercase tracking-[0.18em] text-slate-600">{t.pages.tradeMap.dealsLabel}</span>
-      </div>
-      <div class="stat-tile">
-        <span class="text-sm font-bold text-brand">{country.total_value}</span>
-        <span class="text-xs uppercase tracking-[0.18em] text-slate-600">{t.pages.tradeMap.totalLabel}</span>
-      </div>
-      <div class="stat-tile">
-        <span class="text-sm font-bold text-brand">{country.last_deal_date}</span>
-        <span class="text-xs uppercase tracking-[0.18em] text-slate-600">{t.pages.tradeMap.lastDealLabel}</span>
-      </div>
-    </div>
-
-    <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
       <div class="stat-tile">
         <span class="text-sm font-bold text-brand">{country.capital ?? '—'}</span>
         <span class="text-xs uppercase tracking-[0.18em] text-slate-600">{t.pages.tradeMap.capitalLabel}</span>
@@ -261,15 +149,32 @@ const marketGallery = [
       </div>
 
       <div class="card space-y-4 p-6">
-        <h2 class="text-xl font-semibold text-brand-dark">{t.pages.tradeMap.shipTitle}</h2>
-        <ul class="space-y-2 text-slate-600">
-          {localizedExports.map((item) => (
-            <li class="flex items-start gap-2">
-              <span class="mt-1 h-2 w-2 rounded-full bg-brand-gold"></span>
-              {item}
-            </li>
-          ))}
-        </ul>
+        {hasExports && (
+          <div>
+            <h2 class="text-xl font-semibold text-brand-dark">{t.pages.tradeMap.shipTitle}</h2>
+            <ul class="mt-2 space-y-2 text-slate-600">
+              {localizedExports.map((item) => (
+                <li class="flex items-start gap-2">
+                  <span class="mt-1 h-2 w-2 rounded-full bg-brand-gold"></span>
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+        {hasImports && (
+          <div class:list={[hasExports && 'mt-6 border-t border-slate-100 pt-6']}>
+            <h2 class="text-xl font-semibold text-brand-dark">{t.pages.tradeMap.importsTitle}</h2>
+            <ul class="mt-2 space-y-2 text-slate-600">
+              {localizedImports.map((item) => (
+                <li class="flex items-start gap-2">
+                  <span class="mt-1 h-2 w-2 rounded-full bg-brand-gold"></span>
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
     </div>
 

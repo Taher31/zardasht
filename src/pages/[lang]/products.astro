@@ -1,5 +1,6 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import ProductCard from '../../components/ProductCard.astro';
 import { getTranslation, resolveLang, withLanguagePrefix, localizedLanguages } from '../../i18n';
 
 export function getStaticPaths() {
@@ -87,18 +88,7 @@ const sectionAccents: Record<string, { code: string; note: string }> = {
                 <div class="p-6 sm:p-8">
                   <div class="grid gap-4 sm:grid-cols-2">
                     {section.products.map((product) => (
-                      <article class="rounded-2xl border border-[#19266A]/10 bg-slate-50/70 p-5 transition hover:-translate-y-0.5 hover:border-[#19266A]/20 hover:bg-white hover:shadow-lg">
-                        <div class="flex items-start justify-between gap-4">
-                          <div>
-                            <p class="text-[10px] font-extrabold uppercase tracking-[0.18em] text-[#19266A]/50">{product.tag}</p>
-                            <h3 class="mt-2 text-lg font-semibold text-[#19266A]">{product.name}</h3>
-                          </div>
-                          <span class="inline-flex min-w-9 items-center justify-center rounded-full bg-[#F3C623]/15 px-2.5 py-1 text-[10px] font-bold text-[#19266A]">
-                            {section.badge}
-                          </span>
-                        </div>
-                        <p class="mt-3 text-sm leading-6 text-slate-600">{product.description}</p>
-                      </article>
+                      <ProductCard product={product} badge={section.badge} />
                     ))}
                   </div>
 

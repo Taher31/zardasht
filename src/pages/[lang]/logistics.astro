@@ -13,7 +13,13 @@ const logisticsGallery = [
   '/images/logestic1.jpg',
   '/images/logestic2.jpg',
   '/images/logestic3.jpg',
-  '/images/pulses-5.jpg',
+  '/images/08_warehouse_logistics.jpg',
+];
+const solutionImages = [
+  '/images/logestic1.jpg',
+  '/images/logestic2.jpg',
+  '/images/logestic3.jpg',
+  '/images/06_road_logistics_truck.jpg',
 ];
 ---
 
@@ -49,7 +55,7 @@ const logisticsGallery = [
         <div class="card space-y-4 overflow-hidden p-0">
           <div class="relative h-44 w-full">
             <img
-              src={`/images/logestic${index + 1}.jpg`}
+              src={solutionImages[index] ?? solutionImages[0]}
               alt={solution.title}
               class="h-full w-full object-cover"
               loading="lazy"
