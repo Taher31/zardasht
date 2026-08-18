@@ -15,6 +15,7 @@ export interface Translation {
       about: string;
       contact: string;
       tradeMap: string;
+      quality: string;
     };
     trade: {
       tagline: string;
@@ -194,6 +195,7 @@ const en: Omit<Translation, 'lang' | 'dir'> = {
       about: 'About Us',
       contact: 'Contact',
       tradeMap: 'Trade Map',
+      quality: 'Quality',
     },
     trade: {
       tagline: 'International Commodity Trading · Central Asia · Russia',
@@ -444,6 +446,7 @@ const fa: Omit<Translation, 'lang' | 'dir'> = {
       about: 'درباره ما',
       contact: 'تماس',
       tradeMap: 'نقشه تجارت',
+      quality: 'کیفیت',
     },
     trade: {
       tagline: 'بازرگانی بین‌المللی کالا · آسیای مرکزی · روسیه',
@@ -691,6 +694,7 @@ const ar: Omit<Translation, 'lang' | 'dir'> = {
       about: 'من نحن',
       contact: 'اتصل بنا',
       tradeMap: 'خريطة التجارة',
+      quality: 'الجودة',
     },
     trade: {
       tagline: 'تجارة السلع الدولية · آسيا الوسطى · روسيا',
@@ -902,6 +906,7 @@ const ru: Omit<Translation, 'lang' | 'dir'> = {
       about: 'О компании',
       contact: 'Контакты',
       tradeMap: 'Карта торговли',
+      quality: 'Качество',
     },
     trade: {
       tagline: 'Международная торговля · Центральная Азия · Россия',
