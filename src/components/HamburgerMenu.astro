@@ -15,7 +15,7 @@ interface Language {
 
 interface Props {
   links: Link[];
-  languages: Language[];a
+  languages: Language[];
   lang: LanguageCode;
   currentPath: string;
   homeHref: string;
@@ -28,97 +28,66 @@ const isActive = createIsActiveChecker(currentPath, homeHref);
 const isRtl = translation.dir === 'rtl';
 const trade = translation.labels.trade;
 
-const productsHref = withLanguagePrefix(lang, '/products');
-const productGroups = [
-  { href: withLanguagePrefix(lang, '/products#energy-bitumen'), label: trade.energyBitumen, code: 'EB' },
-  { href: withLanguagePrefix(lang, '/products#metals-steel'), label: trade.metalsSteel, code: 'MS' },
-  { href: withLanguagePrefix(lang, '/products#agricultural-commodities'), label: trade.agriculturalCommodities, code: 'AG' },
-  { href: withLanguagePrefix(lang, '/products#textile-raw-materials'), label: trade.textileRawMaterials, code: 'TX' },
-];
-
-const secondaryLinks = links.filter((link) => link.href !== homeHref && link.href !== productsHref);
+const secondaryLinks = links.filter((link) => link.href );
+const dialogId = `mobile-navigation-${lang}`;
 ---
 
-<details class="group relative lg:hidden">
-  <summary class:list={[
-    'flex h-11 w-11 cursor-pointer list-none items-center justify-center rounded-full border border-[#19266A]/10 bg-[#19266A] text-white shadow-sm transition hover:bg-[#10184A]',
-    isRtl ? 'group-open:fixed group-open:left-4 group-open:top-4 group-open:z-[70]' : 'group-open:fixed group-open:right-4 group-open:top-4 group-open:z-[70]',
-    'group-open:border-[#19266A]/10 group-open:bg-white group-open:text-[#19266A]',
-  ]}>
-    <span class="sr-only">{trade.toggleNavigation}</span>
-    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 transition group-open:rotate-45" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 7h16M4 12h16M4 17h16" />
-    </svg>
-  </summary>
+<button
+  type="button"
+  class="mobile-menu-trigger flex h-11 w-11 items-center justify-center rounded-full border border-[#19266A]/10 bg-[#19266A] text-white shadow-sm transition hover:bg-[#10184A] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#F3C623] focus-visible:ring-offset-2"
+  aria-label={trade.toggleNavigation}
+  aria-haspopup="dialog"
+  aria-controls={dialogId}
+  data-mobile-menu-open
+>
+  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 7h16M4 12h16M4 17h16" />
+  </svg>
+</button>
 
-  <div class="pointer-events-none fixed inset-0 z-[60] opacity-0 transition duration-200 group-open:pointer-events-auto group-open:opacity-100">
-    <button
-      type="button"
-      class="absolute inset-0 h-full w-full bg-[#10184A]/75"
-      aria-label={trade.close}
-      onclick="this.closest('details')?.removeAttribute('open')"
-    ></button>
-
-    <div class:list={[
-      'absolute inset-y-0 flex w-[min(92vw,420px)] flex-col overflow-y-auto bg-white px-5 pb-7 pt-6 text-slate-900 shadow-2xl transition duration-200 ease-out',
-      isRtl ? 'right-0 translate-x-6 group-open:translate-x-0' : 'left-0 -translate-x-6 group-open:translate-x-0',
-    ]}>
-      <div class="flex items-start justify-between gap-4 border-b border-slate-100 pb-5">
-        <div>
-          <p class="text-[10px] font-bold uppercase tracking-[0.2em] text-[#19266A]/45">{translation.labels.subbrand}</p>
-          <p class="mt-1 text-lg font-semibold text-[#19266A]">{translation.labels.brand}</p>
+<dialog
+  id={dialogId}
+  class:list={['mobile-menu-dialog', isRtl && 'mobile-menu-dialog--rtl']}
+  data-mobile-menu-dialog
+>
+  <div class="mobile-menu-shell">
+    <header class="mobile-menu-header">
+      <a href={homeHref} class="flex min-w-0 items-center gap-3" data-mobile-menu-link>
+        <img src="/logo.png" alt="" class="h-11 w-11 shrink-0 object-contain" />
+        <div class="min-w-0">
+          <p class="truncate text-[10px] font-bold uppercase tracking-[0.2em] text-[#19266A]/45">
+            {translation.labels.subbrand}
+          </p>
+          <p class="truncate text-base font-bold leading-tight text-[#19266A]">
+            {translation.labels.brand}
+          </p>
         </div>
-        <button
-          type="button"
-          class="rounded-full border border-[#19266A]/10 px-3 py-2 text-xs font-bold text-[#19266A] transition hover:bg-[#19266A]/5"
-          onclick="this.closest('details')?.removeAttribute('open')"
-        >
-          {trade.close}
-        </button>
-      </div>
+      </a>
 
-      <nav class="mt-5" aria-label={trade.menu}>
+      <button
+        type="button"
+        class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-[#19266A]/10 bg-[#19266A]/5 text-[#19266A] transition hover:bg-[#19266A]/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#F3C623]"
+        aria-label={trade.close}
+        data-mobile-menu-close
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M6 6l12 12M18 6 6 18" />
+        </svg>
+      </button>
+    </header>
+
+    <div class="mobile-menu-scroll">
+      <nav aria-label={trade.menu}>
         <ul class="space-y-2">
-          <li>
-            <a
-              href={homeHref}
-              class:list={[
-                'block rounded-2xl px-4 py-3 text-base font-semibold transition',
-                isActive(homeHref) ? 'bg-[#19266A] text-white' : 'bg-slate-50 text-[#19266A] hover:bg-slate-100',
-              ]}
-            >
-              {translation.labels.nav.home}
-            </a>
-          </li>
-
-          <li class="rounded-2xl border border-[#19266A]/10 bg-white p-2">
-            <a
-              href={productsHref}
-              class:list={[
-                'flex items-center justify-between rounded-xl px-3 py-3 text-base font-semibold transition',
-                isActive(productsHref) ? 'bg-[#F3C623]/20 text-[#19266A]' : 'text-[#19266A] hover:bg-slate-50',
-              ]}
-            >
-              <span>{translation.labels.nav.products}</span>
-              <span class="text-[10px] font-extrabold uppercase tracking-[0.16em] text-[#19266A]/40">{trade.productGroups}</span>
-            </a>
-            <div class="mt-1 grid gap-1">
-              {productGroups.map((group) => (
-                <a href={group.href} class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-[#19266A]/5 hover:text-[#19266A]">
-                  <span class="inline-flex h-7 w-7 items-center justify-center rounded-full bg-[#19266A]/5 text-[9px] font-extrabold tracking-[0.1em] text-[#19266A]">{group.code}</span>
-                  <span>{group.label}</span>
-                </a>
-              ))}
-            </div>
-          </li>
 
           {secondaryLinks.map((link) => (
             <li>
               <a
                 href={link.href}
+                data-mobile-menu-link
                 class:list={[
-                  'block rounded-2xl px-4 py-3 text-base font-semibold transition',
-                  isActive(link.href) ? 'bg-[#19266A] text-white' : 'bg-slate-50 text-[#19266A] hover:bg-slate-100',
+                  'mobile-menu-main-link',
+                  isActive(link.href) && 'mobile-menu-main-link--active',
                 ]}
               >
                 {link.label}
@@ -128,31 +97,202 @@ const secondaryLinks = links.filter((link) => link.href !== homeHref && link.hre
         </ul>
       </nav>
 
-      <div class="mt-6 border-t border-slate-100 pt-5">
-        <p class="mb-3 text-[10px] font-bold uppercase tracking-[0.2em] text-[#19266A]/40">{trade.menu}</p>
+      <section class="mt-7 border-t border-slate-200 pt-6" aria-label="Language">
+        <p class="mb-3 text-[10px] font-bold uppercase tracking-[0.2em] text-[#19266A]/40">
+          {trade.menu}
+        </p>
         <div class="grid grid-cols-2 gap-2">
           {languages.map((language) => (
             <a
               href={withLanguagePrefix(language.code, pathWithoutLang)}
+              data-mobile-menu-link
               class:list={[
-                'rounded-xl px-3 py-2.5 text-center text-sm font-semibold transition',
-                lang === language.code ? 'bg-[#F3C623]/20 text-[#19266A]' : 'bg-slate-50 text-slate-700 hover:bg-slate-100',
+                'rounded-2xl px-3 py-3 text-center text-sm font-semibold transition',
+                lang === language.code
+                  ? 'bg-[#F3C623]/20 text-[#19266A] ring-1 ring-[#F3C623]/35'
+                  : 'bg-slate-50 text-slate-700 hover:bg-slate-100',
               ]}
             >
               {language.nativeName}
             </a>
           ))}
         </div>
-      </div>
-
-      <div class="mt-auto pt-6">
-        <a
-          href={withLanguagePrefix(lang, '/contact')}
-          class="pill-link w-full bg-[#F3C623] text-[#10184A] shadow-lg shadow-[#F3C623]/20 transition hover:-translate-y-0.5"
-        >
-          {trade.inquiry}
-        </a>
-      </div>
+      </section>
     </div>
+
+    <footer class="mobile-menu-footer">
+      <a
+        href={withLanguagePrefix(lang, '/contact')}
+        data-mobile-menu-link
+        class="pill-link w-full bg-[#F3C623] py-3.5 text-[#10184A] shadow-lg shadow-[#F3C623]/20 transition hover:bg-[#ffd85f]"
+      >
+        {trade.inquiry}
+      </a>
+    </footer>
   </div>
-</details>
+</dialog>
+
+<script>
+  const setupMobileMenu = () => {
+    const openButton = document.querySelector('[data-mobile-menu-open]');
+    const dialog = document.querySelector('[data-mobile-menu-dialog]');
+
+    if (!(openButton instanceof HTMLButtonElement) || !(dialog instanceof HTMLDialogElement)) return;
+    if (openButton.dataset.mobileMenuReady === 'true') return;
+    openButton.dataset.mobileMenuReady = 'true';
+
+    const closeButton = dialog.querySelector('[data-mobile-menu-close]');
+    const menuLinks = dialog.querySelectorAll('[data-mobile-menu-link]');
+
+    const openMenu = () => {
+      if (typeof dialog.showModal === 'function') {
+        dialog.showModal();
+      } else {
+        dialog.setAttribute('open', '');
+      }
+      document.documentElement.classList.add('mobile-menu-open');
+    };
+
+    const closeMenu = () => {
+      if (dialog.open && typeof dialog.close === 'function') {
+        dialog.close();
+      } else {
+        dialog.removeAttribute('open');
+      }
+      document.documentElement.classList.remove('mobile-menu-open');
+      openButton.focus({ preventScroll: true });
+    };
+
+    openButton.addEventListener('click', openMenu);
+    closeButton?.addEventListener('click', closeMenu);
+    menuLinks.forEach((link) => link.addEventListener('click', () => {
+      document.documentElement.classList.remove('mobile-menu-open');
+      if (dialog.open && typeof dialog.close === 'function') dialog.close();
+    }));
+
+    dialog.addEventListener('cancel', (event) => {
+      event.preventDefault();
+      closeMenu();
+    });
+
+    dialog.addEventListener('close', () => {
+      document.documentElement.classList.remove('mobile-menu-open');
+    });
+  };
+
+  setupMobileMenu();
+  document.addEventListener('astro:page-load', setupMobileMenu);
+</script>
+
+<style is:global>
+  html.mobile-menu-open,
+  html.mobile-menu-open body {
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+
+  .mobile-menu-dialog {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    width: 100vw;
+    max-width: none;
+    height: 100dvh;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: #f8fafc;
+    color: #0f172a;
+    overflow: hidden;
+  }
+
+  .mobile-menu-dialog:not([open]) {
+    display: none;
+  }
+
+  .mobile-menu-dialog[open] {
+    display: block;
+    animation: mobile-menu-enter 220ms cubic-bezier(.2, .75, .2, 1) both;
+  }
+
+  .mobile-menu-dialog::backdrop {
+    background: rgba(16, 24, 74, .65);
+    backdrop-filter: blur(5px);
+  }
+
+  .mobile-menu-shell {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    flex-direction: column;
+    background:
+      radial-gradient(circle at 90% 0%, rgba(243, 198, 35, .13), transparent 28%),
+      linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  }
+
+  .mobile-menu-header {
+    display: flex;
+    flex: none;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: max(1rem, env(safe-area-inset-top)) 1rem 1rem;
+    border-bottom: 1px solid rgba(25, 38, 106, .10);
+    background: rgba(255, 255, 255, .94);
+    backdrop-filter: blur(16px);
+  }
+
+  .mobile-menu-scroll {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    padding: 1.25rem 1rem 2rem;
+  }
+
+  .mobile-menu-footer {
+    flex: none;
+    padding: 1rem 1rem max(1rem, env(safe-area-inset-bottom));
+    border-top: 1px solid rgba(25, 38, 106, .10);
+    background: rgba(255, 255, 255, .96);
+    backdrop-filter: blur(16px);
+  }
+
+  .mobile-menu-main-link {
+    display: block;
+    border-radius: 1rem;
+    padding: .9rem 1rem;
+    background: #fff;
+    color: #19266A;
+    font-size: 1rem;
+    font-weight: 700;
+    box-shadow: inset 0 0 0 1px rgba(25, 38, 106, .07);
+    transition: background 160ms ease, color 160ms ease, transform 160ms ease;
+  }
+
+  .mobile-menu-main-link:hover {
+    background: #f1f5f9;
+  }
+
+  .mobile-menu-main-link--active {
+    background: #19266A;
+    color: #fff;
+    box-shadow: none;
+  }
+
+  .mobile-menu-dialog--rtl {
+    direction: rtl;
+  }
+
+  @keyframes mobile-menu-enter {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mobile-menu-dialog[open] { animation: none; }
+  }
+</style>

@@ -73,6 +73,8 @@
     text-justify: inter-word;
   }
 
+  
+
   .rtl input,
   .rtl textarea,
   .rtl select,
@@ -149,6 +151,9 @@
   isolation: isolate;
 }
 
+html {
+  scroll-behavior: smooth;
+}
 .trade-hero__images,
 .trade-hero__image,
 .trade-hero__image img,

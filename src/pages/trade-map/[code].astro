@@ -19,8 +19,8 @@ const { country } = Astro.props;
 const tEn = getTranslation('en');
 const title = `${country.country_name} - ${tEn.pages.tradeMap.title}`;
 const marketGallery = [
-  '/images/pulses-1.jpg',
-  '/images/pulses-6.jpg',
+  '/images/03_metals_steel.jpg',
+  '/images/01_global_shipping_port.jpg',
   '/images/logestic2.jpg',
 ];
 ---
@@ -69,7 +69,7 @@ const marketGallery = [
     <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
       {marketGallery.map((image) => (
         <div class="card overflow-hidden p-0">
-          <img src={image} alt={tEn.pages.home.heroImageAlt} class="h-32 w-full object-cover sm:h-36" loading="lazy" />
+          <img src={image} alt={tEn.pages.home.heroImageAlt} class="h-full w-full object-cover sm:h-40" loading="lazy" />
         </div>
       ))}
     </div>
