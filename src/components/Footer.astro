@@ -11,99 +11,107 @@ interface Props {
 const { lang, translation } = Astro.props;
 const currentYear = new Date().getFullYear();
 
-const contactLabels: Record<LanguageCode, { email: string; phone: string; address: string }> = {
-  en: { email: 'Email', phone: 'Phone', address: 'Address' },
-  fa: { email: 'ایمیل', phone: 'تلفن', address: 'آدرس' },
-  ar: { email: 'البريد الإلكتروني', phone: 'الهاتف', address: 'العنوان' },
-  ru: { email: 'Эл. почта', phone: 'Телефон', address: 'Адрес' },
-};
-
-const contactLabel = contactLabels[lang] ?? contactLabels.en;
-const socialLinks = translation.labels.footer.social.map((item, index) => ({
-  item,
-  // WhatsApp is the second item in every locale's social-links list.
-  href: index === 1 ? WHATSAPP_URL : '#',
-}));
-
 const brandMark =
   translation.labels.brand
     .split(/\s+/)
     .filter(Boolean)
     .map((word) => word[0]?.toUpperCase() ?? '')
     .join('')
-    .slice(0, 2) || 'BR';
+    .slice(0, 2) || 'ZM';
 
 const companyLinks = [
   { label: translation.labels.nav.about, href: withLanguagePrefix(lang, '/about') },
-  { label: translation.labels.nav.solutions, href: withLanguagePrefix(lang, '/logistics') },
   { label: translation.labels.nav.products, href: withLanguagePrefix(lang, '/products') },
-  { label: translation.labels.nav.resources, href: withLanguagePrefix(lang, '/quality') },
+  { label: translation.labels.nav.resources, href: withLanguagePrefix(lang, '/trade-map') },
+  { label: translation.labels.nav.solutions, href: withLanguagePrefix(lang, '/logistics') },
 ];
 
 const supportLinks = [
   { label: translation.labels.nav.contact, href: withLanguagePrefix(lang, '/contact') },
-  { label: translation.labels.footer.privacy, href: '#' },
-  { label: translation.labels.footer.terms, href: '#' },
+  { label: translation.labels.footer.tradeMap, href: withLanguagePrefix(lang, '/trade-map') },
+];
+
+const directLinks = [
+  { label: 'WhatsApp', href: WHATSAPP_URL, external: true },
+  { label: 'Email', href: `mailto:${translation.pages.contact.email}`, external: false },
 ];
 ---
 
-<footer dir={translation.dir} class:list={["mt-16 bg-brand-dark text-brand-light", { 'rtl-footer': translation.dir === 'rtl' }]}>
-  <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:py-14">
-    <div class="grid grid-cols-1 gap-10 text-start lg:grid-cols-4 lg:text-start">
-      <div class="space-y-4">
+<footer dir={translation.dir} class:list={["mt-16 bg-[#10184A] text-white", { 'rtl-footer': translation.dir === 'rtl' }]}>
+  <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-14">
+    <div class="grid grid-cols-1 gap-10 text-start md:grid-cols-2 lg:grid-cols-[1.25fr,0.75fr,0.75fr,1fr]">
+      <div class="space-y-5">
         <div class="flex items-center justify-start gap-3">
-          <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 text-lg font-bold uppercase tracking-[0.14em]">
+          <div class="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-sm font-bold uppercase tracking-[0.14em] text-[#F3C623]">
             {brandMark}
           </div>
           <div>
-            <p class="text-xs font-semibold uppercase tracking-[0.28em] text-brand-gold">{translation.labels.subbrand}</p>
-            <p class="text-lg font-semibold leading-tight text-white">{translation.labels.brand}</p>
+            <p class="text-[10px] font-bold uppercase tracking-[0.24em] text-[#F3C623]">{translation.labels.subbrand}</p>
+            <p class="mt-1 text-lg font-semibold leading-tight text-white">{translation.labels.brand}</p>
           </div>
         </div>
-        <p class="text-sm leading-relaxed text-brand-light/80">
+        <p class="max-w-md text-sm leading-7 text-white/65">
           {translation.pages.home.heroSubtitle}
+        </p>
+        <p class="text-xs font-semibold uppercase tracking-[0.18em] text-white/40">
+          {translation.labels.trade.tagline}
         </p>
       </div>
 
       <div>
-        <h4 class="text-sm font-semibold uppercase tracking-[0.22em] text-brand-gold">{translation.labels.footer.company}</h4>
-        <ul class="mt-4 space-y-2 text-sm text-brand-light/80">
+        <h4 class="text-xs font-bold uppercase tracking-[0.22em] text-[#F3C623]">{translation.labels.footer.company}</h4>
+        <ul class="mt-5 space-y-3 text-sm text-white/65">
           {companyLinks.map((item) => (
-            <li>
-              <a class="transition hover:text-white" href={item.href}>{item.label}</a>
-            </li>
+            <li><a class="transition hover:text-white" href={item.href}>{item.label}</a></li>
           ))}
         </ul>
       </div>
 
       <div>
-        <h4 class="text-sm font-semibold uppercase tracking-[0.22em] text-brand-gold">{translation.labels.footer.support}</h4>
-        <ul class="mt-4 space-y-2 text-sm text-brand-light/80">
+        <h4 class="text-xs font-bold uppercase tracking-[0.22em] text-[#F3C623]">{translation.labels.footer.support}</h4>
+        <ul class="mt-5 space-y-3 text-sm text-white/65">
           {supportLinks.map((item) => (
-            <li>
-              <a class="transition hover:text-white" href={item.href}>{item.label}</a>
-            </li>
+            <li><a class="transition hover:text-white" href={item.href}>{item.label}</a></li>
           ))}
         </ul>
-      </div>
-
-      <div class="space-y-4">
-        <h4 class="text-sm font-semibold uppercase tracking-[0.22em] text-brand-gold">{translation.labels.footer.contact}</h4>
-        <ul class="space-y-2 text-sm text-brand-light/80">
-          <li><strong class="text-white">{contactLabel.email}:</strong> <span dir="ltr" class="inline-block">{translation.pages.contact.email}</span></li>
-          <li><strong class="text-white">{contactLabel.phone}:</strong> <a href={WHATSAPP_URL} target="_blank" rel="noreferrer" dir="ltr" class="inline-block transition hover:text-white">{translation.pages.contact.phone}</a></li>
-          <li><strong class="text-white">{contactLabel.address}:</strong> {translation.pages.contact.address}</li>
-        </ul>
-        <div class="flex flex-wrap justify-start gap-2">
-          {socialLinks.map(({ item, href }) => (
-            <a class="pill-link bg-white/10 text-white hover:bg-white/20" href={href} target={href === WHATSAPP_URL ? '_blank' : undefined} rel={href === WHATSAPP_URL ? 'noreferrer' : undefined} aria-label={item}>{item}</a>
+        <div class="mt-5 flex flex-wrap gap-2">
+          {directLinks.map((item) => (
+            <a
+              class="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-semibold text-white/75 transition hover:border-[#F3C623]/40 hover:text-white"
+              href={item.href}
+              target={item.external ? '_blank' : undefined}
+              rel={item.external ? 'noreferrer' : undefined}
+            >
+              {item.label}
+            </a>
           ))}
         </div>
       </div>
+
+      <div class="space-y-5">
+        <h4 class="text-xs font-bold uppercase tracking-[0.22em] text-[#F3C623]">{translation.labels.footer.contact}</h4>
+        <ul class="space-y-4 text-sm text-white/65">
+          <li>
+            <span class="block text-[10px] font-bold uppercase tracking-[0.18em] text-white/35">{translation.pages.contact.form.email}</span>
+            <a href={`mailto:${translation.pages.contact.email}`} dir="ltr" class="mt-1 inline-block transition hover:text-white">{translation.pages.contact.email}</a>
+          </li>
+          <li>
+            <span class="block text-[10px] font-bold uppercase tracking-[0.18em] text-white/35">{translation.pages.contact.form.phone}</span>
+            <a href={WHATSAPP_URL} target="_blank" rel="noreferrer" dir="ltr" class="mt-1 inline-block transition hover:text-white">{translation.pages.contact.phone}</a>
+          </li>
+          <li>
+            <span class="block text-[10px] font-bold uppercase tracking-[0.18em] text-white/35">{translation.pages.contact.addressLabel}</span>
+            <span class="mt-1 block leading-6">{translation.pages.contact.address}</span>
+          </li>
+        </ul>
+      </div>
     </div>
 
-    <div class="mt-12 border-t border-white/10 pt-6 text-sm text-brand-light/80">
+    <div class="mt-12 flex flex-col gap-4 border-t border-white/10 pt-6 text-xs text-white/45 sm:flex-row sm:items-center sm:justify-between">
       <p>&copy; {currentYear} {translation.labels.footer.copyright}</p>
+      <a class="font-semibold text-[#F3C623] transition hover:text-white" href={withLanguagePrefix(lang, '/contact')}>
+        {translation.labels.trade.inquiry}
+      </a>
     </div>
   </div>
 </footer>

@@ -15,7 +15,7 @@ interface Language {
 
 interface Props {
   links: Link[];
-  languages: Language[];
+  languages: Language[];a
   lang: LanguageCode;
   currentPath: string;
   homeHref: string;
@@ -24,77 +24,135 @@ interface Props {
 
 const { links, languages, lang, currentPath, homeHref, translation } = Astro.props;
 const pathWithoutLang = stripLangFromPath(currentPath);
-
 const isActive = createIsActiveChecker(currentPath, homeHref);
+const isRtl = translation.dir === 'rtl';
+const trade = translation.labels.trade;
 
-const uiLabels: Record<LanguageCode, { menu: string; close: string; toggle: string }> = {
-  en: { menu: 'Menu', close: 'Close', toggle: 'Toggle navigation' },
-  fa: { menu: 'منو', close: 'بستن', toggle: 'باز و بسته کردن منو' },
-  ar: { menu: 'القائمة', close: 'إغلاق', toggle: 'تبديل التنقل' },
-  ru: { menu: 'Меню', close: 'Закрыть', toggle: 'Переключить навигацию' },
-};
+const productsHref = withLanguagePrefix(lang, '/products');
+const productGroups = [
+  { href: withLanguagePrefix(lang, '/products#energy-bitumen'), label: trade.energyBitumen, code: 'EB' },
+  { href: withLanguagePrefix(lang, '/products#metals-steel'), label: trade.metalsSteel, code: 'MS' },
+  { href: withLanguagePrefix(lang, '/products#agricultural-commodities'), label: trade.agriculturalCommodities, code: 'AG' },
+  { href: withLanguagePrefix(lang, '/products#textile-raw-materials'), label: trade.textileRawMaterials, code: 'TX' },
+];
 
-const ui = uiLabels[lang] ?? uiLabels.en;
+const secondaryLinks = links.filter((link) => link.href !== homeHref && link.href !== productsHref);
 ---
 
-<details class="group relative sm:hidden">
-  <summary class="flex h-11 w-11 cursor-pointer list-none items-center justify-center rounded-full border border-white/20 bg-white/10 text-white transition hover:bg-white/20 group-open:fixed group-open:right-4 group-open:top-4 group-open:z-60 group-open:bg-white group-open:text-brand-dark shadow-sm">
-    <span class="sr-only">{ui.toggle}</span>
+<details class="group relative lg:hidden">
+  <summary class:list={[
+    'flex h-11 w-11 cursor-pointer list-none items-center justify-center rounded-full border border-[#19266A]/10 bg-[#19266A] text-white shadow-sm transition hover:bg-[#10184A]',
+    isRtl ? 'group-open:fixed group-open:left-4 group-open:top-4 group-open:z-[70]' : 'group-open:fixed group-open:right-4 group-open:top-4 group-open:z-[70]',
+    'group-open:border-[#19266A]/10 group-open:bg-white group-open:text-[#19266A]',
+  ]}>
+    <span class="sr-only">{trade.toggleNavigation}</span>
     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 transition group-open:rotate-45" fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 7h16M4 12h16M4 17h16" />
     </svg>
   </summary>
 
-  <div class="pointer-events-none fixed inset-0 z-50 opacity-0 transition duration-200 group-open:pointer-events-auto group-open:opacity-100">
-    <div class="absolute inset-0 bg-slate-900/70"></div>
-    <div class="absolute inset-0 flex min-h-screen w-screen max-w-none flex-col gap-6 overflow-y-auto bg-white px-6 py-16 text-slate-900 shadow-2xl shadow-brand-dark/15 opacity-0 translate-y-6 transition duration-200 ease-out group-open:opacity-100 group-open:translate-y-0">
-      <div class="flex items-center justify-between">
-        <p class="text-lg font-semibold text-brand-dark">{ui.menu}</p>
+  <div class="pointer-events-none fixed inset-0 z-[60] opacity-0 transition duration-200 group-open:pointer-events-auto group-open:opacity-100">
+    <button
+      type="button"
+      class="absolute inset-0 h-full w-full bg-[#10184A]/75"
+      aria-label={trade.close}
+      onclick="this.closest('details')?.removeAttribute('open')"
+    ></button>
+
+    <div class:list={[
+      'absolute inset-y-0 flex w-[min(92vw,420px)] flex-col overflow-y-auto bg-white px-5 pb-7 pt-6 text-slate-900 shadow-2xl transition duration-200 ease-out',
+      isRtl ? 'right-0 translate-x-6 group-open:translate-x-0' : 'left-0 -translate-x-6 group-open:translate-x-0',
+    ]}>
+      <div class="flex items-start justify-between gap-4 border-b border-slate-100 pb-5">
+        <div>
+          <p class="text-[10px] font-bold uppercase tracking-[0.2em] text-[#19266A]/45">{translation.labels.subbrand}</p>
+          <p class="mt-1 text-lg font-semibold text-[#19266A]">{translation.labels.brand}</p>
+        </div>
         <button
           type="button"
-          class="flex items-center gap-2 rounded-full bg-brand-light px-3 py-2 text-sm font-semibold text-brand-dark shadow-sm ring-1 ring-brand-light transition hover:bg-brand-light/80"
+          class="rounded-full border border-[#19266A]/10 px-3 py-2 text-xs font-bold text-[#19266A] transition hover:bg-[#19266A]/5"
           onclick="this.closest('details')?.removeAttribute('open')"
         >
-          {ui.close}
+          {trade.close}
         </button>
       </div>
 
-      <ul class="grid gap-3 text-lg font-semibold">
-        {links.map((link) => (
+      <nav class="mt-5" aria-label={trade.menu}>
+        <ul class="space-y-2">
           <li>
             <a
-              href={link.href}
-              class={`block rounded-2xl px-4 py-4 transition ${
-                isActive(link.href)
-                  ? 'bg-brand-light text-brand-dark shadow-lg'
-                  : 'bg-slate-100 text-slate-900 hover:bg-slate-200'
-              }`}
+              href={homeHref}
+              class:list={[
+                'block rounded-2xl px-4 py-3 text-base font-semibold transition',
+                isActive(homeHref) ? 'bg-[#19266A] text-white' : 'bg-slate-50 text-[#19266A] hover:bg-slate-100',
+              ]}
             >
-              {link.label}
+              {translation.labels.nav.home}
             </a>
           </li>
-        ))}
-      </ul>
 
-      <div class="grid grid-cols-2 gap-2 sm:grid-cols-3">
-        {languages.map((language) => (
-          <a
-            href={withLanguagePrefix(language.code, pathWithoutLang)}
-            class={`rounded-xl px-3 py-3 text-center text-sm font-semibold transition ${
-              lang === language.code ? 'bg-brand-light text-brand-dark shadow-sm' : 'bg-slate-100 text-slate-900 hover:bg-slate-200'
-            }`}
-          >
-            {language.nativeName}
-          </a>
-        ))}
+          <li class="rounded-2xl border border-[#19266A]/10 bg-white p-2">
+            <a
+              href={productsHref}
+              class:list={[
+                'flex items-center justify-between rounded-xl px-3 py-3 text-base font-semibold transition',
+                isActive(productsHref) ? 'bg-[#F3C623]/20 text-[#19266A]' : 'text-[#19266A] hover:bg-slate-50',
+              ]}
+            >
+              <span>{translation.labels.nav.products}</span>
+              <span class="text-[10px] font-extrabold uppercase tracking-[0.16em] text-[#19266A]/40">{trade.productGroups}</span>
+            </a>
+            <div class="mt-1 grid gap-1">
+              {productGroups.map((group) => (
+                <a href={group.href} class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-[#19266A]/5 hover:text-[#19266A]">
+                  <span class="inline-flex h-7 w-7 items-center justify-center rounded-full bg-[#19266A]/5 text-[9px] font-extrabold tracking-[0.1em] text-[#19266A]">{group.code}</span>
+                  <span>{group.label}</span>
+                </a>
+              ))}
+            </div>
+          </li>
+
+          {secondaryLinks.map((link) => (
+            <li>
+              <a
+                href={link.href}
+                class:list={[
+                  'block rounded-2xl px-4 py-3 text-base font-semibold transition',
+                  isActive(link.href) ? 'bg-[#19266A] text-white' : 'bg-slate-50 text-[#19266A] hover:bg-slate-100',
+                ]}
+              >
+                {link.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      <div class="mt-6 border-t border-slate-100 pt-5">
+        <p class="mb-3 text-[10px] font-bold uppercase tracking-[0.2em] text-[#19266A]/40">{trade.menu}</p>
+        <div class="grid grid-cols-2 gap-2">
+          {languages.map((language) => (
+            <a
+              href={withLanguagePrefix(language.code, pathWithoutLang)}
+              class:list={[
+                'rounded-xl px-3 py-2.5 text-center text-sm font-semibold transition',
+                lang === language.code ? 'bg-[#F3C623]/20 text-[#19266A]' : 'bg-slate-50 text-slate-700 hover:bg-slate-100',
+              ]}
+            >
+              {language.nativeName}
+            </a>
+          ))}
+        </div>
       </div>
 
-      <a
-        href={withLanguagePrefix(lang, '/contact')}
-        class="pill-link border border-brand-gold/30 bg-brand-gold text-brand-dark shadow-lg shadow-brand-gold/40 transition hover:-translate-y-0.5 hover:shadow-xl"
-      >
-        {translation.pages.home.ctaPrimary}
-      </a>
+      <div class="mt-auto pt-6">
+        <a
+          href={withLanguagePrefix(lang, '/contact')}
+          class="pill-link w-full bg-[#F3C623] text-[#10184A] shadow-lg shadow-[#F3C623]/20 transition hover:-translate-y-0.5"
+        >
+          {trade.inquiry}
+        </a>
+      </div>
     </div>
   </div>
 </details>
