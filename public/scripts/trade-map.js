@@ -15,10 +15,16 @@
 
   const tradeData = JSON.parse(tradeEl.textContent || '[]');
   const mapLocale = JSON.parse(localeEl.textContent || '{}');
-  const tradedMap = new Map(tradeData.map((c) => [c.country_code, c]));
+  // Codes are upper-cased on the way in: the geojson uses uppercase ISO codes, so
+  // a lowercase entry in trade-countries.json would otherwise silently fail to
+  // highlight on the map.
+  const normalizeCode = (code) => String(code || '').trim().toUpperCase();
+  const tradedMap = new Map(tradeData.map((c) => [normalizeCode(c.country_code), c]));
   const dash = '—';
 
   const defaultStroke = '#94a3b8';
+  const flaggedStroke = '#10184A';
+  const flaggedStrokeWidth = 0.75;
   const hoverStroke = '#19266A';
   const selectedStroke = '#F3C623';
   const defaultStrokeWidth = 0.4;
@@ -52,60 +58,52 @@
 
   const defs = document.createElementNS(svgNS, 'defs');
 
-  // Iran: ships as a photo-based pattern (existing brand asset).
-  const irPattern = document.createElementNS(svgNS, 'pattern');
-  irPattern.setAttribute('id', 'flag-ir');
-  irPattern.setAttribute('patternUnits', 'objectBoundingBox');
-  irPattern.setAttribute('width', '1');
-  irPattern.setAttribute('height', '1');
-  const irImg = document.createElementNS(svgNS, 'image');
-  irImg.setAttributeNS('http://www.w3.org/1999/xlink', 'href', '/images/iran-flag.jpg');
-  irImg.setAttribute('width', '400');
-  irImg.setAttribute('height', '240');
-  irImg.setAttribute('preserveAspectRatio', 'xMidYMid slice');
-  irPattern.appendChild(irImg);
-  defs.appendChild(irPattern);
+  // Every active market is filled with its own flag. Patterns are generated from
+  // trade-countries.json, so a country added there gets its flag automatically.
+  const patternIdFor = (code) => `flag-${code.toLowerCase()}`;
 
-  // Active markets: hand-drawn flag patterns so no extra image assets are needed.
-  const stripe = (pattern, y, h, fill) => {
-    const rect = document.createElementNS(svgNS, 'rect');
-    rect.setAttribute('x', '0');
-    rect.setAttribute('y', `${y}`);
-    rect.setAttribute('width', '1');
-    rect.setAttribute('height', `${h}`);
-    rect.setAttribute('fill', fill);
-    pattern.appendChild(rect);
-  };
-
-  const makePattern = (id) => {
+  const addFlagPattern = (code, href) => {
     const pattern = document.createElementNS(svgNS, 'pattern');
-    pattern.setAttribute('id', id);
+    pattern.setAttribute('id', patternIdFor(code));
     pattern.setAttribute('patternUnits', 'objectBoundingBox');
     pattern.setAttribute('patternContentUnits', 'objectBoundingBox');
     pattern.setAttribute('width', '1');
     pattern.setAttribute('height', '1');
-    return pattern;
+
+    // Brand-gold base sits under the flag, so a blocked or failed image
+    // degrades to the old highlight instead of leaving a hole in the map.
+    const base = document.createElementNS(svgNS, 'rect');
+    base.setAttribute('width', '1');
+    base.setAttribute('height', '1');
+    // Literal hex, not var(): CSS variables are unreliable inside SVG
+    // presentation attributes outside Chromium.
+    base.setAttribute('fill', '#F3C623');
+    pattern.appendChild(base);
+
+    const image = document.createElementNS(svgNS, 'image');
+    image.setAttribute('href', href);
+    image.setAttributeNS('http://www.w3.org/1999/xlink', 'href', href);
+    image.setAttribute('width', '1');
+    image.setAttribute('height', '1');
+    // Stretch to the country's bounding box; uniform scaling would leave gaps.
+    image.setAttribute('preserveAspectRatio', 'none');
+    pattern.appendChild(image);
+
+    defs.appendChild(pattern);
   };
 
-  // Uzbekistan: blue / white / green, thin red fimbriations.
-  const uzPattern = makePattern('flag-uz');
-  stripe(uzPattern, 0, 0.3, '#0099B5');
-  stripe(uzPattern, 0.3, 0.03, '#CE1126');
-  stripe(uzPattern, 0.33, 0.34, '#FFFFFF');
-  stripe(uzPattern, 0.67, 0.03, '#CE1126');
-  stripe(uzPattern, 0.7, 0.3, '#1EB53A');
-  defs.appendChild(uzPattern);
-
-  // Russia: white / blue / red, equal thirds.
-  const ruPattern = makePattern('flag-ru');
-  stripe(ruPattern, 0, 0.3333, '#FFFFFF');
-  stripe(ruPattern, 0.3333, 0.3334, '#0039A6');
-  stripe(ruPattern, 0.6667, 0.3333, '#D52B1E');
-  defs.appendChild(ruPattern);
+  // Iran is the home base and uses the local brand asset; markets use flagcdn,
+  // which the country detail pages and mobile cards already rely on.
+  const flagSources = new Map([['IR', '/images/iran-flag.jpg']]);
+  tradeData.forEach((entry) => {
+    const code = normalizeCode(entry.country_code);
+    if (code && !flagSources.has(code)) {
+      flagSources.set(code, `https://flagcdn.com/w640/${code.toLowerCase()}.png`);
+    }
+  });
+  flagSources.forEach((href, code) => addFlagPattern(code, href));
 
   svg.appendChild(defs);
-
-  const flagFill = { IR: 'url(#flag-ir)', UZ: 'url(#flag-uz)', RU: 'url(#flag-ru)' };
 
   const world = await fetch('/data/countries.geojson').then((r) => r.json());
   const projection = geoNaturalEarth1().fitSize([width, height], world);
@@ -171,15 +169,24 @@
     p.setAttribute('tabindex', '0');
     p.setAttribute('aria-label', `${countryName} ${traded ? mapLocale.statusTraded : mapLocale.statusNotTraded}`);
     p.classList.add('transition', 'duration-150', 'ease-out');
-    p.style.fill = flagFill[code] ?? (traded ? 'var(--brand-fill, #F3C623)' : '#e5e7eb');
-    p.style.stroke = defaultStroke;
-    p.style.strokeWidth = `${defaultStrokeWidth}`;
+    const hasFlag = flagSources.has(code);
+    p.style.fill = hasFlag ? `url(#${patternIdFor(code)})` : '#e5e7eb';
+    // Flag-filled countries carry a darker, thicker outline: several flags are
+    // partly white, which would otherwise bleed into neighbouring landmass.
+    const restingStroke = hasFlag ? flaggedStroke : defaultStroke;
+    const restingStrokeWidth = hasFlag ? flaggedStrokeWidth : defaultStrokeWidth;
+    // Remembered on the node so deselecting restores this country's own resting
+    // outline rather than the plain default.
+    p.dataset.restStroke = restingStroke;
+    p.dataset.restWidth = `${restingStrokeWidth}`;
+    p.style.stroke = restingStroke;
+    p.style.strokeWidth = `${restingStrokeWidth}`;
     p.style.cursor = traded ? 'pointer' : 'default';
 
     const setDefault = () => {
       if (selectedPath === p) return;
-      p.style.stroke = defaultStroke;
-      p.style.strokeWidth = `${defaultStrokeWidth}`;
+      p.style.stroke = restingStroke;
+      p.style.strokeWidth = `${restingStrokeWidth}`;
     };
 
     const setHover = () => {
@@ -190,8 +197,8 @@
 
     const setSelected = () => {
       if (selectedPath && selectedPath !== p) {
-        selectedPath.style.stroke = defaultStroke;
-        selectedPath.style.strokeWidth = `${defaultStrokeWidth}`;
+        selectedPath.style.stroke = selectedPath.dataset.restStroke || defaultStroke;
+        selectedPath.style.strokeWidth = selectedPath.dataset.restWidth || `${defaultStrokeWidth}`;
       }
       selectedPath = p;
       p.style.stroke = selectedStroke;

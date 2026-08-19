@@ -70,3 +70,5 @@ Error: ENOENT: no such file or directory, stat 'C:\STY\projects\Zardasht Mahd Bi
   [1mStack trace:[22m
 [2m    at Object.statSync (node:fs:2084:25)
     [...] See full stack trace in the browser, or rerun with --verbose.[22m
+[31m[1m۰۲:۵۲:۰۷[22m [ERROR] [vite][39m [31merror while updating dependencies:
+Error: EPERM: operation not permitted, rename 'C:\STY\projects\Zardasht Mahd Binaloud Trading\node_modules\.vite\deps_temp_9e11390a' -> 'C:\STY\projects\Zardasht Mahd Binaloud Trading\node_modules\.vite\deps'[39m

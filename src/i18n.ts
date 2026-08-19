@@ -54,6 +54,14 @@ export interface Translation {
       categoriesTitle: string;
       categoriesIntro: string;
       categories: { name: string; description: string; badge: string; href: string }[];
+      marketsTitle: string;
+      marketsIntro: string;
+      marketsHomeLabel: string;
+      countersTitle: string;
+      countersIntro: string;
+      // `key` lets the homepage derive live values from real data (see index.astro);
+      // `value` is the fallback used when a key has no derived source.
+      counters: { key: 'years' | 'groups' | 'lanes' | 'markets'; value: number; suffix: string; label: string }[];
       industriesTitle: string;
       industriesIntro: string;
       industries: { name: string; description: string }[];
@@ -251,6 +259,17 @@ const en: Omit<Translation, 'lang' | 'dir'> = {
         { name: 'Metals & Steel', description: 'Iron and steel products supplied to buyers across Central Asian markets.', badge: 'MS', href: '/products#metals-steel' },
         { name: 'Agricultural Commodities', description: 'Barley sourced from Russia plus pulses, grains, and selected agricultural products.', badge: 'AG', href: '/products#agricultural-commodities' },
         { name: 'Textile Raw Materials', description: 'Silk yarn imports and specification-based textile raw material sourcing.', badge: 'TX', href: '/products#textile-raw-materials' },
+      ],
+      marketsTitle: 'Countries we work with',
+      marketsIntro: 'Select a flag to see what we move in and out of that market.',
+      marketsHomeLabel: 'Iran · Home base',
+      countersTitle: 'Two decades of cross-border trade',
+      countersIntro: 'Experience built on real import and export activity, not a generic catalogue.',
+      counters: [
+        { key: 'years', value: 20, suffix: '+', label: 'Years of trading experience' },
+        { key: 'groups', value: 4, suffix: '', label: 'Commodity groups' },
+        { key: 'lanes', value: 4, suffix: '', label: 'Key trade lanes' },
+        { key: 'markets', value: 2, suffix: '', label: 'Active markets' },
       ],
       industriesTitle: 'Key trade flows',
       industriesIntro: 'A clear view of the import and export lanes that define our current business.',
@@ -503,6 +522,17 @@ const fa: Omit<Translation, 'lang' | 'dir'> = {
         { name: 'کالاهای کشاورزی', description: 'تأمین جو از روسیه به‌همراه حبوبات، غلات و کالاهای کشاورزی منتخب.', badge: 'AG', href: '/products#agricultural-commodities' },
         { name: 'مواد اولیه نساجی', description: 'واردات نخ ابریشم و تأمین مواد اولیه نساجی بر اساس مشخصات موردنیاز.', badge: 'TX', href: '/products#textile-raw-materials' },
       ],
+      marketsTitle: 'کشورهایی که با آن‌ها کار می‌کنیم',
+      marketsIntro: 'برای دیدن اقلام صادراتی و وارداتی هر بازار، روی پرچم آن کلیک کنید.',
+      marketsHomeLabel: 'ایران · مرکز فعالیت',
+      countersTitle: 'دو دهه تجارت فرامرزی',
+      countersIntro: 'تجربه‌ای که بر پایه فعالیت واقعی واردات و صادرات بنا شده، نه یک کاتالوگ عمومی.',
+      counters: [
+        { key: 'years', value: 20, suffix: '+', label: 'سال تجربه تجاری' },
+        { key: 'groups', value: 4, suffix: '', label: 'گروه کالایی' },
+        { key: 'lanes', value: 4, suffix: '', label: 'مسیر اصلی تجارت' },
+        { key: 'markets', value: 2, suffix: '', label: 'بازار فعال' },
+      ],
       industriesTitle: 'جریان‌های اصلی تجارت',
       industriesIntro: 'تصویری روشن از مسیرهای واردات و صادراتی که فعالیت فعلی شرکت را شکل می‌دهند.',
       industries: [
@@ -751,6 +781,17 @@ const ar: Omit<Translation, 'lang' | 'dir'> = {
         { name: 'السلع الزراعية', description: 'توريد الشعير من روسيا إلى جانب البقول والحبوب والسلع الزراعية المختارة.', badge: 'AG', href: '/products#agricultural-commodities' },
         { name: 'المواد الخام للنسيج', description: 'استيراد خيوط الحرير وتوريد المواد الخام للنسيج وفق المواصفات المطلوبة.', badge: 'TX', href: '/products#textile-raw-materials' },
       ],
+      marketsTitle: 'الدول التي نعمل معها',
+      marketsIntro: 'اضغط على أي علم لعرض ما نصدره ونستورده مع ذلك السوق.',
+      marketsHomeLabel: 'إيران · المقر الرئيسي',
+      countersTitle: 'عقدان من التجارة العابرة للحدود',
+      countersIntro: 'خبرة مبنية على نشاط استيراد وتصدير فعلي، لا على كتالوج عام.',
+      counters: [
+        { key: 'years', value: 20, suffix: '+', label: 'سنة من الخبرة التجارية' },
+        { key: 'groups', value: 4, suffix: '', label: 'مجموعات سلعية' },
+        { key: 'lanes', value: 4, suffix: '', label: 'مسارات تجارية رئيسية' },
+        { key: 'markets', value: 2, suffix: '', label: 'أسواق نشطة' },
+      ],
       industriesTitle: 'تدفقات التجارة الرئيسية',
       industriesIntro: 'صورة واضحة لمسارات الاستيراد والتصدير التي تحدد نشاطنا الحالي.',
       industries: [
@@ -956,6 +997,17 @@ const ru: Omit<Translation, 'lang' | 'dir'> = {
         { name: 'Металлы и сталь', description: 'Железо и стальная продукция для покупателей на рынках Центральной Азии.', badge: 'MS', href: '/products#metals-steel' },
         { name: 'Сельхозтовары', description: 'Ячмень из России, а также бобовые, зерновые и отдельные сельскохозяйственные товары.', badge: 'AG', href: '/products#agricultural-commodities' },
         { name: 'Текстильное сырье', description: 'Импорт шелковой пряжи и поставки текстильного сырья по требуемым спецификациям.', badge: 'TX', href: '/products#textile-raw-materials' },
+      ],
+      marketsTitle: 'Страны, с которыми мы работаем',
+      marketsIntro: 'Нажмите на флаг, чтобы увидеть, что мы поставляем на этот рынок и закупаем на нём.',
+      marketsHomeLabel: 'Иран · Головной офис',
+      countersTitle: 'Два десятилетия трансграничной торговли',
+      countersIntro: 'Опыт, построенный на реальной импортно-экспортной деятельности, а не на общем каталоге.',
+      counters: [
+        { key: 'years', value: 20, suffix: '+', label: 'Лет торгового опыта' },
+        { key: 'groups', value: 4, suffix: '', label: 'Товарные группы' },
+        { key: 'lanes', value: 4, suffix: '', label: 'Ключевые направления' },
+        { key: 'markets', value: 2, suffix: '', label: 'Активные рынки' },
       ],
       industriesTitle: 'Ключевые торговые потоки', industriesIntro: 'Понятная картина импортных и экспортных направлений, формирующих текущий бизнес компании.',
       industries: [

@@ -1,6 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import { getTranslation, resolveLang, localizedLanguages, withLanguagePrefix } from '../../i18n';
+import { localizedCountryName } from '../../data/country-locale';
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -30,10 +31,12 @@ const fxStrings = {
   error: t.pages.tradeMap.fxError,
 };
 
-const countryNames: Record<string, string> = {
-  UZ: lang === 'fa' ? 'ازبکستان' : lang === 'ar' ? 'أوزبكستان' : lang === 'ru' ? 'Узбекистан' : 'Uzbekistan',
-  RU: lang === 'fa' ? 'روسیه' : lang === 'ar' ? 'روسيا' : lang === 'ru' ? 'Россия' : 'Russia',
-};
+// Names come from the shared country-locale module so the map, the mobile
+// cards and the per-country detail pages never drift apart.
+const namedCountries = activeCountries.map((country) => ({
+  ...country,
+  displayName: localizedCountryName(lang, country.country_code, country.country_name),
+}));
 ---
 
 <Layout title={t.pages.tradeMap.title} lang={lang} translation={t}>
@@ -57,7 +60,7 @@ const countryNames: Record<string, string> = {
 
     <!-- Mobile fallback: the interactive SVG map only renders at sm+, so give small screens the same active markets as cards. -->
     <div class="grid grid-cols-1 gap-4 sm:hidden">
-      {activeCountries.map((country) => (
+      {namedCountries.map((country) => (
         <a
           href={withLanguagePrefix(lang, `/trade-map/${country.country_code.toLowerCase()}`)}
           class="card flex items-center gap-4 p-4 transition hover:-translate-y-0.5 hover:shadow-lg"
@@ -70,7 +73,7 @@ const countryNames: Record<string, string> = {
           />
           <div class="min-w-0 flex-1">
             <p class="truncate text-base font-semibold text-brand-dark">
-              {countryNames[country.country_code] ?? country.country_name}
+              {country.displayName}
             </p>
             <p class="truncate text-sm text-slate-600">{country.notes}</p>
           </div>

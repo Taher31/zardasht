@@ -1,4 +1,26 @@
-[
+[{
+    "country_code": "CN",
+    "country_name": "Togo",
+    "capital": "Tashkent",
+    "currency": "UZS - Uzbekistani som",
+    "status": true,
+    "notes": "Bitumen exports and silk yarn imports, based on agreed specification and delivery terms.",
+    "main_exports": ["Bitumen"],
+    "main_imports": ["Silk yarn"],
+    "compliance_notes": "Export and import documentation confirmed per shipment.",
+    "page_slug": "uzbekistan"
+  },{
+    "country_code": "VE",
+    "country_name": "Venezuela",
+    "capital": "Tashkent",
+    "currency": "UZS - Uzbekistani som",
+    "status": true,
+    "notes": "Bitumen exports and silk yarn imports, based on agreed specification and delivery terms.",
+    "main_exports": ["Bitumen"],
+    "main_imports": ["Silk yarn"],
+    "compliance_notes": "Export and import documentation confirmed per shipment.",
+    "page_slug": "uzbekistan"
+  },
   {
     "country_code": "UZ",
     "country_name": "Uzbekistan",
@@ -22,5 +44,65 @@
     "main_imports": ["Barley"],
     "compliance_notes": "Quality specification and shipping documentation confirmed per shipment.",
     "page_slug": "russia"
+  },
+  {
+    "country_code": "IQ",
+    "country_name": "Iraq",
+    "capital": "Baghdad",
+    "currency": "IQD - Iraqi dinar",
+    "status": true,
+    "notes": "Bitumen export destination, supplied against agreed specification and delivery terms.",
+    "main_exports": ["Bitumen"],
+    "main_imports": [],
+    "compliance_notes": "Export documentation confirmed per shipment.",
+    "page_slug": "iraq"
+  },
+  {
+    "country_code": "KZ",
+    "country_name": "Kazakhstan",
+    "capital": "Astana",
+    "currency": "KZT - Kazakhstani tenge",
+    "status": true,
+    "notes": "Iron and steel export destination across Central Asian markets.",
+    "main_exports": ["Iron and steel products"],
+    "main_imports": [],
+    "compliance_notes": "Export documentation confirmed per shipment.",
+    "page_slug": "kazakhstan"
+  },
+  {
+    "country_code": "TM",
+    "country_name": "Turkmenistan",
+    "capital": "Ashgabat",
+    "currency": "TMT - Turkmenistani manat",
+    "status": true,
+    "notes": "Iron and steel export destination across Central Asian markets.",
+    "main_exports": ["Iron and steel products"],
+    "main_imports": [],
+    "compliance_notes": "Export documentation confirmed per shipment.",
+    "page_slug": "turkmenistan"
+  },
+  {
+    "country_code": "TJ",
+    "country_name": "Tajikistan",
+    "capital": "Dushanbe",
+    "currency": "TJS - Tajikistani somoni",
+    "status": true,
+    "notes": "Iron and steel export destination across Central Asian markets.",
+    "main_exports": ["Iron and steel products"],
+    "main_imports": [],
+    "compliance_notes": "Export documentation confirmed per shipment.",
+    "page_slug": "tajikistan"
+  },
+  {
+    "country_code": "KG",
+    "country_name": "Kyrgyzstan",
+    "capital": "Bishkek",
+    "currency": "KGS - Kyrgyzstani som",
+    "status": true,
+    "notes": "Iron and steel export destination across Central Asian markets.",
+    "main_exports": ["Iron and steel products"],
+    "main_imports": [],
+    "compliance_notes": "Export documentation confirmed per shipment.",
+    "page_slug": "kyrgyzstan"
   }
 ]
