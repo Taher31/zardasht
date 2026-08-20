@@ -1,4 +1,4 @@
-﻿(async () => {
+(async () => {
   if (window.innerWidth < 640) return;
   const svgNS = 'http://www.w3.org/2000/svg';
   const tradeEl = document.getElementById('trade-data');
@@ -15,12 +15,18 @@
 
   const tradeData = JSON.parse(tradeEl.textContent || '[]');
   const mapLocale = JSON.parse(localeEl.textContent || '{}');
-  const tradedMap = new Map(tradeData.map((c) => [c.country_code, c]));
-  const dash = '\u2014';
+  // Codes are upper-cased on the way in: the geojson uses uppercase ISO codes, so
+  // a lowercase entry in trade-countries.json would otherwise silently fail to
+  // highlight on the map.
+  const normalizeCode = (code) => String(code || '').trim().toUpperCase();
+  const tradedMap = new Map(tradeData.map((c) => [normalizeCode(c.country_code), c]));
+  const dash = '—';
 
   const defaultStroke = '#94a3b8';
-  const hoverStroke = '#0b2f5b';
-  const selectedStroke = '#c8961a';
+  const flaggedStroke = '#10184A';
+  const flaggedStrokeWidth = 0.75;
+  const hoverStroke = '#19266A';
+  const selectedStroke = '#F3C623';
   const defaultStrokeWidth = 0.4;
   const hoverStrokeWidth = 0.9;
   const selectedStrokeWidth = 1.3;
@@ -51,19 +57,52 @@
   container.appendChild(svg);
 
   const defs = document.createElementNS(svgNS, 'defs');
-  const pattern = document.createElementNS(svgNS, 'pattern');
-  pattern.setAttribute('id', 'flag-ir');
-  pattern.setAttribute('patternUnits', 'objectBoundingBox');
-  pattern.setAttribute('width', '1');
-  pattern.setAttribute('height', '1');
 
-  const img = document.createElementNS(svgNS, 'image');
-  img.setAttributeNS('http://www.w3.org/1999/xlink', 'href', '/images/iran-flag.jpg');
-  img.setAttribute('width', '400');
-  img.setAttribute('height', '240');
-  img.setAttribute('preserveAspectRatio', 'xMidYMid slice');
-  pattern.appendChild(img);
-  defs.appendChild(pattern);
+  // Every active market is filled with its own flag. Patterns are generated from
+  // trade-countries.json, so a country added there gets its flag automatically.
+  const patternIdFor = (code) => `flag-${code.toLowerCase()}`;
+
+  const addFlagPattern = (code, href) => {
+    const pattern = document.createElementNS(svgNS, 'pattern');
+    pattern.setAttribute('id', patternIdFor(code));
+    pattern.setAttribute('patternUnits', 'objectBoundingBox');
+    pattern.setAttribute('patternContentUnits', 'objectBoundingBox');
+    pattern.setAttribute('width', '1');
+    pattern.setAttribute('height', '1');
+
+    // Brand-gold base sits under the flag, so a blocked or failed image
+    // degrades to the old highlight instead of leaving a hole in the map.
+    const base = document.createElementNS(svgNS, 'rect');
+    base.setAttribute('width', '1');
+    base.setAttribute('height', '1');
+    // Literal hex, not var(): CSS variables are unreliable inside SVG
+    // presentation attributes outside Chromium.
+    base.setAttribute('fill', '#F3C623');
+    pattern.appendChild(base);
+
+    const image = document.createElementNS(svgNS, 'image');
+    image.setAttribute('href', href);
+    image.setAttributeNS('http://www.w3.org/1999/xlink', 'href', href);
+    image.setAttribute('width', '1');
+    image.setAttribute('height', '1');
+    // Stretch to the country's bounding box; uniform scaling would leave gaps.
+    image.setAttribute('preserveAspectRatio', 'none');
+    pattern.appendChild(image);
+
+    defs.appendChild(pattern);
+  };
+
+  // Iran is the home base and uses the local brand asset; markets use flagcdn,
+  // which the country detail pages and mobile cards already rely on.
+  const flagSources = new Map([['IR', '/images/iran-flag.jpg']]);
+  tradeData.forEach((entry) => {
+    const code = normalizeCode(entry.country_code);
+    if (code && !flagSources.has(code)) {
+      flagSources.set(code, `https://flagcdn.com/w640/${code.toLowerCase()}.png`);
+    }
+  });
+  flagSources.forEach((href, code) => addFlagPattern(code, href));
+
   svg.appendChild(defs);
 
   const world = await fetch('/data/countries.geojson').then((r) => r.json());
@@ -130,15 +169,24 @@
     p.setAttribute('tabindex', '0');
     p.setAttribute('aria-label', `${countryName} ${traded ? mapLocale.statusTraded : mapLocale.statusNotTraded}`);
     p.classList.add('transition', 'duration-150', 'ease-out');
-    p.style.fill = code === 'IR' ? 'url(#flag-ir)' : traded ? 'var(--brand-fill, #c8961a)' : '#e5e7eb';
-    p.style.stroke = defaultStroke;
-    p.style.strokeWidth = `${defaultStrokeWidth}`;
+    const hasFlag = flagSources.has(code);
+    p.style.fill = hasFlag ? `url(#${patternIdFor(code)})` : '#e5e7eb';
+    // Flag-filled countries carry a darker, thicker outline: several flags are
+    // partly white, which would otherwise bleed into neighbouring landmass.
+    const restingStroke = hasFlag ? flaggedStroke : defaultStroke;
+    const restingStrokeWidth = hasFlag ? flaggedStrokeWidth : defaultStrokeWidth;
+    // Remembered on the node so deselecting restores this country's own resting
+    // outline rather than the plain default.
+    p.dataset.restStroke = restingStroke;
+    p.dataset.restWidth = `${restingStrokeWidth}`;
+    p.style.stroke = restingStroke;
+    p.style.strokeWidth = `${restingStrokeWidth}`;
     p.style.cursor = traded ? 'pointer' : 'default';
 
     const setDefault = () => {
       if (selectedPath === p) return;
-      p.style.stroke = defaultStroke;
-      p.style.strokeWidth = `${defaultStrokeWidth}`;
+      p.style.stroke = restingStroke;
+      p.style.strokeWidth = `${restingStrokeWidth}`;
     };
 
     const setHover = () => {
@@ -149,8 +197,8 @@
 
     const setSelected = () => {
       if (selectedPath && selectedPath !== p) {
-        selectedPath.style.stroke = defaultStroke;
-        selectedPath.style.strokeWidth = `${defaultStrokeWidth}`;
+        selectedPath.style.stroke = selectedPath.dataset.restStroke || defaultStroke;
+        selectedPath.style.strokeWidth = selectedPath.dataset.restWidth || `${defaultStrokeWidth}`;
       }
       selectedPath = p;
       p.style.stroke = selectedStroke;
@@ -160,19 +208,17 @@
     const showTooltip = () => {
       const td = tradedMap.get(code);
       const status = traded ? mapLocale.statusTraded : mapLocale.statusNotTraded;
-      const deals = td?.deals_count ?? dash;
-      const value = td?.total_value ?? dash;
-    tooltip.innerHTML = `
+      tooltip.innerHTML = `
         <div class="font-bold text-white">${countryName}</div>
-        <div class="text-brand-light/90">${mapLocale.statusLabel}: ${status}</div>
-        ${traded ? `<div class="text-white/80">${mapLocale.dealsLabel}: ${deals}</div><div class="text-white/80">${mapLocale.totalLabel}: ${value}</div>` : ''}
+        <div class="text-white/80">${mapLocale.statusLabel}: ${status}</div>
+        ${traded && td?.notes ? `<div class="mt-1 max-w-[220px] font-normal text-white/70">${td.notes}</div>` : ''}
       `;
-    const [cx, cy] = path.centroid(feature);
-    tooltip.classList.remove('hidden');
-    tooltip.style.opacity = '0';
-    positionTooltip(cx, cy);
-    tooltip.style.opacity = '';
-  };
+      const [cx, cy] = path.centroid(feature);
+      tooltip.classList.remove('hidden');
+      tooltip.style.opacity = '0';
+      positionTooltip(cx, cy);
+      tooltip.style.opacity = '';
+    };
 
     const hideTooltip = () => tooltip.classList.add('hidden');
 

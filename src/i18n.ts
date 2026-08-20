@@ -15,6 +15,7 @@ export interface Translation {
       about: string;
       contact: string;
       tradeMap: string;
+      quality: string;
     };
     trade: {
       tagline: string;
@@ -34,7 +35,6 @@ export interface Translation {
       copyright: string;
       privacy: string;
       terms: string;
-      social: string[];
     };
   };
   pages: {
@@ -54,6 +54,14 @@ export interface Translation {
       categoriesTitle: string;
       categoriesIntro: string;
       categories: { name: string; description: string; badge: string; href: string }[];
+      marketsTitle: string;
+      marketsIntro: string;
+      marketsHomeLabel: string;
+      countersTitle: string;
+      countersIntro: string;
+      // `key` lets the homepage derive live values from real data (see index.astro);
+      // `value` is the fallback used when a key has no derived source.
+      counters: { key: 'years' | 'groups' | 'lanes' | 'markets'; value: number; suffix: string; label: string }[];
       industriesTitle: string;
       industriesIntro: string;
       industries: { name: string; description: string }[];
@@ -113,9 +121,11 @@ export interface Translation {
       title: string;
       intro: string;
       address: string;
+      addressLabel: string;
       phone: string;
       email: string;
       quickLinks: string[];
+      whatsappIntro: string;
       form: {
         name: string;
         company: string;
@@ -129,6 +139,14 @@ export interface Translation {
         message: string;
         submit: string;
       };
+    };
+    quality: {
+      eyebrow: string;
+      title: string;
+      intro: string;
+      pillars: { title: string; description: string; badge: string }[];
+      processTitle: string;
+      process: { title: string; description: string }[];
     };
     tradeMap: {
       title: string;
@@ -152,6 +170,7 @@ export interface Translation {
       summaryTitle: string;
       complianceLabel: string;
       shipTitle: string;
+      importsTitle: string;
       projectsTitle: string;
       projectsEmpty: string;
       selectPrompt: string;
@@ -184,6 +203,7 @@ const en: Omit<Translation, 'lang' | 'dir'> = {
       about: 'About Us',
       contact: 'Contact',
       tradeMap: 'Trade Map',
+      quality: 'Quality',
     },
     trade: {
       tagline: 'International Commodity Trading · Central Asia · Russia',
@@ -203,7 +223,7 @@ const en: Omit<Translation, 'lang' | 'dir'> = {
       copyright: 'Zardasht Mahd Binaloud Trading. All rights reserved.',
       privacy: 'Privacy Policy',
       terms: 'Terms of Service',
-      social: ['LinkedIn', 'WhatsApp', 'Email', 'Instagram'],    },
+    },
   },
   pages: {
     home: {
@@ -239,6 +259,17 @@ const en: Omit<Translation, 'lang' | 'dir'> = {
         { name: 'Metals & Steel', description: 'Iron and steel products supplied to buyers across Central Asian markets.', badge: 'MS', href: '/products#metals-steel' },
         { name: 'Agricultural Commodities', description: 'Barley sourced from Russia plus pulses, grains, and selected agricultural products.', badge: 'AG', href: '/products#agricultural-commodities' },
         { name: 'Textile Raw Materials', description: 'Silk yarn imports and specification-based textile raw material sourcing.', badge: 'TX', href: '/products#textile-raw-materials' },
+      ],
+      marketsTitle: 'Countries we work with',
+      marketsIntro: 'Select a flag to see what we move in and out of that market.',
+      marketsHomeLabel: 'Iran · Home base',
+      countersTitle: 'Two decades of cross-border trade',
+      countersIntro: 'Experience built on real import and export activity, not a generic catalogue.',
+      counters: [
+        { key: 'years', value: 20, suffix: '+', label: 'Years of trading experience' },
+        { key: 'groups', value: 4, suffix: '', label: 'Commodity groups' },
+        { key: 'lanes', value: 4, suffix: '', label: 'Key trade lanes' },
+        { key: 'markets', value: 2, suffix: '', label: 'Active markets' },
       ],
       industriesTitle: 'Key trade flows',
       industriesIntro: 'A clear view of the import and export lanes that define our current business.',
@@ -364,14 +395,33 @@ const en: Omit<Translation, 'lang' | 'dir'> = {
       title: 'Tell us what you need to buy or sell',
       intro: 'Share the commodity, specification, quantity, origin or destination, and preferred delivery terms so our trade team can evaluate the opportunity.',
       address: 'Razavi Khorasan Province, Mashhad, District 1, Sanabad St, No. 32, Iran',
+      addressLabel: 'Address',
       phone: '+98 (0) 000-000-0000',
       email: 'sales@Zardasht.com',
       quickLinks: ['Send Trade Inquiry', 'Explore Products', 'View Trade Map'],
+      whatsappIntro: 'Hello, I would like to discuss a commodity trade inquiry.',
       form: {
         name: 'Full name', company: 'Company name', country: 'Country', email: 'Work email', phone: 'Phone / WhatsApp',
         product: 'Commodity & specification', quantity: 'Quantity', destination: 'Origin / destination', incoterms: 'Preferred delivery terms',
         message: 'Notes / requirements', submit: 'Submit inquiry',
       },
+    },
+    quality: {
+      eyebrow: 'Quality',
+      title: 'How we assure quality',
+      intro: 'Every shipment moves through the same specification, evaluation, and documentation steps before it leaves for its destination.',
+      pillars: [
+        { title: 'Specification confirmed upfront', description: 'Grade, packaging, and technical requirements are agreed and confirmed before any purchase is finalized.', badge: '01' },
+        { title: 'Supplier evaluation', description: 'Supplier options are compared against specification, availability, and delivery requirements for every commodity group.', badge: '02' },
+        { title: 'Documentation aligned to destination', description: "Export and import paperwork is prepared to match the requirements of the buyer's market before shipment.", badge: '03' },
+      ],
+      processTitle: 'Our quality process',
+      process: [
+        { title: '1) Specification', description: 'Grade, packaging, and commercial requirements are confirmed against each inquiry.' },
+        { title: '2) Sourcing check', description: 'Supplier or buyer options are evaluated against the agreed specification and timeline.' },
+        { title: '3) Documentation', description: 'Shipping and compliance documentation is prepared to match destination requirements.' },
+        { title: '4) Delivery confirmation', description: 'Shipment details are confirmed against the agreed terms through to delivery.' },
+      ],
     },
     tradeMap: {
       title: 'Trade Map',
@@ -395,6 +445,7 @@ const en: Omit<Translation, 'lang' | 'dir'> = {
       summaryTitle: 'Summary',
       complianceLabel: 'Compliance',
       shipTitle: 'What we ship',
+      importsTitle: 'What we import',
       projectsTitle: 'Market highlights',
       projectsEmpty: 'No details listed yet.',
       selectPrompt: 'Select a country',
@@ -414,6 +465,7 @@ const fa: Omit<Translation, 'lang' | 'dir'> = {
       about: 'درباره ما',
       contact: 'تماس',
       tradeMap: 'نقشه تجارت',
+      quality: 'کیفیت',
     },
     trade: {
       tagline: 'بازرگانی بین‌المللی کالا · آسیای مرکزی · روسیه',
@@ -433,7 +485,7 @@ const fa: Omit<Translation, 'lang' | 'dir'> = {
       copyright: 'بازرگانی زردشت مهد بینالود. تمامی حقوق محفوظ است.',
       privacy: 'حریم خصوصی',
       terms: 'شرایط خدمات',
-      social: ['لینکدین', 'واتساپ', 'ایمیل', 'اینستاگرام'],    },
+    },
   },
   pages: {
     home: {
@@ -469,6 +521,17 @@ const fa: Omit<Translation, 'lang' | 'dir'> = {
         { name: 'فلزات و فولاد', description: 'تأمین آهن و محصولات فولادی برای خریداران بازارهای آسیای مرکزی.', badge: 'MS', href: '/products#metals-steel' },
         { name: 'کالاهای کشاورزی', description: 'تأمین جو از روسیه به‌همراه حبوبات، غلات و کالاهای کشاورزی منتخب.', badge: 'AG', href: '/products#agricultural-commodities' },
         { name: 'مواد اولیه نساجی', description: 'واردات نخ ابریشم و تأمین مواد اولیه نساجی بر اساس مشخصات موردنیاز.', badge: 'TX', href: '/products#textile-raw-materials' },
+      ],
+      marketsTitle: 'کشورهایی که با آن‌ها کار می‌کنیم',
+      marketsIntro: 'برای دیدن اقلام صادراتی و وارداتی هر بازار، روی پرچم آن کلیک کنید.',
+      marketsHomeLabel: 'ایران · مرکز فعالیت',
+      countersTitle: 'دو دهه تجارت فرامرزی',
+      countersIntro: 'تجربه‌ای که بر پایه فعالیت واقعی واردات و صادرات بنا شده، نه یک کاتالوگ عمومی.',
+      counters: [
+        { key: 'years', value: 20, suffix: '+', label: 'سال تجربه تجاری' },
+        { key: 'groups', value: 4, suffix: '', label: 'گروه کالایی' },
+        { key: 'lanes', value: 4, suffix: '', label: 'مسیر اصلی تجارت' },
+        { key: 'markets', value: 2, suffix: '', label: 'بازار فعال' },
       ],
       industriesTitle: 'جریان‌های اصلی تجارت',
       industriesIntro: 'تصویری روشن از مسیرهای واردات و صادراتی که فعالیت فعلی شرکت را شکل می‌دهند.',
@@ -590,13 +653,32 @@ const fa: Omit<Translation, 'lang' | 'dir'> = {
       title: 'بگویید قصد خرید یا فروش چه کالایی را دارید',
       intro: 'نام کالا، مشخصات، مقدار، مبدأ یا مقصد و شرایط تحویل موردنظر را ارسال کنید تا تیم بازرگانی فرصت معامله را بررسی کند.',
       address: 'استان خراسان رضوی، مشهد، منطقه ۱، خیابان سناباد، پلاک ۳۲، ایران',
+      addressLabel: 'آدرس',
       phone: '+98 (0) 000-000-0000', email: 'sales@Zardasht.com',
       quickLinks: ['ارسال درخواست تجاری', 'مشاهده محصولات', 'مشاهده نقشه تجارت'],
+      whatsappIntro: 'سلام، مایل به بررسی یک درخواست تجاری کالا هستم.',
       form: {
         name: 'نام و نام خانوادگی', company: 'نام شرکت', country: 'کشور', email: 'ایمیل کاری', phone: 'تلفن / واتساپ',
         product: 'کالا و مشخصات', quantity: 'مقدار', destination: 'مبدأ / مقصد', incoterms: 'شرایط تحویل ترجیحی',
         message: 'توضیحات / الزامات', submit: 'ارسال درخواست',
       },
+    },
+    quality: {
+      eyebrow: 'کیفیت',
+      title: 'چگونه کیفیت را تضمین می‌کنیم',
+      intro: 'هر محموله پیش از ارسال، مراحل یکسانی از تأیید مشخصات، ارزیابی و مستندسازی را طی می‌کند.',
+      pillars: [
+        { title: 'تأیید مشخصات از ابتدا', description: 'گرید، بسته‌بندی و الزامات فنی پیش از نهایی‌شدن هر خرید توافق و تأیید می‌شود.', badge: '01' },
+        { title: 'ارزیابی تأمین‌کننده', description: 'گزینه‌های تأمین‌کننده برای هر گروه کالایی بر اساس مشخصات، موجودی و الزامات تحویل مقایسه می‌شوند.', badge: '02' },
+        { title: 'مستندسازی متناسب با مقصد', description: 'مدارک صادرات و واردات پیش از حمل، مطابق با الزامات بازار خریدار آماده می‌شود.', badge: '03' },
+      ],
+      processTitle: 'فرآیند کیفیت ما',
+      process: [
+        { title: '۱) مشخصات', description: 'گرید، بسته‌بندی و الزامات تجاری برای هر درخواست تأیید می‌شود.' },
+        { title: '۲) بررسی تأمین', description: 'گزینه‌های تأمین‌کننده یا خریدار بر اساس مشخصات و زمان‌بندی توافق‌شده ارزیابی می‌شوند.' },
+        { title: '۳) مستندسازی', description: 'مدارک حمل و انطباق مطابق با الزامات مقصد آماده می‌شود.' },
+        { title: '۴) تأیید تحویل', description: 'جزئیات محموله تا تحویل نهایی مطابق شرایط توافق‌شده تأیید می‌شود.' },
+      ],
     },
     tradeMap: {
       title: 'نقشه تجارت',
@@ -620,6 +702,7 @@ const fa: Omit<Translation, 'lang' | 'dir'> = {
       summaryTitle: 'خلاصه',
       complianceLabel: 'انطباق',
       shipTitle: 'اقلام ارسالی',
+      importsTitle: 'اقلام وارداتی',
       projectsTitle: 'بازارهای کلیدی',
       projectsEmpty: 'هنوز جزئیاتی ثبت نشده است.',
       selectPrompt: 'یک کشور را انتخاب کنید',
@@ -641,6 +724,7 @@ const ar: Omit<Translation, 'lang' | 'dir'> = {
       about: 'من نحن',
       contact: 'اتصل بنا',
       tradeMap: 'خريطة التجارة',
+      quality: 'الجودة',
     },
     trade: {
       tagline: 'تجارة السلع الدولية · آسيا الوسطى · روسيا',
@@ -660,7 +744,7 @@ const ar: Omit<Translation, 'lang' | 'dir'> = {
       copyright: 'زردشت مهد بينالود للتجارة. جميع الحقوق محفوظة.',
       privacy: 'سياسة الخصوصية',
       terms: 'شروط الخدمة',
-      social: ['لينكدإن', 'واتساب', 'البريد', 'إنستغرام'],    },
+    },
   },
   pages: {
     home: {
@@ -696,6 +780,17 @@ const ar: Omit<Translation, 'lang' | 'dir'> = {
         { name: 'المعادن والصلب', description: 'توريد منتجات الحديد والصلب للمشترين في أسواق آسيا الوسطى.', badge: 'MS', href: '/products#metals-steel' },
         { name: 'السلع الزراعية', description: 'توريد الشعير من روسيا إلى جانب البقول والحبوب والسلع الزراعية المختارة.', badge: 'AG', href: '/products#agricultural-commodities' },
         { name: 'المواد الخام للنسيج', description: 'استيراد خيوط الحرير وتوريد المواد الخام للنسيج وفق المواصفات المطلوبة.', badge: 'TX', href: '/products#textile-raw-materials' },
+      ],
+      marketsTitle: 'الدول التي نعمل معها',
+      marketsIntro: 'اضغط على أي علم لعرض ما نصدره ونستورده مع ذلك السوق.',
+      marketsHomeLabel: 'إيران · المقر الرئيسي',
+      countersTitle: 'عقدان من التجارة العابرة للحدود',
+      countersIntro: 'خبرة مبنية على نشاط استيراد وتصدير فعلي، لا على كتالوج عام.',
+      counters: [
+        { key: 'years', value: 20, suffix: '+', label: 'سنة من الخبرة التجارية' },
+        { key: 'groups', value: 4, suffix: '', label: 'مجموعات سلعية' },
+        { key: 'lanes', value: 4, suffix: '', label: 'مسارات تجارية رئيسية' },
+        { key: 'markets', value: 2, suffix: '', label: 'أسواق نشطة' },
       ],
       industriesTitle: 'تدفقات التجارة الرئيسية',
       industriesIntro: 'صورة واضحة لمسارات الاستيراد والتصدير التي تحدد نشاطنا الحالي.',
@@ -786,9 +881,27 @@ const ar: Omit<Translation, 'lang' | 'dir'> = {
     contact: {
       eyebrow: 'استفسار تجاري', title: 'أخبرنا بما تريد شراءه أو بيعه',
       intro: 'أرسل السلعة والمواصفات والكمية والمنشأ أو الوجهة وشروط التسليم المفضلة ليقيّم فريق التجارة الفرصة.',
-      address: 'محافظة خراسان الرضوية، مشهد، المنطقة 1، شارع سناباد، رقم 32، إيران', phone: '+98 (0) 000-000-0000', email: 'sales@Zardasht.com',
+      address: 'محافظة خراسان الرضوية، مشهد، المنطقة 1، شارع سناباد، رقم 32، إيران', addressLabel: 'العنوان', phone: '+98 (0) 000-000-0000', email: 'sales@Zardasht.com',
       quickLinks: ['إرسال استفسار تجاري', 'استعراض المنتجات', 'عرض خريطة التجارة'],
+      whatsappIntro: 'مرحبًا، أرغب في مناقشة استفسار تجاري بخصوص سلعة.',
       form: { name: 'الاسم الكامل', company: 'اسم الشركة', country: 'الدولة', email: 'البريد المهني', phone: 'الهاتف / واتساب', product: 'السلعة والمواصفات', quantity: 'الكمية', destination: 'المنشأ / الوجهة', incoterms: 'شروط التسليم المفضلة', message: 'ملاحظات / متطلبات', submit: 'إرسال الاستفسار' },
+    },
+    quality: {
+      eyebrow: 'الجودة',
+      title: 'كيف نضمن الجودة',
+      intro: 'تمر كل شحنة بنفس خطوات تأكيد المواصفات والتقييم والتوثيق قبل مغادرتها إلى وجهتها.',
+      pillars: [
+        { title: 'تأكيد المواصفات مسبقًا', description: 'يتم الاتفاق على الدرجة والتعبئة والمتطلبات الفنية وتأكيدها قبل إتمام أي عملية شراء.', badge: '01' },
+        { title: 'تقييم الموردين', description: 'تتم مقارنة خيارات الموردين وفق المواصفات والتوفر ومتطلبات التسليم لكل مجموعة سلعية.', badge: '02' },
+        { title: 'توثيق يتماشى مع الوجهة', description: 'يتم إعداد مستندات التصدير والاستيراد لتتوافق مع متطلبات سوق المشتري قبل الشحن.', badge: '03' },
+      ],
+      processTitle: 'عملية الجودة لدينا',
+      process: [
+        { title: '1) المواصفات', description: 'تُؤكَّد الدرجة والتعبئة والمتطلبات التجارية لكل استفسار.' },
+        { title: '2) فحص التوريد', description: 'تُقيَّم خيارات المورد أو المشتري وفق المواصفات المتفق عليها والجدول الزمني.' },
+        { title: '3) التوثيق', description: 'تُعد مستندات الشحن والامتثال لتتوافق مع متطلبات الوجهة.' },
+        { title: '4) تأكيد التسليم', description: 'تُؤكَّد تفاصيل الشحنة وفق الشروط المتفق عليها حتى التسليم.' },
+      ],
     },
     tradeMap: {
       title: 'خريطة التجارة',
@@ -812,6 +925,7 @@ const ar: Omit<Translation, 'lang' | 'dir'> = {
       summaryTitle: 'ملخص',
       complianceLabel: 'الامتثال',
       shipTitle: 'ما نشحنه',
+      importsTitle: 'ما نستورده',
       projectsTitle: 'أبرز الأسواق',
       projectsEmpty: 'لا توجد تفاصيل بعد.',
       selectPrompt: 'اختر دولة',
@@ -833,6 +947,7 @@ const ru: Omit<Translation, 'lang' | 'dir'> = {
       about: 'О компании',
       contact: 'Контакты',
       tradeMap: 'Карта торговли',
+      quality: 'Качество',
     },
     trade: {
       tagline: 'Международная торговля · Центральная Азия · Россия',
@@ -852,7 +967,7 @@ const ru: Omit<Translation, 'lang' | 'dir'> = {
       copyright: 'Zardasht Mahd Binaloud Trading. Все права защищены.',
       privacy: 'Политика конфиденциальности',
       terms: 'Условия обслуживания',
-      social: ['LinkedIn', 'WhatsApp', 'Email', 'Instagram'],    },
+    },
   },
   pages: {
     home: {
@@ -882,6 +997,17 @@ const ru: Omit<Translation, 'lang' | 'dir'> = {
         { name: 'Металлы и сталь', description: 'Железо и стальная продукция для покупателей на рынках Центральной Азии.', badge: 'MS', href: '/products#metals-steel' },
         { name: 'Сельхозтовары', description: 'Ячмень из России, а также бобовые, зерновые и отдельные сельскохозяйственные товары.', badge: 'AG', href: '/products#agricultural-commodities' },
         { name: 'Текстильное сырье', description: 'Импорт шелковой пряжи и поставки текстильного сырья по требуемым спецификациям.', badge: 'TX', href: '/products#textile-raw-materials' },
+      ],
+      marketsTitle: 'Страны, с которыми мы работаем',
+      marketsIntro: 'Нажмите на флаг, чтобы увидеть, что мы поставляем на этот рынок и закупаем на нём.',
+      marketsHomeLabel: 'Иран · Головной офис',
+      countersTitle: 'Два десятилетия трансграничной торговли',
+      countersIntro: 'Опыт, построенный на реальной импортно-экспортной деятельности, а не на общем каталоге.',
+      counters: [
+        { key: 'years', value: 20, suffix: '+', label: 'Лет торгового опыта' },
+        { key: 'groups', value: 4, suffix: '', label: 'Товарные группы' },
+        { key: 'lanes', value: 4, suffix: '', label: 'Ключевые направления' },
+        { key: 'markets', value: 2, suffix: '', label: 'Активные рынки' },
       ],
       industriesTitle: 'Ключевые торговые потоки', industriesIntro: 'Понятная картина импортных и экспортных направлений, формирующих текущий бизнес компании.',
       industries: [
@@ -968,9 +1094,27 @@ const ru: Omit<Translation, 'lang' | 'dir'> = {
     contact: {
       eyebrow: 'Торговый запрос', title: 'Расскажите, что вы хотите купить или продать',
       intro: 'Укажите товар, спецификацию, объем, происхождение или назначение и предпочтительные условия поставки, чтобы наша торговая команда могла оценить возможность.',
-      address: 'Провинция Разави-Хорасан, Мешхед, район 1, ул. Санабад, 32, Иран', phone: '+98 (0) 000-000-0000', email: 'sales@Zardasht.com',
+      address: 'Провинция Разави-Хорасан, Мешхед, район 1, ул. Санабад, 32, Иран', addressLabel: 'Адрес', phone: '+98 (0) 000-000-0000', email: 'sales@Zardasht.com',
       quickLinks: ['Отправить торговый запрос', 'Смотреть товары', 'Карта торговли'],
+      whatsappIntro: 'Здравствуйте, хочу обсудить торговый запрос по товару.',
       form: { name: 'Имя и фамилия', company: 'Компания', country: 'Страна', email: 'Рабочий email', phone: 'Телефон / WhatsApp', product: 'Товар и спецификация', quantity: 'Объем', destination: 'Происхождение / назначение', incoterms: 'Предпочтительные условия поставки', message: 'Примечания / требования', submit: 'Отправить запрос' },
+    },
+    quality: {
+      eyebrow: 'Качество',
+      title: 'Как мы обеспечиваем качество',
+      intro: 'Каждая партия проходит одинаковые этапы согласования спецификации, оценки и оформления документов перед отправкой.',
+      pillars: [
+        { title: 'Спецификация согласуется заранее', description: 'Марка, упаковка и технические требования согласовываются и подтверждаются до завершения любой закупки.', badge: '01' },
+        { title: 'Оценка поставщиков', description: 'Варианты поставщиков сравниваются по спецификации, наличию и требованиям к доставке для каждой товарной группы.', badge: '02' },
+        { title: 'Документы под конкретное направление', description: 'Экспортные и импортные документы готовятся в соответствии с требованиями рынка покупателя перед отгрузкой.', badge: '03' },
+      ],
+      processTitle: 'Наш процесс контроля качества',
+      process: [
+        { title: '1) Спецификация', description: 'Марка, упаковка и коммерческие требования подтверждаются для каждого запроса.' },
+        { title: '2) Проверка поставки', description: 'Варианты поставщика или покупателя оцениваются по согласованной спецификации и срокам.' },
+        { title: '3) Документы', description: 'Отгрузочные и разрешительные документы готовятся в соответствии с требованиями направления.' },
+        { title: '4) Подтверждение доставки', description: 'Детали поставки подтверждаются по согласованным условиям вплоть до доставки.' },
+      ],
     },
     tradeMap: {
       title: 'Карта торговли',
@@ -994,6 +1138,7 @@ const ru: Omit<Translation, 'lang' | 'dir'> = {
       summaryTitle: 'Сводка',
       complianceLabel: 'Соответствие',
       shipTitle: 'Что поставляем',
+      importsTitle: 'Что импортируем',
       projectsTitle: 'Ключевые рынки',
       projectsEmpty: 'Пока нет деталей.',
       selectPrompt: 'Выберите страну',

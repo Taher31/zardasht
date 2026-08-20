@@ -1,213 +1,108 @@
-[
-  {
-    "country_code": "AE",
-    "country_name": "United Arab Emirates",
-    "capital": "Abu Dhabi",
-    "currency": "AED - UAE dirham",
-    "status": true,
-    "deals_count": 24,
-    "total_value": "$3.4M",
-    "last_deal_date": "2025-12-10",
-    "notes": "Regular Kabuli chickpeas and red lentils into Jebel Ali.",
-    "flag_url": "/images/flags/ae.png",
-    "main_exports": [
-      "Kabuli chickpeas 8-9mm",
-      "Red split lentils",
-      "LSKB beans"
-    ],
-    "main_imports": [],
-    "compliance_notes": "Requires phytosanitary and fumigation certificates.",
-    "page_slug": "united-arab-emirates"
-  },
-  {
-    "country_code": "OM",
-    "country_name": "Oman",
-    "capital": "Muscat",
-    "currency": "OMR - Omani rial",
-    "status": true,
-    "deals_count": 12,
-    "total_value": "$1.1M",
-    "last_deal_date": "2025-11-02",
-    "notes": "Mixed containers to Sohar and Muscat.",
-    "flag_url": "/images/flags/om.png",
-    "main_exports": [
-      "Kabuli chickpeas",
-      "Pinto beans"
-    ],
-    "main_imports": [],
-    "compliance_notes": "Pre-shipment inspection optional.",
-    "page_slug": "oman"
-  },
-  {
-    "country_code": "SA",
-    "country_name": "Saudi Arabia",
-    "capital": "Riyadh",
-    "currency": "SAR - Saudi riyal",
-    "status": true,
-    "deals_count": 18,
-    "total_value": "$2.6M",
-    "last_deal_date": "2025-10-18",
-    "notes": "Retail pack clients in Dammam and Jeddah.",
-    "flag_url": "/images/flags/sa.png",
-    "main_exports": [
-      "Red split lentils",
-      "Green lentils",
-      "Kidney beans"
-    ],
-    "main_imports": [],
-    "compliance_notes": "Labeling per SFDA; HS codes cleared via local broker.",
-    "page_slug": "saudi-arabia"
-  },
-  {
-    "country_code": "QA",
-    "country_name": "Qatar",
-    "capital": "Doha",
-    "currency": "QAR - Qatari riyal",
-    "status": true,
-    "deals_count": 6,
-    "total_value": "$0.8M",
-    "last_deal_date": "2025-09-05",
-    "notes": "Foodservice wholesalers in Doha.",
-    "flag_url": "/images/flags/qa.png",
-    "main_exports": [
-      "Kabuli chickpeas",
-      "Red lentils"
-    ],
-    "main_imports": [],
-    "compliance_notes": "Fumigation cert typically requested.",
-    "page_slug": "qatar"
-  },
-  {
-    "country_code": "IN",
-    "country_name": "India",
-    "capital": "New Delhi",
-    "currency": "INR - Indian rupee",
-    "status": true,
-    "deals_count": 9,
-    "total_value": "$1.9M",
-    "last_deal_date": "2025-11-28",
-    "notes": "Industrial buyers for splitting and canning.",
-    "flag_url": "/images/flags/in.png",
-    "main_exports": [
-      "Kabuli chickpeas",
-      "Green peas"
-    ],
-    "main_imports": [],
-    "compliance_notes": "Phyto and fumigation per FSSAI.",
-    "page_slug": "india"
-  },
-  {
-    "country_code": "PK",
-    "country_name": "Pakistan",
-    "capital": "Islamabad",
-    "currency": "PKR - Pakistani rupee",
-    "status": true,
-    "deals_count": 7,
-    "total_value": "$0.9M",
-    "last_deal_date": "2025-08-12",
-    "notes": "Bulk green lentils to Karachi.",
-    "flag_url": "/images/flags/pk.png",
-    "main_exports": [
-      "Green lentils",
-      "Kabuli chickpeas"
-    ],
-    "main_imports": [],
-    "compliance_notes": "Weight tickets and stuffing photos required.",
-    "page_slug": "pakistan"
-  },
-  {
+[{
     "country_code": "CN",
-    "country_name": "China",
-    "capital": "Beijing",
-    "currency": "CNY - Chinese yuan",
+    "country_name": "Togo",
+    "capital": "Tashkent",
+    "currency": "UZS - Uzbekistani som",
     "status": true,
-    "deals_count": 5,
-    "total_value": "$1.4M",
-    "last_deal_date": "2025-06-30",
-    "notes": "Pulses for re-export packing.",
-    "flag_url": "/images/flags/cn.png",
-    "main_exports": [
-      "Red lentils",
-      "Kabuli chickpeas"
-    ],
-    "main_imports": [],
-    "compliance_notes": "CIQ inspection; advance documentation.",
-    "page_slug": "china"
+    "notes": "Bitumen exports and silk yarn imports, based on agreed specification and delivery terms.",
+    "main_exports": ["Bitumen"],
+    "main_imports": ["Silk yarn"],
+    "compliance_notes": "Export and import documentation confirmed per shipment.",
+    "page_slug": "uzbekistan"
+  },{
+    "country_code": "VE",
+    "country_name": "Venezuela",
+    "capital": "Tashkent",
+    "currency": "UZS - Uzbekistani som",
+    "status": true,
+    "notes": "Bitumen exports and silk yarn imports, based on agreed specification and delivery terms.",
+    "main_exports": ["Bitumen"],
+    "main_imports": ["Silk yarn"],
+    "compliance_notes": "Export and import documentation confirmed per shipment.",
+    "page_slug": "uzbekistan"
   },
   {
-    "country_code": "EG",
-    "country_name": "Egypt",
-    "capital": "Cairo",
-    "currency": "EGP - Egyptian pound",
+    "country_code": "UZ",
+    "country_name": "Uzbekistan",
+    "capital": "Tashkent",
+    "currency": "UZS - Uzbekistani som",
     "status": true,
-    "deals_count": 11,
-    "total_value": "$1.6M",
-    "last_deal_date": "2025-10-03",
-    "notes": "Beans and peas for Cairo wholesalers.",
-    "flag_url": "/images/flags/eg.png",
-    "main_exports": [
-      "White beans",
-      "Yellow peas"
-    ],
-    "main_imports": [],
-    "compliance_notes": "Phyto required; Arabic labeling handled locally.",
-    "page_slug": "egypt"
+    "notes": "Bitumen exports and silk yarn imports, based on agreed specification and delivery terms.",
+    "main_exports": ["Bitumen"],
+    "main_imports": ["Silk yarn"],
+    "compliance_notes": "Export and import documentation confirmed per shipment.",
+    "page_slug": "uzbekistan"
   },
   {
-    "country_code": "KE",
-    "country_name": "Kenya",
-    "capital": "Nairobi",
-    "currency": "KES - Kenyan shilling",
+    "country_code": "RU",
+    "country_name": "Russia",
+    "capital": "Moscow",
+    "currency": "RUB - Russian ruble",
     "status": true,
-    "deals_count": 4,
-    "total_value": "$0.5M",
-    "last_deal_date": "2025-07-14",
-    "notes": "Foodservice distributors in Mombasa and Nairobi.",
-    "flag_url": "/images/flags/ke.png",
-    "main_exports": [
-      "Green peas",
-      "Beans"
-    ],
-    "main_imports": [],
-    "compliance_notes": "Standard documents; SGS optional.",
-    "page_slug": "kenya"
+    "notes": "Barley sourced for import as part of our agricultural commodity portfolio.",
+    "main_exports": [],
+    "main_imports": ["Barley"],
+    "compliance_notes": "Quality specification and shipping documentation confirmed per shipment.",
+    "page_slug": "russia"
   },
   {
-    "country_code": "TR",
-    "country_name": "Türkiye",
-    "capital": "Ankara",
-    "currency": "TRY - Turkish lira",
+    "country_code": "IQ",
+    "country_name": "Iraq",
+    "capital": "Baghdad",
+    "currency": "IQD - Iraqi dinar",
     "status": true,
-    "deals_count": 10,
-    "total_value": "$1.2M",
-    "last_deal_date": "2025-09-22",
-    "notes": "Processors in Mersin and Istanbul.",
-    "flag_url": "/images/flags/tr.png",
-    "main_exports": [
-      "Chickpeas",
-      "Red lentils"
-    ],
+    "notes": "Bitumen export destination, supplied against agreed specification and delivery terms.",
+    "main_exports": ["Bitumen"],
     "main_imports": [],
-    "compliance_notes": "EU-style documentation accepted.",
-    "page_slug": "turkey"
+    "compliance_notes": "Export documentation confirmed per shipment.",
+    "page_slug": "iraq"
   },
   {
-    "country_code": "VN",
-    "country_name": "Vietnam",
-    "capital": "Hanoi",
-    "currency": "VND - Vietnamese dong",
+    "country_code": "KZ",
+    "country_name": "Kazakhstan",
+    "capital": "Astana",
+    "currency": "KZT - Kazakhstani tenge",
     "status": true,
-    "deals_count": 6,
-    "total_value": ".7M",
-    "last_deal_date": "2025-10-15",
-    "notes": "Split red lentils and peas for HCMC packers.",
-    "flag_url": "/images/flags/vn.png",
-    "main_exports": [
-      "Red split lentils",
-      "Green peas"
-    ],
+    "notes": "Iron and steel export destination across Central Asian markets.",
+    "main_exports": ["Iron and steel products"],
     "main_imports": [],
-    "compliance_notes": "Phyto required; VIETGAP labeling on request.",
-    "page_slug": "vietnam"
+    "compliance_notes": "Export documentation confirmed per shipment.",
+    "page_slug": "kazakhstan"
+  },
+  {
+    "country_code": "TM",
+    "country_name": "Turkmenistan",
+    "capital": "Ashgabat",
+    "currency": "TMT - Turkmenistani manat",
+    "status": true,
+    "notes": "Iron and steel export destination across Central Asian markets.",
+    "main_exports": ["Iron and steel products"],
+    "main_imports": [],
+    "compliance_notes": "Export documentation confirmed per shipment.",
+    "page_slug": "turkmenistan"
+  },
+  {
+    "country_code": "TJ",
+    "country_name": "Tajikistan",
+    "capital": "Dushanbe",
+    "currency": "TJS - Tajikistani somoni",
+    "status": true,
+    "notes": "Iron and steel export destination across Central Asian markets.",
+    "main_exports": ["Iron and steel products"],
+    "main_imports": [],
+    "compliance_notes": "Export documentation confirmed per shipment.",
+    "page_slug": "tajikistan"
+  },
+  {
+    "country_code": "KG",
+    "country_name": "Kyrgyzstan",
+    "capital": "Bishkek",
+    "currency": "KGS - Kyrgyzstani som",
+    "status": true,
+    "notes": "Iron and steel export destination across Central Asian markets.",
+    "main_exports": ["Iron and steel products"],
+    "main_imports": [],
+    "compliance_notes": "Export documentation confirmed per shipment.",
+    "page_slug": "kyrgyzstan"
   }
 ]

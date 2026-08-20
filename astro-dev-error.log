@@ -51,3 +51,24 @@ Error: EBUSY: resource busy or locked, watch 'C:\STY\projects\Zardasht Mahd Bina
   [1mStack trace:[22m
 [2m    at FSWatcher.<computed> (node:internal/fs/watchers:323:19)
     [...] See full stack trace in the browser, or rerun with --verbose.[22m
+[31m[1m۰۱:۰۸:۵۳[22m [ERROR][39m [31m[UnhandledRejection][39m Astro detected an unhandled rejection. Here's the stack trace:
+Error: ENOENT: no such file or directory, stat 'C:\STY\projects\Zardasht Mahd Binaloud Trading\src\pages\[lang]\logistics.astro'
+    at Object.statSync (node:fs:2084:25)
+    at walk (file:///C:/STY/projects/Zardasht%20Mahd%20Binaloud%20Trading/node_modules/astro/dist/core/routing/manifest/create.js:78:24)
+    at walk (file:///C:/STY/projects/Zardasht%20Mahd%20Binaloud%20Trading/node_modules/astro/dist/core/routing/manifest/create.js:144:9)
+    at createFileBasedRoutes (file:///C:/STY/projects/Zardasht%20Mahd%20Binaloud%20Trading/node_modules/astro/dist/core/routing/manifest/create.js:174:5)
+    at createRoutesList (file:///C:/STY/projects/Zardasht%20Mahd%20Binaloud%20Trading/node_modules/astro/dist/core/routing/manifest/create.js:308:27)
+    at rebuildManifest (file:///C:/STY/projects/Zardasht%20Mahd%20Binaloud%20Trading/node_modules/astro/dist/vite-plugin-astro-server/plugin.js:105:30)
+    at FSWatcher.emit (node:events:526:24)
+    at FSWatcher.emitWithAll (file:///C:/STY/projects/Zardasht%20Mahd%20Binaloud%20Trading/node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:23789:8)
+    at FSWatcher._emit (file:///C:/STY/projects/Zardasht%20Mahd%20Binaloud%20Trading/node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:23881:8)
+    at NodeFsHandler._handleFile (file:///C:/STY/projects/Zardasht%20Mahd%20Binaloud%20Trading/node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:22466:14)
+  [1mHint:[22m
+[33m    Make sure your promises all have an `await` or a `.catch()` handler.[39m
+  [1mError reference:[22m
+    [36m[4mhttps://docs.astro.build/en/reference/errors/unhandled-rejection/[24m[39m
+  [1mStack trace:[22m
+[2m    at Object.statSync (node:fs:2084:25)
+    [...] See full stack trace in the browser, or rerun with --verbose.[22m
+[31m[1m۰۲:۵۲:۰۷[22m [ERROR] [vite][39m [31merror while updating dependencies:
+Error: EPERM: operation not permitted, rename 'C:\STY\projects\Zardasht Mahd Binaloud Trading\node_modules\.vite\deps_temp_9e11390a' -> 'C:\STY\projects\Zardasht Mahd Binaloud Trading\node_modules\.vite\deps'[39m

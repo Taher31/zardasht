@@ -8,109 +8,231 @@ export function getStaticPaths() {
 
 const lang = resolveLang(Astro.props.lang ?? Astro.params.lang);
 const t = getTranslation(lang);
+
 const aboutGallery = [
-  '/images/pulses-4.jpg',
-  '/images/pulses-9.jpg',
-  '/images/logestic2.jpg',
+  '/images/06_road_logistics_truck.jpg',
+  '/images/03_metals_steel.jpg',
+  '/images/02_bitumen.jpg',
 ];
-const mapUrl = 'https://www.google.com/maps/place/%D8%B2%D8%B1%D8%AF%D8%B4%D8%AA+%D9%85%D9%87%D8%AF+%D8%A8%DB%8C%D9%86%D8%A7%D9%84%D9%88%D8%AF%E2%80%AD/data=!4m2!3m1!1s0x0:0x82a8217a57d18731?sa=X&ved=1t:2428&ictx=111';
-const mapEmbedUrl = 'https://www.google.com/maps?q=%D8%B2%D8%B1%D8%AF%D8%B4%D8%AA%20%D9%85%D9%87%D8%AF%20%D8%A8%DB%8C%D9%86%D8%A7%D9%84%D9%88%D8%AF&output=embed&z=14';
+
+const ceoByLanguage = {
+  en: {
+    eyebrow: 'Leadership',
+    name: 'Mr. Majid Rokhsati',
+    role: 'Chief Executive Officer',
+    intro:
+      'Our leadership is focused on building reliable long-term trading relationships across Central Asia, Russia, and neighboring markets.',
+    quote:
+      'We believe sustainable trade is built on trust, clear commitments, and reliable execution from sourcing to delivery.',
+  },
+  fa: {
+    eyebrow: 'مدیریت',
+    name: "آقای مجید رخصتی",
+    role: 'مدیرعامل',
+    intro:
+      'تمرکز مدیریت شرکت بر ایجاد روابط تجاری بلندمدت و قابل‌اعتماد در آسیای مرکزی، روسیه و بازارهای منطقه است.',
+    quote:
+      'ما معتقدیم تجارت پایدار بر اعتماد، تعهد روشن و اجرای قابل‌اتکا از تأمین تا تحویل شکل می‌گیرد.',
+  },
+  ar: {
+    eyebrow: 'الإدارة',
+    name: 'السيد مجيد رخصتي',
+    role: 'الرئيس التنفيذي',
+    intro:
+      'تركز إدارة الشركة على بناء علاقات تجارية طويلة الأجل وموثوقة في آسيا الوسطى وروسيا والأسواق الإقليمية.',
+    quote:
+      'نؤمن أن التجارة المستدامة تقوم على الثقة والالتزام الواضح والتنفيذ الموثوق من التوريد حتى التسليم.',
+  },
+  ru: {
+    eyebrow: 'Руководство',
+    name: 'Г-н Маджид Рохсати',
+    role: 'Генеральный директор',
+    intro:
+      'Руководство компании сосредоточено на развитии надежных долгосрочных торговых отношений в Центральной Азии, России и соседних рынках.',
+    quote:
+      'Мы считаем, что устойчивый бизнес строится на доверии, четких обязательствах и надежном исполнении от закупки до поставки.',
+  },
+} as const;
+
+const ceo = ceoByLanguage[lang] ?? ceoByLanguage.en;
+const ceoImage = '/images/CEO.png';
+
+const mapQuery = encodeURIComponent(t.pages.about.mapAddress || t.pages.contact.address);
+const mapUrl = `https://www.google.com/maps/search/?api=1&query=${mapQuery}`;
+const mapEmbedUrl = `https://www.google.com/maps?q=${mapQuery}&output=embed&z=14`;
 ---
 
 <Layout title={t.pages.about.title} lang={lang} translation={t}>
   <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16">
     <div class="mb-10 grid grid-cols-1 gap-4 lg:grid-cols-[1.2fr,0.8fr]">
-      <div class="overflow-hidden rounded-3xl border border-brand-light bg-white/90 shadow-xl">
-        <img src={aboutGallery[0]} alt={t.pages.home.heroImageAlt} class="h-56 w-full object-cover sm:h-72 lg:h-80" loading="lazy" />
+      <div class="overflow-hidden rounded-3xl border border-[#19266A]/10 bg-white/90 shadow-xl">
+        <img
+          src={aboutGallery[0]}
+          alt={t.pages.home.heroImageAlt}
+          class="h-56 w-full object-cover sm:h-72 lg:h-80"
+          loading="lazy"
+        />
       </div>
+
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-1">
         {aboutGallery.slice(1).map((image) => (
-          <div class="overflow-hidden rounded-3xl border border-brand-light bg-white/90 shadow-xl">
-            <img src={image} alt={t.pages.home.heroImageAlt} class="h-40 w-full object-cover sm:h-48 lg:h-44" loading="lazy" />
+          <div class="overflow-hidden rounded-3xl border border-[#19266A]/10 bg-white/90 shadow-xl">
+            <img
+              src={image}
+              alt={t.pages.home.heroImageAlt}
+              class="h-40 w-full object-cover sm:h-48 lg:h-44"
+              loading="lazy"
+              onerror="this.onerror=null; this.src='/images/logestic1.jpg';"
+            />
           </div>
         ))}
       </div>
     </div>
+
     <div class="text-center">
       <div class="mb-4 flex justify-center">
-        <span class="inline-flex h-10 w-16 items-center justify-center overflow-hidden rounded-xl bg-white/90 ring-1 ring-brand-light">
+        <span class="inline-flex h-10 w-16 items-center justify-center overflow-hidden rounded-xl bg-white/90 ring-1 ring-[#19266A]/10">
           <img src="/images/iran-flag.jpg" alt="Iran flag" class="h-full w-full object-cover" loading="lazy" />
         </span>
       </div>
-      <p class="text-sm font-semibold uppercase tracking-[0.28em] text-brand-dark/80">{t.pages.about.eyebrow}</p>
+
+      <p class="section-eyebrow">{t.pages.about.eyebrow}</p>
       <h1 class="section-title">{t.pages.about.title}</h1>
-      <p class="mt-3 text-base text-slate-600 sm:text-lg">
+      <span class="section-accent" aria-hidden="true"></span>
+      <p class="mx-auto mt-5 max-w-3xl text-base text-slate-600 sm:text-lg">
         {t.pages.about.intro}
       </p>
     </div>
 
+    <!-- CEO / Leadership -->
+    <section class="mt-12 overflow-hidden rounded-3xl bg-[#10184A] text-white shadow-2xl shadow-[#19266A]/25">
+      <div class="grid grid-cols-1 lg:grid-cols-[0.82fr,1.18fr]">
+        <div class="relative min-h-[360px] overflow-hidden lg:min-h-[520px]">
+          <img
+            src={ceoImage}
+            alt={`${ceo.name} — ${ceo.role}`}
+            class="absolute inset-0 h-full w-full object-cover object-top"
+            loading="lazy"
+            onerror="this.onerror=null; this.src='/images/logestic1.jpg';"
+          />
+          <div class="absolute inset-0 bg-gradient-to-t from-[#10184A]/70 via-transparent to-transparent lg:bg-gradient-to-r lg:from-transparent lg:to-[#10184A]/25"></div>
+
+          <div class="absolute inset-x-0 bottom-0 p-6 lg:hidden">
+            <p class="text-sm font-bold uppercase tracking-[0.22em] text-[#F3C623]">{ceo.eyebrow}</p>
+            <h2 class="mt-2 text-2xl font-semibold text-white">{ceo.name}</h2>
+            <p class="mt-1 text-sm font-semibold text-white/70">{ceo.role}</p>
+          </div>
+        </div>
+
+        <div class="flex flex-col justify-center p-7 sm:p-10 lg:p-14">
+          <div class="hidden lg:block">
+            <p class="text-sm font-bold uppercase tracking-[0.24em] text-[#F3C623]">{ceo.eyebrow}</p>
+            <h2 class="mt-3 text-3xl font-semibold tracking-tight text-white xl:text-4xl">{ceo.name}</h2>
+            <p class="mt-2 text-sm font-semibold uppercase tracking-[0.14em] text-white/55">{ceo.role}</p>
+          </div>
+
+          <p class="mt-6 text-base leading-8 text-white/75 sm:text-lg">
+            {ceo.intro}
+          </p>
+
+          <blockquote class="relative mt-8 border-s-2 border-[#F3C623] ps-5 sm:ps-7">
+            <svg
+              viewBox="0 0 32 32"
+              aria-hidden="true"
+              class="mb-4 h-8 w-8 text-[#F3C623]"
+              fill="currentColor"
+            >
+              <path d="M7.8 8C3.9 10.8 2 14.2 2 18.2 2 22.5 4.5 25 8.2 25c3.1 0 5.4-2.2 5.4-5.1 0-2.8-2-4.8-4.8-4.8-.7 0-1.4.1-2 .4.5-2.2 1.8-4 4-5.6L7.8 8Zm16 0C19.9 10.8 18 14.2 18 18.2c0 4.3 2.5 6.8 6.2 6.8 3.1 0 5.4-2.2 5.4-5.1 0-2.8-2-4.8-4.8-4.8-.7 0-1.4.1-2 .4.5-2.2 1.8-4 4-5.6L23.8 8Z" />
+            </svg>
+            <p class="text-lg leading-8 text-white sm:text-xl">
+              {ceo.quote}
+            </p>
+          </blockquote>
+
+          <div class="mt-9 flex flex-wrap gap-3">
+            <a
+              href={withLanguagePrefix(lang, '/contact')}
+              class="pill-link bg-[#F3C623] text-[#10184A] transition hover:-translate-y-0.5 hover:bg-[#ffd85f]"
+            >
+              {t.pages.about.cta}
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <div class="mt-10 grid grid-cols-1 gap-6 lg:grid-cols-[1.1fr,0.9fr]">
-      <div class="card space-y-5 p-6">
+      <div class="card space-y-6 p-6 sm:p-8">
         <div class="space-y-2">
-          <h2 class="text-xl font-semibold text-brand-dark">{t.pages.about.missionTitle}</h2>
-          <p class="text-slate-600">
-            {t.pages.about.missionBody}
-          </p>
+          <h2 class="text-xl font-semibold text-[#19266A]">{t.pages.about.missionTitle}</h2>
+          <p class="text-slate-600">{t.pages.about.missionBody}</p>
         </div>
 
-        <div class="space-y-2">
-          <h2 class="text-xl font-semibold text-brand-dark">{t.pages.about.storyTitle}</h2>
-          <p class="text-slate-600">
-            {t.pages.about.storyBody}
-          </p>
+        <div class="border-t border-slate-100 pt-6">
+          <h2 class="text-xl font-semibold text-[#19266A]">{t.pages.about.storyTitle}</h2>
+          <p class="mt-2 text-slate-600">{t.pages.about.storyBody}</p>
         </div>
 
-        <div class="space-y-2">
-          <h2 class="text-xl font-semibold text-brand-dark">{t.pages.about.valuesTitle}</h2>
-          <ul class="space-y-2 text-slate-600">
+        <div class="border-t border-slate-100 pt-6">
+          <h2 class="text-xl font-semibold text-[#19266A]">{t.pages.about.valuesTitle}</h2>
+          <ul class="mt-4 space-y-3 text-slate-600">
             {t.pages.about.values.map((value) => (
-              <li class="flex items-start gap-2">
-                <span class="mt-1 h-2.5 w-2.5 rounded-full bg-brand-gold"></span>
-                {value}
+              <li class="flex items-start gap-3">
+                <span class="mt-2 h-2.5 w-2.5 shrink-0 rounded-full bg-[#F3C623]"></span>
+                <span>{value}</span>
               </li>
             ))}
           </ul>
         </div>
       </div>
 
-      <div class="card flex flex-col justify-between gap-4 p-6">
+      <div class="card flex flex-col justify-between gap-6 p-6 sm:p-8">
         <div class="space-y-2">
-          <h2 class="text-xl font-semibold text-brand-dark">{t.pages.about.leadershipTitle}</h2>
-          <p class="text-slate-600">
-            {t.pages.about.leadershipBody}
-          </p>
+          <h2 class="text-xl font-semibold text-[#19266A]">{t.pages.about.leadershipTitle}</h2>
+          <p class="text-slate-600">{t.pages.about.leadershipBody}</p>
         </div>
-        <div class="grid grid-cols-1 gap-3 rounded-xl bg-brand-light p-4 ring-1 ring-brand-light">
+
+        <div class="grid grid-cols-1 gap-3 rounded-2xl bg-[#19266A]/5 p-4 ring-1 ring-[#19266A]/10">
           {t.pages.about.metrics.map((metric) => (
-            <div class="flex items-center justify-between text-sm font-semibold text-brand-dark">
-              <span>{metric.label}</span>
-              <span>{metric.value}</span>
+            <div class="flex items-center justify-between gap-4 border-b border-[#19266A]/10 pb-3 text-sm font-semibold text-[#19266A] last:border-0 last:pb-0">
+              <span class="text-[#19266A]/65">{metric.label}</span>
+              <span class="text-end">{metric.value}</span>
             </div>
           ))}
         </div>
-        <a class="pill-link w-full border border-brand-gold/40 bg-white text-brand-dark shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg" href={withLanguagePrefix(lang, '/contact')}>
+
+        <a
+          class="pill-link w-full border border-[#F3C623]/50 bg-[#F3C623]/10 text-[#19266A] shadow-sm transition hover:-translate-y-0.5 hover:bg-[#F3C623]/20 hover:shadow-lg"
+          href={withLanguagePrefix(lang, '/contact')}
+        >
           {t.pages.about.cta}
         </a>
       </div>
     </div>
 
-    <section class="mt-10 grid grid-cols-1 gap-6 overflow-hidden rounded-3xl bg-white/90 p-4 shadow-xl ring-1 ring-brand-light sm:p-6 lg:grid-cols-[0.85fr,1.15fr]">
+    <section class="mt-10 grid grid-cols-1 gap-6 overflow-hidden rounded-3xl bg-white/90 p-4 shadow-xl ring-1 ring-[#19266A]/10 sm:p-6 lg:grid-cols-[0.85fr,1.15fr]">
       <div class="flex flex-col justify-center gap-4 p-2 sm:p-4">
         <div class="space-y-2">
-          <p class="text-sm font-semibold uppercase tracking-[0.2em] text-brand-dark/75">{t.pages.about.mapTitle}</p>
-          <h2 class="text-2xl font-semibold tracking-tight text-brand-dark sm:text-3xl">{t.pages.about.mapAddress}</h2>
+          <p class="text-sm font-semibold uppercase tracking-[0.2em] text-[#19266A]/75">{t.pages.about.mapTitle}</p>
+          <h2 class="text-2xl font-semibold tracking-tight text-[#19266A] sm:text-3xl">{t.pages.about.mapAddress}</h2>
           <p class="text-slate-600">{t.pages.contact.address}</p>
         </div>
-        <a class="pill-link w-full border border-brand-gold/40 bg-brand-gold text-brand-dark shadow-lg shadow-brand-gold/30 transition hover:-translate-y-0.5 hover:shadow-xl sm:w-fit" href={mapUrl} target="_blank" rel="noreferrer">
+
+        <a
+          class="pill-link w-full bg-[#F3C623] text-[#19266A] shadow-lg shadow-[#F3C623]/20 transition hover:-translate-y-0.5 hover:bg-[#ffd85f] hover:shadow-xl sm:w-fit"
+          href={mapUrl}
+          target="_blank"
+          rel="noreferrer"
+        >
           {t.pages.about.mapCta}
           <svg xmlns="http://www.w3.org/2000/svg" class="ms-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M5 12h14m-7-7 7 7-7 7" />
           </svg>
         </a>
       </div>
-      <div class="relative min-h-72 overflow-hidden rounded-2xl bg-brand-light ring-1 ring-brand-light sm:min-h-96">
+
+      <div class="relative min-h-72 overflow-hidden rounded-2xl bg-[#19266A]/5 ring-1 ring-[#19266A]/10 sm:min-h-96">
         <iframe
-          id="about-map-frame"
           title={t.pages.about.mapTitle}
           src={mapEmbedUrl}
           class="h-full min-h-72 w-full border-0 sm:min-h-96"
@@ -118,28 +240,7 @@ const mapEmbedUrl = 'https://www.google.com/maps?q=%D8%B2%D8%B1%D8%AF%D8%B4%D8%A
           referrerpolicy="no-referrer-when-downgrade"
           allowfullscreen
         ></iframe>
-
       </div>
     </section>
   </div>
 </Layout>
-
-<script>
-  const mapFrame = document.querySelector<HTMLIFrameElement>('#about-map-frame');
-  const zoomInButton = document.querySelector<HTMLButtonElement>('#map-zoom-in');
-  const zoomOutButton = document.querySelector<HTMLButtonElement>('#map-zoom-out');
-  let mapZoom = 14;
-
-  const updateMapZoom = (nextZoom: number) => {
-    if (!mapFrame || nextZoom < 5 || nextZoom > 5) return;
-    mapZoom = nextZoom;
-    const mapUrl = new URL(mapFrame.src);
-    mapUrl.searchParams.set('z', String(mapZoom));
-    mapFrame.src = mapUrl.toString();
-    if (zoomInButton) zoomInButton.disabled = mapZoom >= 19;
-    if (zoomOutButton) zoomOutButton.disabled = mapZoom <= 10;
-  };
-
-  zoomInButton?.addEventListener('click', () => updateMapZoom(mapZoom + 1));
-  zoomOutButton?.addEventListener('click', () => updateMapZoom(mapZoom - 1));
-</script>

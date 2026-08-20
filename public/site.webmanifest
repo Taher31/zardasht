@@ -1,0 +1,14 @@
+{
+  "name": "Zardasht Mahd Binaloud Trading",
+  "short_name": "Zardasht Trading",
+  "icons": [
+    {
+      "src": "/logo.png",
+      "sizes": "any",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#19266A",
+  "background_color": "#ffffff",
+  "display": "standalone"
+}

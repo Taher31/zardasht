@@ -1,6 +1,9 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import { getTranslation, resolveLang, withLanguagePrefix, localizedLanguages } from '../../i18n';
+import { localizedCountryName, normalizeCountryCode } from '../../data/country-locale';
+import fs from 'node:fs';
+import path from 'node:path';
 
 export function getStaticPaths() {
   return localizedLanguages.map((language) => ({ params: { lang: language.code } }));
@@ -13,162 +16,326 @@ const categories = t.pages.home.categories.map((category) => ({
   href: withLanguagePrefix(lang, category.href),
 }));
 const productSections = t.pages.products.sections;
+
+const tradeImages = {
+  bitumen: '/images/02_bitumen.jpg',
+  steel: '/images/03_metals_steel.jpg',
+  agriculture: '/images/04_agricultural_grain.jpg',
+  textile: '/images/05_textile_yarn.jpg',
+  logistics: '/images/06_road_logistics_truck.jpg',
+} as const;
+
+const categoryImages: Record<string, string> = {
+  'energy-bitumen': tradeImages.bitumen,
+  'metals-steel': tradeImages.steel,
+  'agricultural-commodities': tradeImages.agriculture,
+  'textile-raw-materials': tradeImages.textile,
+};
+
 const categoriesWithSpecs = categories.map((category) => {
   const fragment = category.href.split('#')[1];
   const productSection = productSections.find((section) => section.id === fragment);
   return {
     ...category,
+    image: categoryImages[fragment] ?? tradeImages.logistics,
     specLine: productSection?.products?.[0]?.description ?? '',
   };
 });
-const industries = t.pages.home.industries;
+
+const industries = t.pages.home.industries.map((industry, index) => ({
+  ...industry,
+  image: [tradeImages.bitumen, tradeImages.agriculture, tradeImages.steel, tradeImages.textile][index] ?? tradeImages.logistics,
+}));
 const faq = t.pages.home.faq;
 const trustBadges = t.pages.home.trustBadges;
 const trustBadgeChips = trustBadges.slice(0, 2);
-const complianceCards = t.pages.resources.cards;
+const complianceCards = t.pages.resources.cards.map((card, index) => ({
+  ...card,
+  image: [tradeImages.bitumen, tradeImages.agriculture, tradeImages.steel, tradeImages.logistics][index] ?? tradeImages.logistics,
+}));
 const logisticsCards = t.pages.solutions.solutions;
 const exportSteps = t.pages.solutions.outcomes;
-const galleryImages = [
-  '/images/pulses-1.png',
-  '/images/pulses-2.png',
-  '/images/pulses-3.png',
-  '/images/pulses-4.png',
-  '/images/pulses-5.png',
-  '/images/pulses-6.png',
-  '/images/pulses-7.png',
-  '/images/pulses-8.png',
-  '/images/pulses-9.png',
-  '/images/pulses-10.png',
-  '/images/logestic1.jpg',
-];
 
-const heroSlides = [
-  {
-    image: '/images/pulses-7.png',
-    kicker: t.pages.home.eyebrow,
-    title: t.pages.home.heroTitle,
-    description: t.pages.home.heroSubtitle,
-    alt: t.pages.home.heroImageAlt,
+// One panel per commodity group; the portrait photos suit vertical panels.
+const heroPanels = categoriesWithSpecs.slice(0, 4);
+// Real import/export lanes, shown as a rail under the headline.
+const heroLanes = t.pages.home.industries.slice(0, 4);
+
+// Counter figures are derived from real data wherever possible, so adding a
+// country to trade-countries.json (or a product group) updates the homepage
+// automatically instead of silently going stale. Only "years" is a literal.
+const tradeCountriesPath = path.join(process.cwd(), 'public', 'data', 'trade-countries.json');
+const activeCountries = JSON.parse(fs.readFileSync(tradeCountriesPath, 'utf-8')).filter(
+  (country: { status: boolean }) => country.status,
+);
+const activeMarketCount = activeCountries.length;
+
+// Flags orbit the ring; each one is evenly spaced and links to its market page.
+const marketFlags = activeCountries.map(
+  (country: { country_code: string; country_name: string }, index: number) => {
+    const code = normalizeCountryCode(country.country_code);
+    return {
+      code,
+      name: localizedCountryName(lang, code, country.country_name),
+      href: withLanguagePrefix(lang, `/trade-map/${code.toLowerCase()}`),
+      flag: `https://flagcdn.com/w160/${code.toLowerCase()}.png`,
+      angle: (360 / activeMarketCount) * index,
+    };
   },
-  {
-    image: '/images/pulses-4.png',
-    kicker: t.pages.home.featuredTitle,
-    title: t.pages.home.categoriesTitle,
-    description: t.pages.home.featuredList[0] ?? t.pages.home.categoriesIntro,
-    alt: t.pages.home.heroImageAlt,
-  },
-  {
-    image: '/images/pulses-10.png',
-    kicker: t.pages.solutions.eyebrow,
-    title: t.pages.solutions.title,
-    description: t.pages.solutions.intro,
-    alt: t.pages.solutions.title,
-  },
-];
+);
+
+const derivedCounterValues: Record<string, number> = {
+  groups: t.pages.products.sections.length,
+  lanes: t.pages.home.industries.length,
+  markets: activeMarketCount,
+};
+
+// Render the final figure server-side (correct digits per locale, and it stays
+// readable without JS); the client only animates from zero up to it.
+const counterFormatter = new Intl.NumberFormat(lang);
+const counters = t.pages.home.counters.map((counter) => {
+  const value = derivedCounterValues[counter.key] ?? counter.value;
+  return { ...counter, value, display: counterFormatter.format(value) };
+});
 ---
 
 <Layout title={t.pages.home.title} lang={lang} translation={t}>
-  <section class="trade-hero" data-trade-slideshow aria-label={t.pages.home.title}>
-    <div class="trade-hero__images" aria-hidden="true">
-      {heroSlides.map((slide, index) => (
-        <div class:list={['trade-hero__image', index === 0 && 'is-active']} data-slide-image={index}>
-          <img src={slide.image} alt="" loading={index === 0 ? 'eager' : 'lazy'} />
-        </div>
+  <section class="trade-hero" data-trade-hero aria-label={t.pages.home.title}>
+    <div class="trade-hero__panels">
+      {heroPanels.map((panel, index) => (
+        <a
+          href={panel.href}
+          class:list={['trade-hero__panel', index === 0 && 'is-active']}
+          data-hero-panel={index}
+          aria-label={panel.name}
+        >
+          <img
+            src={panel.image}
+            alt=""
+            loading={index === 0 ? 'eager' : 'lazy'}
+            data-fallback-image
+            data-fallback={tradeImages.logistics}
+          />
+          <span class="trade-hero__panel-badge">{panel.badge}</span>
+          <span class="trade-hero__panel-name">{panel.name}</span>
+        </a>
       ))}
     </div>
-    <div class="trade-hero__veil" aria-hidden="true"></div>
+
+    <div class="trade-hero__scrim" aria-hidden="true"></div>
+
+    <svg class="trade-hero__arcs" viewBox="0 0 1200 800" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M120 470 C 400 250, 780 250, 1120 400" />
+      <path d="M150 560 C 480 420, 820 460, 1150 300" />
+      <path d="M100 380 C 380 480, 760 560, 1100 520" />
+      <circle cx="120" cy="470" r="4" />
+      <circle cx="150" cy="560" r="4" />
+      <circle cx="100" cy="380" r="4" />
+    </svg>
+
     <div class="trade-hero__grain" aria-hidden="true"></div>
 
-    <div class="trade-hero__content">
+    <div class="trade-hero__inner">
       <div class="trade-hero__brand">
         <span class="trade-hero__brand-mark">ZM</span>
         <span>{t.labels.brand}</span>
       </div>
 
-      <div class="trade-hero__copy-wrap">
-        {heroSlides.map((slide, index) => (
-          <div class:list={['trade-hero__copy', index === 0 && 'is-active']} data-slide-copy={index}>
-            <p class="trade-hero__kicker">{slide.kicker}</p>
-            <h1>{slide.title}</h1>
-            <p class="trade-hero__description">{slide.description}</p>
-            <div class="trade-hero__actions">
-              <a class="trade-button trade-button--primary" href={withLanguagePrefix(lang, '/contact')}>
-                {t.pages.home.ctaPrimary}
-                <svg aria-hidden="true" viewBox="0 0 16 16" fill="none"><path d="M3 13 13 3M5 3h8v8" stroke="currentColor" stroke-width="1.4" stroke-linecap="square" /></svg>
-              </a>
-              <a class="trade-button trade-button--text" href={withLanguagePrefix(lang, '/products')}>
-                {t.pages.home.ctaSecondary}
-                <svg aria-hidden="true" viewBox="0 0 16 16" fill="none"><path d="M2 8h11M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="square" stroke-linejoin="miter" /></svg>
-              </a>
-            </div>
-          </div>
-        ))}
+      <div>
+        <p class="trade-hero__kicker">{t.pages.home.eyebrow}</p>
+        <h1>{t.pages.home.heroTitle}</h1>
+        <p class="trade-hero__description">{t.pages.home.heroSubtitle}</p>
+
+        <div class="trade-hero__actions">
+          <a class="trade-button trade-button--primary" href={withLanguagePrefix(lang, '/contact')}>
+            {t.pages.home.ctaPrimary}
+            <svg aria-hidden="true" viewBox="0 0 16 16" fill="none"><path d="M3 13 13 3M5 3h8v8" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" /></svg>
+          </a>
+          <a class="trade-button trade-button--text" href={withLanguagePrefix(lang, '/products')}>
+            {t.pages.home.ctaSecondary}
+            <svg aria-hidden="true" viewBox="0 0 16 16" fill="none"><path d="M2 8h11M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" /></svg>
+          </a>
+        </div>
       </div>
 
-      <div class="trade-hero__footer" dir="ltr">
-        <div class="trade-hero__progress" aria-hidden="true"><span data-slide-progress></span></div>
-        <div class="trade-hero__count"><span data-slide-current>01</span><span class="trade-hero__count-divider">/</span><span>{String(heroSlides.length).padStart(2, '0')}</span></div>
-        <p class="trade-hero__footnote">{t.pages.home.categoriesTitle}</p>
-      </div>
-    </div>
-
-    <div class="trade-hero__controls" dir="ltr">
-      <div class="trade-hero__dots" role="tablist" aria-label={t.pages.home.title}>
-        {heroSlides.map((slide, index) => (
-          <button class:list={['trade-hero__dot', index === 0 && 'is-active']} type="button" data-slide-dot={index} role="tab" aria-selected={index === 0 ? 'true' : 'false'} aria-label={`${index + 1}`}>
-            <span>{String(index + 1).padStart(2, '0')}</span>
-          </button>
+      <div class="trade-hero__lanes">
+        {heroLanes.map((lane) => (
+          <a class="trade-hero__lane" href={withLanguagePrefix(lang, '/trade-map')}>
+            <span class="trade-hero__lane-dot" aria-hidden="true"></span>
+            {lane.name}
+          </a>
         ))}
-      </div>
-      <div class="trade-hero__arrows">
-        <button type="button" class="trade-hero__arrow" data-slide-prev aria-label="Previous slide"><svg aria-hidden="true" viewBox="0 0 20 20" fill="none"><path d="M16 10H4m5-5-5 5 5 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="square" stroke-linejoin="miter" /></svg></button>
-        <button type="button" class="trade-hero__arrow" data-slide-next aria-label="Next slide"><svg aria-hidden="true" viewBox="0 0 20 20" fill="none"><path d="M4 10h12m-5-5 5 5-5 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="square" stroke-linejoin="miter" /></svg></button>
       </div>
     </div>
   </section>
 
   <script>
-    const slideshow = document.querySelector('[data-trade-slideshow]');
+    const heroEl = document.querySelector('[data-trade-hero]');
 
-    if (slideshow) {
-      const images = Array.from(slideshow.querySelectorAll('[data-slide-image]'));
-      const copies = Array.from(slideshow.querySelectorAll('[data-slide-copy]'));
-      const dots = Array.from(slideshow.querySelectorAll('[data-slide-dot]'));
-      const current = slideshow.querySelector('[data-slide-current]');
-      const progress = slideshow.querySelector('[data-slide-progress]');
-      const next = slideshow.querySelector('[data-slide-next]');
-      const previous = slideshow.querySelector('[data-slide-prev]');
+    if (heroEl) {
+      const panels = Array.from(heroEl.querySelectorAll('[data-hero-panel]'));
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       let activeIndex = 0;
-      let timer;
+      let timer = 0;
 
-      const setSlide = (nextIndex) => {
-        activeIndex = (nextIndex + images.length) % images.length;
-        images.forEach((item, index) => item.classList.toggle('is-active', index === activeIndex));
-        copies.forEach((item, index) => item.classList.toggle('is-active', index === activeIndex));
-        dots.forEach((item, index) => {
-          item.classList.toggle('is-active', index === activeIndex);
-          item.setAttribute('aria-selected', index === activeIndex ? 'true' : 'false');
-        });
-        if (current) current.textContent = String(activeIndex + 1).padStart(2, '0');
-        if (progress) progress.style.width = `${((activeIndex + 1) / images.length) * 100}%`;
+      const setPanel = (nextIndex) => {
+        activeIndex = (nextIndex + panels.length) % panels.length;
+        panels.forEach((panel, index) => panel.classList.toggle('is-active', index === activeIndex));
       };
 
-      const restartTimer = () => {
-        window.clearInterval(timer);
-        timer = window.setInterval(() => setSlide(activeIndex + 1), 3500);
+      const stop = () => window.clearInterval(timer);
+      const start = () => {
+        if (reduceMotion) return;
+        stop();
+        timer = window.setInterval(() => setPanel(activeIndex + 1), 4200);
       };
 
-      dots.forEach((dot, index) => dot.addEventListener('click', () => { setSlide(index); restartTimer(); }));
-      next?.addEventListener('click', () => { setSlide(activeIndex + 1); restartTimer(); });
-      previous?.addEventListener('click', () => { setSlide(activeIndex - 1); restartTimer(); });
-      slideshow.addEventListener('mouseenter', () => window.clearInterval(timer));
-      slideshow.addEventListener('mouseleave', restartTimer);
-      setSlide(0);
-      restartTimer();
+      panels.forEach((panel, index) => {
+        // Pointer/focus takes over from the auto-cycle while the visitor explores.
+        panel.addEventListener('mouseenter', () => { stop(); setPanel(index); });
+        panel.addEventListener('focus', () => { stop(); setPanel(index); });
+        panel.addEventListener('mouseleave', start);
+        panel.addEventListener('blur', start);
+      });
+
+      setPanel(0);
+      start();
     }
   </script>
 
+  <script>
+    const counterEls = Array.from(document.querySelectorAll('[data-counter]'));
 
+    if (counterEls.length) {
+      const formatter = new Intl.NumberFormat(document.documentElement.lang || 'en');
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      const countUp = (el) => {
+        const target = Number(el.getAttribute('data-counter')) || 0;
+        // Respecting reduced motion means showing the final value immediately.
+        if (reduceMotion) {
+          el.textContent = formatter.format(target);
+          return;
+        }
+        const duration = 1400;
+        const startedAt = performance.now();
+        const step = (now) => {
+          const progress = Math.min((now - startedAt) / duration, 1);
+          const eased = 1 - Math.pow(1 - progress, 3);
+          el.textContent = formatter.format(Math.round(target * eased));
+          if (progress < 1) requestAnimationFrame(step);
+        };
+        requestAnimationFrame(step);
+      };
+
+      if ('IntersectionObserver' in window) {
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            countUp(entry.target);
+            observer.unobserve(entry.target);
+          });
+        }, { threshold: 0.4 });
+        counterEls.forEach((el) => observer.observe(el));
+      } else {
+        // Without IntersectionObserver the server-rendered value already stands.
+        counterEls.forEach(countUp);
+      }
+    }
+  </script>
+
+  <section class="mx-auto max-w-6xl px-14 py-12 sm:px-6 sm:py-16">
+    <div class="grid items-center gap-10 lg:grid-cols-2 lg:gap-14">
+      <div>
+        <p class="section-eyebrow">{t.pages.resources.eyebrow}</p>
+        <h2 class="mt-3 text-3xl font-semibold tracking-tight text-[#19266A] sm:text-4xl">
+          {t.pages.home.marketsTitle}
+        </h2>
+        <span class="mt-4 block h-[3px] w-16 rounded-full bg-[#F3C623]" aria-hidden="true"></span>
+        <p class="mt-5 text-base leading-8 text-slate-600 sm:text-lg">{t.pages.home.marketsIntro}</p>
+
+        <ul class="mt-7 flex flex-wrap gap-2">
+          {marketFlags.map((market) => (
+            <li>
+              <a
+                href={market.href}
+                class="flag-chip"
+                data-orbit-link={market.code}
+              >
+                <img src={market.flag} alt="" loading="lazy" width="24" height="16" />
+                {market.name}
+              </a>
+            </li>
+          ))}
+        </ul>
+
+        <a
+          class="pill-link mt-7 inline-flex bg-[#F3C623] text-[#10184A] shadow-lg shadow-[#F3C623]/25 transition hover:-translate-y-0.5"
+          href={withLanguagePrefix(lang, '/trade-map')}
+        >
+          {t.labels.nav.tradeMap}
+        </a>
+      </div>
+
+      <div class="flag-orbit" data-flag-orbit>
+        <div class="flag-orbit__path" aria-hidden="true"></div>
+
+        <div class="flag-orbit__ring">
+          {marketFlags.map((market) => (
+            <a
+              class="flag-orbit__item"
+              style={`--angle:${market.angle}deg`}
+              href={market.href}
+              aria-label={market.name}
+              data-orbit-item={market.code}
+            >
+              <span class="flag-orbit__spin">
+                <span class="flag-orbit__frame">
+                  {/* Sits behind the flag, so an unreachable flagcdn degrades to
+                      the country code instead of a blank tile. */}
+                  <span class="flag-orbit__code" aria-hidden="true">{market.code}</span>
+                  <img
+                    class="flag-orbit__flag"
+                    src={market.flag}
+                    alt=""
+                    loading="lazy"
+                    width="70"
+                    height="50"
+                  />
+                </span>
+                <span class="flag-orbit__label">{market.name}</span>
+              </span>
+            </a>
+          ))}
+        </div>
+
+        <div class="flag-orbit__core">
+          <img src="/images/iran-flag.jpg" alt="" class="flag-orbit__core-flag" loading="lazy" />
+          <span class="flag-orbit__core-text">{t.pages.home.marketsHomeLabel}</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // Hovering a flag chip highlights the matching flag out on the ring, so the
+    // two lists read as one control rather than two separate ones.
+    const orbit = document.querySelector('[data-flag-orbit]');
+
+    if (orbit) {
+      const itemFor = (code) => orbit.querySelector(`[data-orbit-item="${code}"]`);
+
+      document.querySelectorAll('[data-orbit-link]').forEach((chip) => {
+        const code = chip.getAttribute('data-orbit-link');
+        const highlight = (on) => itemFor(code)?.classList.toggle('is-highlighted', on);
+
+        chip.addEventListener('mouseenter', () => highlight(true));
+        chip.addEventListener('mouseleave', () => highlight(false));
+        chip.addEventListener('focus', () => highlight(true));
+        chip.addEventListener('blur', () => highlight(false));
+      });
+    }
+  </script>
 
   <section class="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16">
     <div class="mb-10 text-center">
@@ -182,24 +349,62 @@ const heroSlides = [
 
     <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
       {categoriesWithSpecs.map((category) => (
-        <div class="card flex flex-col justify-between gap-5 p-6 transition hover:-translate-y-1 hover:shadow-2xl">
-          <div class="space-y-4">
-            <span class="inline-flex h-12 w-12 items-center justify-center rounded-full bg-[#F3C623]/15 text-sm font-semibold text-[#19266A] ring-1 ring-[#F3C623]/40">
+        <article class="card group overflow-hidden transition hover:-translate-y-1 hover:shadow-2xl">
+          <a href={category.href} class="relative block aspect-[4/3] overflow-hidden bg-[#19266A]">
+            <img
+              src={category.image}
+              alt={category.name}
+              loading="lazy"
+              data-fallback-image
+              data-fallback={tradeImages.logistics}
+              class="h-full w-full object-cover transition duration-700 group-hover:scale-105"
+            />
+            <div class="absolute inset-0 bg-gradient-to-t from-[#10184A]/85 via-[#10184A]/15 to-transparent"></div>
+            <span class="absolute start-4 top-4 inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/25 bg-[#10184A]/55 text-xs font-bold text-white backdrop-blur">
               {category.badge}
             </span>
-            <div class="space-y-2">
-              <h3 class="text-xl font-semibold text-[#19266A]">{category.name}</h3>
-              <p class="text-slate-600">{category.description}</p>
+            <h3 class="absolute inset-x-4 bottom-4 text-xl font-semibold text-white">{category.name}</h3>
+          </a>
+
+          <div class="flex min-h-[220px] flex-col justify-between gap-5 p-5">
+            <div class="space-y-3">
+              <p class="text-sm leading-7 text-slate-600">{category.description}</p>
               {category.specLine && (
-                <p class="text-xs font-semibold uppercase tracking-[0.18em] text-[#19266A]/70">{category.specLine}</p>
+                <p class="border-s-2 border-[#F3C623] ps-3 text-xs font-semibold leading-6 text-[#19266A]/75">{category.specLine}</p>
               )}
             </div>
+            <a class="inline-flex items-center gap-2 text-sm font-bold text-[#19266A] transition group-hover:gap-3" href={category.href}>
+              {t.pages.home.ctaSecondary}
+              <span aria-hidden="true">→</span>
+            </a>
           </div>
-          <a class="pill-link w-full border border-[#F3C623]/50 bg-[#F3C623]/10 text-[#19266A] hover:border-[#F3C623]/70 hover:bg-[#F3C623]/20" href={category.href}>
-            {t.pages.home.ctaSecondary}
-          </a>
-        </div>
+        </article>
       ))}
+    </div>
+  </section>
+
+    <section class="border-b border-[#19266A]/10 bg-[#10184A] text-white">
+    <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16">
+      <div class="max-w-2xl">
+        <p class="text-xs font-bold uppercase tracking-[0.28em] text-[#F3C623]">{t.pages.home.eyebrow}</p>
+        <h2 class="mt-3 text-3xl font-semibold tracking-tight text-white sm:text-4xl">{t.pages.home.countersTitle}</h2>
+        <p class="mt-4 text-base leading-8 text-white/70">{t.pages.home.countersIntro}</p>
+      </div>
+
+      <dl class="mt-10 grid grid-cols-2 gap-x-6 gap-y-10 lg:grid-cols-4">
+        {counters.map((counter) => (
+          <div class="border-t border-white/15 pt-5">
+            <dt class="sr-only">{counter.label}</dt>
+            <dd>
+              <p class="flex items-baseline gap-0.5 text-4xl font-extrabold tracking-tight text-white sm:text-5xl">
+                <span data-counter={counter.value}>{counter.display}</span>
+                {counter.suffix && <span class="text-[#F3C623]">{counter.suffix}</span>}
+              </p>
+              <p class="mt-3 text-sm font-semibold leading-6 text-white/65">{counter.label}</p>
+            </dd>
+          </div>
+        ))}
+      </dl>
     </div>
   </section>
 
@@ -212,7 +417,7 @@ const heroSlides = [
           <span class="block h-[3px] w-16 rounded-full bg-[#F3C623]" aria-hidden="true"></span>
           <p class="text-base text-slate-600 sm:text-lg">{t.pages.resources.intro}</p>
           <div class="flex flex-wrap gap-3">
-            <a class="pill-link border border-[#19266A]/15 bg-white text-[#19266A] shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg" href={withLanguagePrefix(lang, '/quality')}>
+            <a class="pill-link border border-[#19266A]/15 bg-white text-[#19266A] shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg" href={withLanguagePrefix(lang, '/trade-map')}>
               {t.pages.home.ctaPrimary}
             </a>
             <a class="pill-link border border-[#F3C623]/50 bg-[#F3C623]/10 text-[#19266A] hover:bg-[#F3C623]/20" href={withLanguagePrefix(lang, '/products')}>
@@ -222,64 +427,90 @@ const heroSlides = [
         </div>
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 ">
           {complianceCards.map((card) => (
-            <div class="card space-y-3 p-5 transition hover:-translate-y-1 hover:shadow-2xl">
-              <div class="flex items-center justify-between">
-                <h3 class="text-lg font-semibold text-[#19266A]">{card.title}</h3>
-                <span class="badge-chip">{card.badge}</span>
+            <article class="card group overflow-hidden transition hover:-translate-y-1 hover:shadow-2xl">
+              <div class="relative h-32 overflow-hidden bg-[#19266A]">
+                <img
+                  src={card.image}
+                  alt={card.title}
+                  loading="lazy"
+                  data-fallback-image
+                  data-fallback={tradeImages.logistics}
+                  class="h-full w-full object-cover transition duration-700 group-hover:scale-105"
+                />
+                <div class="absolute inset-0 bg-gradient-to-t from-[#10184A]/65 to-transparent"></div>
+                <span class="absolute end-3 top-3 badge-chip bg-white/90">{card.badge}</span>
               </div>
-              <p class="text-sm text-slate-600">{card.description}</p>
-            </div>
+              <div class="space-y-2 p-5">
+                <h3 class="text-lg font-semibold text-[#19266A]">{card.title}</h3>
+                <p class="text-sm leading-6 text-slate-600">{card.description}</p>
+              </div>
+            </article>
           ))}
         </div>
       </div>
     </div>
   </section>
 
-  <section class="mx-auto max-w-6xl px-4 pb-12 sm:px-6 sm:pb-16">
-    <div class="rounded-3xl bg-[#19266A] px-6 py-10 text-white shadow-2xl shadow-[#19266A]/40 sm:px-10">
-      <div class="text-center">
-        <p class="text-sm font-semibold uppercase tracking-[0.28em] text-[#F3C623]">{t.pages.solutions.eyebrow}</p>
-        <h2 class="text-3xl font-semibold tracking-tight text-white sm:text-4xl">{t.pages.solutions.title}</h2>
-        <span class="mx-auto mt-4 block h-[3px] w-16 rounded-full bg-[#F3C623]" aria-hidden="true"></span>
-        <p class="mt-5 text-base text-white/75 sm:text-lg">{t.pages.solutions.intro}</p>
-      </div>
+    <section class="mx-auto max-w-6xl px-4 pb-12 sm:px-6 sm:pb-16">
+      <div class="rounded-3xl bg-[#19266A] px-6 py-10 text-white shadow-2xl shadow-[#19266A]/40 sm:px-10">
+        <div class="text-center">
+          <p class="text-sm font-semibold uppercase tracking-[0.28em] text-[#F3C623]">{t.pages.solutions.eyebrow}</p>
+          <h2 class="text-3xl font-semibold tracking-tight text-white sm:text-4xl">{t.pages.solutions.title}</h2>
+          <span class="mx-auto mt-4 block h-[3px] w-16 rounded-full bg-[#F3C623]" aria-hidden="true"></span>
+          <p class="mt-5 text-base text-white/75 sm:text-lg">{t.pages.solutions.intro}</p>
+        </div>
 
-      <div class="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
-        {logisticsCards.map((solution) => (
-          <div class="rounded-2xl bg-white/10 p-5 ring-1 ring-white/15">
-            <div class="flex items-center justify-between">
-              <h3 class="text-lg font-semibold text-white">{solution.title}</h3>
-              <span class="badge-chip bg-white/10 text-white">{solution.tags[0]}</span>
-            </div>
-            <p class="mt-2 text-sm text-white/80">{solution.description}</p>
-            <div class="mt-3 flex flex-wrap gap-2">
-              {solution.tags.map((tag) => (
-                <span class="rounded-full bg-white/15 px-3 py-1 text-xs font-semibold text-white/80">{tag}</span>
-              ))}
-            </div>
+        <div class="relative mt-8 min-h-[260px] overflow-hidden rounded-2xl ring-1 ring-white/15 sm:min-h-[320px]">
+          <img
+            src={tradeImages.logistics}
+            alt={t.pages.solutions.title}
+            loading="lazy"
+            class="absolute inset-0 h-full w-full object-cover"
+          />
+          <div class="absolute inset-0 bg-gradient-to-r from-[#10184A]/90 via-[#10184A]/55 to-transparent"></div>
+          <div class="relative flex min-h-[260px] max-w-xl flex-col justify-end p-6 sm:min-h-[320px] sm:p-8">
+            <p class="text-xs font-bold uppercase tracking-[0.25em] text-[#F3C623]">{t.pages.solutions.eyebrow}</p>
+            <h3 class="mt-3 text-2xl font-semibold text-white sm:text-3xl">{t.pages.solutions.title}</h3>
+            <p class="mt-3 text-sm leading-7 text-white/75 sm:text-base">{t.pages.solutions.intro}</p>
           </div>
-        ))}
-      </div>
+        </div>
 
-      <div class="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2">
-        {exportSteps.map((step) => (
-          <div class="rounded-2xl bg-white/10 p-4 ring-1 ring-white/15">
-            <p class="text-sm font-semibold uppercase tracking-[0.18em] text-[#F3C623]">{step.title}</p>
-            <p class="mt-2 text-sm text-white/80">{step.description}</p>
-          </div>
-        ))}
-      </div>
+        <div class="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
+          {logisticsCards.map((solution) => (
+            <div class="rounded-2xl bg-white/10 p-5 ring-1 ring-white/15">
+              <div class="flex items-center justify-between">
+                <h3 class="text-lg font-semibold text-white">{solution.title}</h3>
+                <span class="badge-chip bg-white/10 text-white">{solution.tags[0]}</span>
+              </div>
+              <p class="mt-2 text-sm text-white/80">{solution.description}</p>
+              <div class="mt-3 flex flex-wrap gap-2">
+                {solution.tags.map((tag) => (
+                  <span class="rounded-full bg-white/15 px-3 py-1 text-xs font-semibold text-white/80">{tag}</span>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
 
-      <div class="mt-8 flex flex-wrap justify-center gap-3">
-        <a class="pill-link bg-[#F3C623] text-[#19266A] shadow-lg shadow-[#F3C623]/40 transition hover:-translate-y-0.5 hover:shadow-xl" href={withLanguagePrefix(lang, '/contact')}>
-          {t.pages.home.ctaPrimary}
-        </a>
-        <a class="pill-link border border-white/30 bg-white/10 text-white hover:bg-white/20" href={withLanguagePrefix(lang, '/logistics')}>
-          {t.pages.products.cta}
-        </a>
+        <div class="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2">
+          {exportSteps.map((step) => (
+            <div class="rounded-2xl bg-white/10 p-4 ring-1 ring-white/15">
+              <p class="text-sm font-semibold uppercase tracking-[0.18em] text-[#F3C623]">{step.title}</p>
+              <p class="mt-2 text-sm text-white/80">{step.description}</p>
+            </div>
+          ))}
+        </div>
+
+        <div class="mt-8 flex flex-wrap justify-center gap-3">
+          <a class="pill-link bg-[#F3C623] text-[#19266A] shadow-lg shadow-[#F3C623]/40 transition hover:-translate-y-0.5 hover:shadow-xl" href={withLanguagePrefix(lang, '/contact')}>
+            {t.pages.home.ctaPrimary}
+          </a>
+          <a class="pill-link border border-white/30 bg-white/10 text-white hover:bg-white/20" href={withLanguagePrefix(lang, '/logistics')}>
+            {t.pages.products.cta}
+          </a>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
 
   <section class="mx-auto max-w-6xl px-4 pb-12 sm:px-6 sm:pb-16">
     <div class="mb-8 text-center">
@@ -290,10 +521,23 @@ const heroSlides = [
     </div>
     <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
       {industries.map((industry) => (
-        <div class="card flex flex-col gap-3 p-5">
-          <h3 class="text-lg font-semibold text-[#19266A]">{industry.name}</h3>
-          <p class="text-slate-600">{industry.description}</p>
-        </div>
+        <article class="card group grid overflow-hidden sm:grid-cols-[180px,1fr]">
+          <div class="relative min-h-44 overflow-hidden bg-[#19266A] sm:min-h-full">
+            <img
+              src={industry.image}
+              alt={industry.name}
+              loading="lazy"
+              data-fallback-image
+              data-fallback={tradeImages.logistics}
+              class="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105"
+            />
+            <div class="absolute inset-0 bg-[#10184A]/15"></div>
+          </div>
+          <div class="flex flex-col justify-center gap-3 p-5 sm:p-6">
+            <h3 class="text-lg font-semibold text-[#19266A]">{industry.name}</h3>
+            <p class="leading-7 text-slate-600">{industry.description}</p>
+          </div>
+        </article>
       ))}
     </div>
   </section>
@@ -324,4 +568,16 @@ const heroSlides = [
       </a>
     </div>
   </section>
+
+  <script>
+    document.querySelectorAll('[data-fallback-image]').forEach((image) => {
+      if (!(image instanceof HTMLImageElement)) return;
+      image.addEventListener('error', () => {
+        const fallback = image.dataset.fallback;
+        if (!fallback || image.src.endsWith(fallback)) return;
+        image.src = fallback;
+      }, { once: true });
+    });
+  </script>
+
 </Layout>

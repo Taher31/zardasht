@@ -1,6 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import { getTranslation, resolveLang, localizedLanguages } from '../../i18n';
+import { getTranslation, resolveLang, localizedLanguages, withLanguagePrefix } from '../../i18n';
+import { localizedCountryName } from '../../data/country-locale';
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -8,7 +9,7 @@ export function getStaticPaths() {
   return localizedLanguages.map((language) => ({ params: { lang: language.code } }));
 }
 
-const lang = resolveLang(Astro.params.lang);
+const lang = resolveLang(Astro.props.lang ?? Astro.params.lang);
 const t = getTranslation(lang);
 
 const dataPath = path.join(process.cwd(), 'public', 'data', 'trade-countries.json');
@@ -29,6 +30,13 @@ const fxStrings = {
   loading: t.pages.tradeMap.fxLoading,
   error: t.pages.tradeMap.fxError,
 };
+
+// Names come from the shared country-locale module so the map, the mobile
+// cards and the per-country detail pages never drift apart.
+const namedCountries = activeCountries.map((country) => ({
+  ...country,
+  displayName: localizedCountryName(lang, country.country_code, country.country_name),
+}));
 ---
 
 <Layout title={t.pages.tradeMap.title} lang={lang} translation={t}>
@@ -48,6 +56,30 @@ const fxStrings = {
         id="map-tooltip"
         class="pointer-events-none absolute z-20 hidden max-w-xs rounded-lg bg-slate-900/95 px-3 py-2 text-xs font-semibold text-white shadow-lg backdrop-blur"
       ></div>
+    </div>
+
+    <!-- Mobile fallback: the interactive SVG map only renders at sm+, so give small screens the same active markets as cards. -->
+    <div class="grid grid-cols-1 gap-4 sm:hidden">
+      {namedCountries.map((country) => (
+        <a
+          href={withLanguagePrefix(lang, `/trade-map/${country.country_code.toLowerCase()}`)}
+          class="card flex items-center gap-4 p-4 transition hover:-translate-y-0.5 hover:shadow-lg"
+        >
+          <img
+            src={`https://flagcdn.com/w320/${country.country_code.toLowerCase()}.png`}
+            alt=""
+            class="h-10 w-14 shrink-0 rounded-md object-cover ring-1 ring-slate-200"
+            loading="lazy"
+          />
+          <div class="min-w-0 flex-1">
+            <p class="truncate text-base font-semibold text-brand-dark">
+              {country.displayName}
+            </p>
+            <p class="truncate text-sm text-slate-600">{country.notes}</p>
+          </div>
+          <span class="badge-chip shrink-0">{t.pages.tradeMap.statusTraded}</span>
+        </a>
+      ))}
     </div>
 
     <div class="mt-6 flex flex-wrap items-center gap-3 text-sm text-slate-600">
