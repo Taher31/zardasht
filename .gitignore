@@ -24,3 +24,8 @@ astro-dev-error.log
 
 # jetbrains setting folder
 .idea/
+
+# admin panel: real DB credentials and uploaded images never get committed
+admin/config/config.php
+admin/uploads/news/*
+!admin/uploads/news/.gitkeep

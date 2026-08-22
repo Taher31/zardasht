@@ -137,5 +137,53 @@ const websiteSchema = {
 
     <Footer lang={lang} translation={translation} />
     <CallButton lang={lang} translation={translation} />
+
+    <script>
+      // Any link marked data-copy-email copies its address to the clipboard
+      // instead of navigating, across every page (header, footer, contact card).
+      const copiedLabels: Record<string, string> = {
+        en: 'Copied!',
+        fa: 'کپی شد!',
+        ar: 'تم النسخ!',
+        ru: 'Скопировано!',
+      };
+
+      document.addEventListener('click', (event) => {
+        if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+
+        const target = event.target;
+        if (!(target instanceof Element)) return;
+        const trigger = target.closest('[data-copy-email]');
+        if (!(trigger instanceof HTMLElement)) return;
+
+        const email = trigger.dataset.copyEmail;
+        if (!email) return;
+
+        event.preventDefault();
+
+        const openMailClient = () => {
+          window.location.href = `mailto:${email}`;
+        };
+
+        if (!navigator.clipboard?.writeText) {
+          openMailClient();
+          return;
+        }
+
+        navigator.clipboard.writeText(email).then(() => {
+          if (trigger.dataset.copied === 'true') return;
+          trigger.dataset.copied = 'true';
+
+          const original = trigger.textContent;
+          const lang = document.documentElement.lang || 'en';
+          trigger.textContent = copiedLabels[lang] ?? copiedLabels.en;
+
+          window.setTimeout(() => {
+            trigger.textContent = original;
+            delete trigger.dataset.copied;
+          }, 1600);
+        }).catch(openMailClient);
+      });
+    </script>
   </body>
 </html>

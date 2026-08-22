@@ -2,6 +2,7 @@
 import Layout from '../../layouts/Layout.astro';
 import { getTranslation, resolveLang, withLanguagePrefix, localizedLanguages } from '../../i18n';
 import { localizedCountryName, normalizeCountryCode } from '../../data/country-locale';
+import { getNewsPosts, formatNewsDate } from '../../data/news';
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -18,11 +19,11 @@ const categories = t.pages.home.categories.map((category) => ({
 const productSections = t.pages.products.sections;
 
 const tradeImages = {
-  bitumen: '/images/02_bitumen.jpg',
-  steel: '/images/03_metals_steel.jpg',
-  agriculture: '/images/04_agricultural_grain.jpg',
-  textile: '/images/05_textile_yarn.jpg',
-  logistics: '/images/06_road_logistics_truck.jpg',
+  bitumen: '/images/02_bitumen.webp',
+  steel: '/images/03_metals_steel.webp',
+  agriculture: '/images/04_agricultural_grain.webp',
+  textile: '/images/05_textile_yarn.webp',
+  logistics: '/images/06_road_logistics_truck.webp',
 } as const;
 
 const categoryImages: Record<string, string> = {
@@ -32,12 +33,18 @@ const categoryImages: Record<string, string> = {
   'textile-raw-materials': tradeImages.textile,
 };
 
+const categoryVideos: Record<string, string> = {
+  'energy-bitumen': '/video/02_bitumen.mp4',
+  'agricultural-commodities': '/video/04_agricultural_grain.mp4',
+};
+
 const categoriesWithSpecs = categories.map((category) => {
   const fragment = category.href.split('#')[1];
   const productSection = productSections.find((section) => section.id === fragment);
   return {
     ...category,
     image: categoryImages[fragment] ?? tradeImages.logistics,
+    video: categoryVideos[fragment],
     specLine: productSection?.products?.[0]?.description ?? '',
   };
 });
@@ -84,6 +91,20 @@ const marketFlags = activeCountries.map(
   },
 );
 
+// Featured posts lead the homepage strip; if fewer than three are flagged,
+// the newest remaining posts fill the row so it never renders half-empty.
+const allNews = getNewsPosts(lang);
+const homeNews = [
+  ...allNews.filter((post) => post.featured),
+  ...allNews.filter((post) => !post.featured),
+]
+  .slice(0, 3)
+  .map((post) => ({
+    ...post,
+    href: withLanguagePrefix(lang, `/news/${post.slug}`),
+    displayDate: formatNewsDate(post.date, lang),
+  }));
+
 const derivedCounterValues: Record<string, number> = {
   groups: t.pages.products.sections.length,
   lanes: t.pages.home.industries.length,
@@ -109,13 +130,29 @@ const counters = t.pages.home.counters.map((counter) => {
           data-hero-panel={index}
           aria-label={panel.name}
         >
-          <img
-            src={panel.image}
-            alt=""
-            loading={index === 0 ? 'eager' : 'lazy'}
-            data-fallback-image
-            data-fallback={tradeImages.logistics}
-          />
+          {panel.video ? (
+            <video
+              poster={panel.image}
+              autoplay
+              muted
+              loop
+              playsinline
+              preload="metadata"
+              aria-hidden="true"
+              data-fallback-video
+              data-fallback={tradeImages.logistics}
+            >
+              <source src={panel.video} type="video/mp4" />
+            </video>
+          ) : (
+            <img
+              src={panel.image}
+              alt=""
+              loading={index === 0 ? 'eager' : 'lazy'}
+              data-fallback-image
+              data-fallback={tradeImages.logistics}
+            />
+          )}
           <span class="trade-hero__panel-badge">{panel.badge}</span>
           <span class="trade-hero__panel-name">{panel.name}</span>
         </a>
@@ -173,9 +210,10 @@ const counters = t.pages.home.counters.map((counter) => {
     const heroEl = document.querySelector('[data-trade-hero]');
 
     if (heroEl) {
+      const panelContainer = heroEl.querySelector('.trade-hero__panels');
       const panels = Array.from(heroEl.querySelectorAll('[data-hero-panel]'));
-      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      let activeIndex = 0;
+      const initialActiveIndex = panels.findIndex((panel) => panel.classList.contains('is-active'));
+      let activeIndex = initialActiveIndex >= 0 ? initialActiveIndex : 0;
       let timer = 0;
 
       const setPanel = (nextIndex) => {
@@ -183,23 +221,66 @@ const counters = t.pages.home.counters.map((counter) => {
         panels.forEach((panel, index) => panel.classList.toggle('is-active', index === activeIndex));
       };
 
-      const stop = () => window.clearInterval(timer);
-      const start = () => {
-        if (reduceMotion) return;
-        stop();
-        timer = window.setInterval(() => setPanel(activeIndex + 1), 4200);
+      const stop = () => {
+        if (!timer) return;
+        window.clearInterval(timer);
+        timer = 0;
       };
 
-      panels.forEach((panel, index) => {
-        // Pointer/focus takes over from the auto-cycle while the visitor explores.
-        panel.addEventListener('mouseenter', () => { stop(); setPanel(index); });
-        panel.addEventListener('focus', () => { stop(); setPanel(index); });
+      const rotatePanels = () => {
+        if (!panelContainer || panels.length < 2) return;
+        const firstPanel = panels.shift();
+        if (!firstPanel) return;
+
+        panels.push(firstPanel);
+        panelContainer.append(firstPanel);
+        setPanel(0);
+      };
+
+      const start = () => {
+        stop();
+        if (panels.length < 2) return;
+        timer = window.setInterval(rotatePanels, 4200);
+      };
+
+      panels.forEach((panel) => {
+        const activatePanel = () => {
+          stop();
+          setPanel(panels.indexOf(panel));
+        };
+
+        panel.addEventListener('mouseenter', activatePanel);
+        panel.addEventListener('focus', activatePanel);
         panel.addEventListener('mouseleave', start);
         panel.addEventListener('blur', start);
       });
 
-      setPanel(0);
-      start();
+      if (panels.length) {
+        setPanel(activeIndex);
+        start();
+      }
+
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      heroEl.querySelectorAll('[data-fallback-video]').forEach((video) => {
+        if (!(video instanceof HTMLVideoElement)) return;
+        if (reduceMotion) {
+          video.pause();
+          video.removeAttribute('autoplay');
+          return;
+        }
+        // A failed source (unsupported codec, bad path) should degrade to the
+        // still image rather than leaving a blank/broken video box.
+        video.addEventListener('error', () => {
+          const fallback = video.dataset.fallback;
+          if (!fallback) return;
+          const image = document.createElement('img');
+          image.src = fallback;
+          image.alt = '';
+          image.loading = 'lazy';
+          video.replaceWith(image);
+        }, { once: true });
+      });
     }
   </script>
 
@@ -310,7 +391,7 @@ const counters = t.pages.home.counters.map((counter) => {
         </div>
 
         <div class="flag-orbit__core">
-          <img src="/images/iran-flag.jpg" alt="" class="flag-orbit__core-flag" loading="lazy" />
+          <img src="/images/iran-flag.webp" alt="" class="flag-orbit__core-flag" loading="lazy" />
           <span class="flag-orbit__core-text">{t.pages.home.marketsHomeLabel}</span>
         </div>
       </div>
@@ -336,6 +417,55 @@ const counters = t.pages.home.counters.map((counter) => {
       });
     }
   </script>
+
+  {homeNews.length > 0 && (
+    <section class="border-y border-[#19266A]/10 bg-white/70">
+      <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16">
+        <div class="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <p class="section-eyebrow">{t.pages.news.eyebrow}</p>
+            <h2 class="mt-3 text-3xl font-semibold tracking-tight text-[#19266A] sm:text-4xl">
+              {t.pages.news.homeTitle}
+            </h2>
+            <p class="mt-4 max-w-xl text-base leading-8 text-slate-600">{t.pages.news.homeIntro}</p>
+          </div>
+          <a
+            class="inline-flex items-center gap-2 text-sm font-bold text-[#19266A] transition hover:gap-3"
+            href={withLanguagePrefix(lang, '/news')}
+          >
+            {t.pages.news.allNews}
+            <span aria-hidden="true">→</span>
+          </a>
+        </div>
+
+        <div class="mt-10 grid grid-cols-1 gap-6 md:grid-cols-3">
+          {homeNews.map((post) => (
+            <a href={post.href} class="card group flex flex-col overflow-hidden">
+              <div class="relative h-44 overflow-hidden bg-[#19266A]">
+                <img
+                  src={post.image}
+                  alt=""
+                  loading="lazy"
+                  class="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105"
+                />
+              </div>
+              <div class="flex flex-1 flex-col gap-3 p-5">
+                <time datetime={post.date} class="text-[10px] font-bold uppercase tracking-[0.18em] text-[#19266A]/50">
+                  {post.displayDate}
+                </time>
+                <h3 class="text-lg font-semibold leading-snug text-[#19266A]">{post.title}</h3>
+                <p class="text-sm leading-6 text-slate-600">{post.excerpt}</p>
+                <span class="mt-auto inline-flex items-center gap-2 pt-2 text-sm font-bold text-[#19266A] transition group-hover:gap-3">
+                  {t.pages.news.readMore}
+                  <span aria-hidden="true">→</span>
+                </span>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
 
   <section class="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16">
     <div class="mb-10 text-center">

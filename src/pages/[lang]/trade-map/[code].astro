@@ -37,15 +37,20 @@ const hasImports = localizedImports.length > 0;
 const title = `${localizedName} - ${t.pages.tradeMap.title}`;
 
 const galleryByCountry: Record<string, string[]> = {
-  UZ: ['/images/02_bitumen.jpg', '/images/05_textile_yarn.jpg', '/images/01_global_shipping_port.jpg'],
-  RU: ['/images/04_agricultural_grain.jpg', '/images/07_rail_logistics.jpg', '/images/01_global_shipping_port.jpg'],
-  IQ: ['/images/02_bitumen.jpg', '/images/06_road_logistics_truck.jpg', '/images/01_global_shipping_port.jpg'],
-  KZ: ['/images/03_metals_steel.jpg', '/images/07_rail_logistics.jpg', '/images/08_warehouse_logistics.jpg'],
-  TM: ['/images/03_metals_steel.jpg', '/images/06_road_logistics_truck.jpg', '/images/08_warehouse_logistics.jpg'],
-  TJ: ['/images/03_metals_steel.jpg', '/images/07_rail_logistics.jpg', '/images/06_road_logistics_truck.jpg'],
-  KG: ['/images/03_metals_steel.jpg', '/images/08_warehouse_logistics.jpg', '/images/06_road_logistics_truck.jpg'],
+  UZ: ['/images/02_bitumen.webp', '/images/05_textile_yarn.webp', '/images/01_global_shipping_port.webp'],
+  RU: ['/images/04_agricultural_grain.webp', '/images/07_rail_logistics.webp', '/images/01_global_shipping_port.webp'],
+  IQ: ['/images/02_bitumen.webp', '/images/06_road_logistics_truck.webp', '/images/01_global_shipping_port.webp'],
+  KZ: ['/images/03_metals_steel.webp', '/images/07_rail_logistics.webp', '/images/08_warehouse_logistics.webp'],
+  TM: ['/images/03_metals_steel.webp', '/images/06_road_logistics_truck.webp', '/images/08_warehouse_logistics.webp'],
+  TJ: ['/images/03_metals_steel.webp', '/images/07_rail_logistics.webp', '/images/06_road_logistics_truck.webp'],
+  KG: ['/images/03_metals_steel.webp', '/images/08_warehouse_logistics.webp', '/images/06_road_logistics_truck.webp'],
+  AE: ['/images/01_global_shipping_port.webp', '/images/03_metals_steel.webp', '/images/04_agricultural_grain.webp'],
+  OM: ['/images/02_bitumen.webp', '/images/04_agricultural_grain.webp', '/images/01_global_shipping_port.webp'],
+  TR: ['/images/03_metals_steel.webp', '/images/05_textile_yarn.webp', '/images/06_road_logistics_truck.webp'],
+  CN: ['/images/05_textile_yarn.webp', '/images/08_warehouse_logistics.webp', '/images/01_global_shipping_port.webp'],
+  MN: ['/images/05_textile_yarn.webp', '/images/04_agricultural_grain.webp', '/images/07_rail_logistics.webp'],
 };
-const marketGallery = galleryByCountry[code] ?? ['/images/01_global_shipping_port.jpg'];
+const marketGallery = galleryByCountry[code] ?? ['/images/01_global_shipping_port.webp'];
 ---
 
 <Layout title={title} lang={resolvedLang} translation={t}>

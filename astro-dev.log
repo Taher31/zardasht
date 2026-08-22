@@ -525,3 +525,65 @@
 [2m۰۲:۵۲:۰۲[22m [34m[types][39m Generated [2m692ms[22m
 [2m۰۲:۵۲:۰۲[22m [34m[vite][39m Port 4321 is in use, trying another one...
 [2m۰۲:۵۲:۰۲[22m [34m[vite][39m Port 4322 is in use, trying another one...
+[33m[1m۱۶:۲۰:۴۲[22m [WARN][39m Unsupported file type [1mC:\STY\projects\Zardasht Mahd Binaloud Trading\src\pages\news.astro.tmp.11568.8e6ac5ecf9bb[22m found. Prefix filename with an underscore (`_`) to ignore.
+[33m[1m۱۷:۱۴:۵۴[22m [WARN] [router][39m A `getStaticPaths()` route pattern was matched, but no matching static path was found for requested path `/en/`.
+
+Possible dynamic routes being matched: src/pages/[lang]/index.astro.
+[2m۱۷:۱۴:۵۴[22m [33m[404][39m /en/ [2m5ms[22m
+[2m۱۷:۱۵:۱۳[22m [34m[200][39m / [2m721ms[22m
+[2m۱۷:۱۵:۳۸[22m [34m[watch][39m src/data/news.ts
+[2m۱۷:۱۵:۳۸[22m [34m[watch][39m src/data/news.ts
+[2m۱۷:۱۵:۴۱[22m [34m[200][39m / [2m449ms[22m
+[2m۱۷:۱۵:۴۳[22m [34m[200][39m / [2m58ms[22m
+[2m۱۷:۱۵:۵۱[22m [34m[watch][39m src/data/news.ts
+[2m۱۷:۱۵:۵۱[22m [34m[watch][39m src/data/news.ts
+[2m۱۷:۱۵:۵۲[22m [34m[200][39m / [2m533ms[22m
+[2m۱۷:۱۶:۱۱[22m [34m[watch][39m src/data/news.ts
+[2m۱۷:۱۶:۱۱[22m [34m[watch][39m src/data/news.ts
+[2m۱۷:۱۶:۱۵[22m [34m[200][39m / [2m2395ms[22m
+[2m۱۷:۱۸:۵۲[22m [34m[watch][39m src/pages/[lang]/index.astro
+[2m۱۷:۱۸:۵۲[22m [34m[watch][39m src/pages/[lang]/index.astro
+[2m۱۷:۱۹:۰۰[22m [34m[200][39m / [2m4055ms[22m
+[2m۱۷:۱۹:۴۴[22m [34m[watch][39m src/pages/[lang]/index.astro
+[2m۱۷:۱۹:۴۴[22m [34m[watch][39m src/pages/[lang]/index.astro
+[2m۱۷:۱۹:۴۸[22m [34m[200][39m / [2m880ms[22m
+[2m۱۷:۲۰:۵۷[22m [34m[200][39m / [2m32ms[22m
+[2m۱۷:۲۱:۲۲[22m [34m[200][39m / [2m24ms[22m
+[2m۱۷:۲۲:۲۸[22m [34m[200][39m / [2m21ms[22m
+[2m۱۷:۲۵:۰۷[22m [34m[watch][39m src/i18n.ts
+[2m۱۷:۲۵:۰۷[22m [34m[watch][39m src/i18n.ts
+[2m۱۷:۲۵:۱۸[22m [34m[watch][39m src/i18n.ts
+[2m۱۷:۲۵:۱۸[22m [34m[watch][39m src/i18n.ts
+[2m۱۷:۲۵:۳۲[22m [34m[watch][39m src/i18n.ts
+[2m۱۷:۲۵:۳۲[22m [34m[watch][39m src/i18n.ts
+[2m۱۷:۲۵:۴۷[22m [34m[watch][39m src/i18n.ts
+[2m۱۷:۲۵:۴۷[22m [34m[watch][39m src/i18n.ts
+[2m۱۷:۲۶:۴۱[22m [34m[watch][39m src/i18n.ts
+[2m۱۷:۲۶:۴۱[22m [34m[watch][39m src/i18n.ts
+[2m۱۷:۲۸:۲۳[22m [34m[watch][39m /src/styles/global.css
+[2m۱۷:۲۸:۲۳[22m [34m[watch][39m src/pages/[lang]/index.astro
+[2m۱۷:۲۸:۲۳[22m [34m[watch][39m src/pages/[lang]/index.astro
+[2m۱۷:۲۹:۰۴[22m [34m[200][39m / [2m414ms[22m
+[2m۱۷:۲۹:۵۳[22m [34m[watch][39m src/i18n.ts
+[2m۱۷:۲۹:۵۳[22m [34m[watch][39m src/i18n.ts
+[2m۱۷:۳۳:۳۶[22m [34m[watch][39m src/i18n.ts
+[2m۱۷:۳۳:۳۶[22m [34m[watch][39m src/i18n.ts
+[2m۱۷:۳۴:۱۳[22m [34m[watch][39m src/i18n.ts
+[2m۱۷:۳۴:۱۳[22m [34m[watch][39m src/i18n.ts
+[2m۱۷:۳۴:۴۸[22m [34m[watch][39m src/i18n.ts
+[2m۱۷:۳۴:۴۸[22m [34m[watch][39m src/i18n.ts
+[2m۱۷:۳۵:۲۵[22m [34m[watch][39m src/i18n.ts
+[2m۱۷:۳۵:۲۵[22m [34m[watch][39m src/i18n.ts
+[2m۱۷:۳۶:۰۵[22m [34m[watch][39m /src/styles/global.css
+[2m۱۷:۳۶:۰۵[22m [34m[watch][39m src/pages/[lang]/index.astro
+[2m۱۷:۳۶:۰۵[22m [34m[watch][39m src/pages/[lang]/index.astro
+[2m۱۷:۳۶:۵۶[22m [34m[200][39m / [2m516ms[22m
+[2m۱۷:۳۶:۵۷[22m [34m[200][39m / [2m12ms[22m
+[2m۱۷:۳۷:۳۰[22m [34m[200][39m / [2m17ms[22m
+[2m۱۷:۳۸:۴۶[22m [34m[watch][39m src/data/country-locale.ts
+[2m۱۷:۳۸:۴۶[22m [34m[watch][39m src/data/country-locale.ts
+[2m۱۷:۴۱:۵۰[22m [34m[watch][39m src/pages/[lang]/index.astro
+[2m۱۷:۴۱:۵۰[22m [34m[watch][39m src/pages/[lang]/index.astro
+[2m۱۷:۴۲:۵۷[22m [34m[200][39m / [2m123ms[22m
+[2m۱۷:۴۳:۳۸[22m [34m[200][39m / [2m13ms[22m
+[2m۱۸:۳۵:۱۵[22m [34m[200][39m /news/test1/ [2m27ms[22m

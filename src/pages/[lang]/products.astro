@@ -11,13 +11,13 @@ const lang = resolveLang(Astro.props.lang ?? Astro.params.lang);
 const t = getTranslation(lang);
 const stats = t.pages.home.stats;
 
-const sectionAccents: Record<string, { code: string; note: string; image: string }> = {
-  'energy-bitumen': { code: '01', note: 'EB', image: '/images/02_bitumen.jpg' },
-  'metals-steel': { code: '02', note: 'MS', image: '/images/03_metals_steel.jpg' },
-  'agricultural-commodities': { code: '03', note: 'AG', image: '/images/04_agricultural_grain.jpg' },
-  'textile-raw-materials': { code: '04', note: 'TX', image: '/images/05_textile_yarn.jpg' },
+const sectionAccents: Record<string, { code: string; note: string; image: string; video?: string }> = {
+  'energy-bitumen': { code: '01', note: 'EB', image: '/images/02_bitumen.webp', video: '/video/02_bitumen.mp4' },
+  'metals-steel': { code: '02', note: 'MS', image: '/images/03_metals_steel.webp' },
+  'agricultural-commodities': { code: '03', note: 'AG', image: '/images/04_agricultural_grain.webp', video: '/video/04_agricultural_grain.mp4' },
+  'textile-raw-materials': { code: '04', note: 'TX', image: '/images/05_textile_yarn.webp' },
 };
-const fallbackImage = '/images/06_road_logistics_truck.jpg';
+const fallbackImage = '/images/06_road_logistics_truck.webp';
 ---
 
 <Layout title={t.pages.products.title} lang={lang} translation={t}>
@@ -79,14 +79,31 @@ const fallbackImage = '/images/06_road_logistics_truck.jpg';
             <section id={section.id} class="scroll-mt-32 overflow-hidden rounded-3xl border border-[#19266A]/10 bg-white shadow-[0_24px_60px_-36px_rgba(25,38,106,.4)]">
               <div class="grid lg:grid-cols-[0.78fr,1.22fr]">
                 <div class="relative flex min-h-[260px] flex-col justify-between overflow-hidden bg-[#10184A] p-7 text-white sm:p-9">
-                  <img
-                    src={accent.image}
-                    alt={section.title}
-                    loading="lazy"
-                    data-fallback-image
-                    data-fallback={fallbackImage}
-                    class="absolute inset-0 h-full w-full object-cover opacity-100"
-                  />
+                  {accent.video ? (
+                    <video
+                      class="absolute inset-0 h-full w-full object-cover opacity-100"
+                      poster={accent.image}
+                      autoplay
+                      muted
+                      loop
+                      playsinline
+                      preload="metadata"
+                      aria-hidden="true"
+                      data-fallback-video
+                      data-fallback={accent.image}
+                    >
+                      <source src={accent.video} type="video/mp4" />
+                    </video>
+                  ) : (
+                    <img
+                      src={accent.image}
+                      alt={section.title}
+                      loading="lazy"
+                      data-fallback-image
+                      data-fallback={fallbackImage}
+                      class="absolute inset-0 h-full w-full object-cover opacity-100"
+                    />
+                  )}
                   <div class="absolute inset-0 bg-gradient-to-br from-[#10184A]/95 via-[#10184A]/85 to-[#0b1440]/95"></div>
                   <div class="absolute -right-16 -top-16 h-56 w-56 rounded-full border border-white/10"></div>
                   <div class="absolute -bottom-24 -left-16 h-72 w-72 rounded-full border border-[#F3C623]/20"></div>
@@ -141,12 +158,21 @@ const fallbackImage = '/images/06_road_logistics_truck.jpg';
             <h2 class="text-2xl font-semibold text-white sm:text-3xl">{t.pages.products.title}</h2>
             <p class="text-white/75">{t.pages.home.heroSubtitle}</p>
           </div>
-          <a
-            class="pill-link shrink-0 bg-[#F3C623] text-[#10184A] shadow-lg shadow-[#F3C623]/25 transition hover:-translate-y-0.5"
-            href={withLanguagePrefix(lang, '/contact')}
-          >
-            {t.labels.trade.inquiry}
-          </a>
+          <div class="flex flex-wrap items-center justify-center gap-3 lg:justify-end">
+            <a
+              class="pill-link shrink-0 border border-white/25 bg-white/10 text-white transition hover:bg-white/15"
+              href="/downloads/zardasht-product-catalog.pdf"
+              download
+            >
+              {t.labels.trade.downloadCatalog}
+            </a>
+            <a
+              class="pill-link shrink-0 bg-[#F3C623] text-[#10184A] shadow-lg shadow-[#F3C623]/25 transition hover:-translate-y-0.5"
+              href={withLanguagePrefix(lang, '/contact')}
+            >
+              {t.labels.trade.inquiry}
+            </a>
+          </div>
         </div>
       </section>
     </div>
@@ -159,6 +185,29 @@ const fallbackImage = '/images/06_road_logistics_truck.jpg';
         const fallback = image.dataset.fallback;
         if (!fallback || image.src.endsWith(fallback)) return;
         image.src = fallback;
+      }, { once: true });
+    });
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    document.querySelectorAll('[data-fallback-video]').forEach((video) => {
+      if (!(video instanceof HTMLVideoElement)) return;
+      if (reduceMotion) {
+        video.pause();
+        video.removeAttribute('autoplay');
+        return;
+      }
+      // A failed source (unsupported codec, bad path) should degrade to the
+      // still image rather than leaving a blank/broken video box.
+      video.addEventListener('error', () => {
+        const fallback = video.dataset.fallback;
+        if (!fallback) return;
+        const image = document.createElement('img');
+        image.src = fallback;
+        image.alt = '';
+        image.loading = 'lazy';
+        image.className = video.className;
+        video.replaceWith(image);
       }, { once: true });
     });
   </script>

@@ -10,9 +10,9 @@ const lang = resolveLang(Astro.props.lang ?? Astro.params.lang);
 const t = getTranslation(lang);
 
 const aboutGallery = [
-  '/images/06_road_logistics_truck.jpg',
-  '/images/03_metals_steel.jpg',
-  '/images/02_bitumen.jpg',
+  '/images/06_road_logistics_truck.webp',
+  '/images/03_metals_steel.webp',
+  '/images/02_bitumen.webp',
 ];
 
 const ceoByLanguage = {
@@ -55,7 +55,7 @@ const ceoByLanguage = {
 } as const;
 
 const ceo = ceoByLanguage[lang] ?? ceoByLanguage.en;
-const ceoImage = '/images/CEO.png';
+const ceoImage = '/images/CEO.webp';
 
 const mapQuery = encodeURIComponent(t.pages.about.mapAddress || t.pages.contact.address);
 const mapUrl = `https://www.google.com/maps/search/?api=1&query=${mapQuery}`;
@@ -82,7 +82,7 @@ const mapEmbedUrl = `https://www.google.com/maps?q=${mapQuery}&output=embed&z=14
               alt={t.pages.home.heroImageAlt}
               class="h-40 w-full object-cover sm:h-48 lg:h-44"
               loading="lazy"
-              onerror="this.onerror=null; this.src='/images/logestic1.jpg';"
+              onerror="this.onerror=null; this.src='/images/logestic1.webp';"
             />
           </div>
         ))}
@@ -92,7 +92,7 @@ const mapEmbedUrl = `https://www.google.com/maps?q=${mapQuery}&output=embed&z=14
     <div class="text-center">
       <div class="mb-4 flex justify-center">
         <span class="inline-flex h-10 w-16 items-center justify-center overflow-hidden rounded-xl bg-white/90 ring-1 ring-[#19266A]/10">
-          <img src="/images/iran-flag.jpg" alt="Iran flag" class="h-full w-full object-cover" loading="lazy" />
+          <img src="/images/iran-flag.webp" alt="Iran flag" class="h-full w-full object-cover" loading="lazy" />
         </span>
       </div>
 
@@ -113,7 +113,7 @@ const mapEmbedUrl = `https://www.google.com/maps?q=${mapQuery}&output=embed&z=14
             alt={`${ceo.name} — ${ceo.role}`}
             class="absolute inset-0 h-full w-full object-cover object-top"
             loading="lazy"
-            onerror="this.onerror=null; this.src='/images/logestic1.jpg';"
+            onerror="this.onerror=null; this.src='/images/logestic1.webp';"
           />
           <div class="absolute inset-0 bg-gradient-to-t from-[#10184A]/70 via-transparent to-transparent lg:bg-gradient-to-r lg:from-transparent lg:to-[#10184A]/25"></div>
 

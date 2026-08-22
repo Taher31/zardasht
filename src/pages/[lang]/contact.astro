@@ -23,6 +23,8 @@ const productGroups = [
   { code: 'AG', label: t.labels.trade.agriculturalCommodities },
   { code: 'TX', label: t.labels.trade.textileRawMaterials },
 ];
+
+const whatsappGreetingUrl = `${WHATSAPP_URL}?text=${encodeURIComponent(t.pages.contact.whatsappGreeting)}`;
 ---
 
 <Layout title={t.pages.contact.title} lang={lang} translation={t}>
@@ -52,13 +54,13 @@ const productGroups = [
             <div class="mt-6 space-y-5 border-t border-white/10 pt-6">
               <div>
                 <p class="text-[10px] font-bold uppercase tracking-[0.2em] text-white/45">{t.pages.contact.form.email}</p>
-                <a href={`mailto:${t.pages.contact.email}`} dir="ltr" class="mt-1 inline-block text-sm font-semibold text-white transition hover:text-[#F3C623]">
+                <a href={`mailto:${t.pages.contact.email}`} dir="ltr" class="mt-1 inline-block text-sm font-semibold text-white transition hover:text-[#F3C623]" data-copy-email={t.pages.contact.email}>
                   {t.pages.contact.email}
                 </a>
               </div>
               <div>
                 <p class="text-[10px] font-bold uppercase tracking-[0.2em] text-white/45">{t.pages.contact.form.phone}</p>
-                <a href={WHATSAPP_URL} target="_blank" rel="noreferrer" dir="ltr" class="mt-1 inline-block text-sm font-semibold text-white transition hover:text-[#F3C623]">
+                <a href={whatsappGreetingUrl} target="_blank" rel="noreferrer" dir="ltr" class="mt-1 inline-block text-sm font-semibold text-white transition hover:text-[#F3C623]">
                   {t.pages.contact.phone}
                 </a>
               </div>
@@ -66,7 +68,7 @@ const productGroups = [
                 <p class="text-[10px] font-bold uppercase tracking-[0.2em] text-white/45">{t.pages.contact.addressLabel}</p>
                 <div class="mt-2 flex items-start gap-3">
                   <span class="mt-0.5 inline-flex h-5 w-8 shrink-0 overflow-hidden rounded-sm ring-1 ring-white/15">
-                    <img src="/images/iran-flag.jpg" alt="Iran flag" class="h-full w-full object-cover" loading="lazy" />
+                    <img src="/images/iran-flag.webp" alt="Iran flag" class="h-full w-full object-cover" loading="lazy" />
                   </span>
                   <p class="text-sm leading-6 text-white/75">{t.pages.contact.address}</p>
                 </div>

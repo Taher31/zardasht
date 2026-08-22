@@ -14,6 +14,7 @@ const base = withLanguagePrefix(lang, '/');
 const productsHref = withLanguagePrefix(lang, '/products');
 const marketsHref = withLanguagePrefix(lang, '/trade-map');
 const logisticsHref = withLanguagePrefix(lang, '/logistics');
+const newsHref = withLanguagePrefix(lang, '/news');
 const aboutHref = withLanguagePrefix(lang, '/about');
 const contactHref = withLanguagePrefix(lang, '/contact');
 
@@ -60,6 +61,7 @@ const labels = {
   products: translation.labels.nav.products,
   markets: translation.labels.nav.resources,
   logistics: translation.labels.nav.solutions,
+  news: translation.labels.nav.news,
   about: translation.labels.nav.about,
   contact: translation.labels.nav.contact,
   inquiry: translation.labels.trade.inquiry,
@@ -104,6 +106,7 @@ const mainLinks = [
   { href: base, label: labels.home },
   { href: marketsHref, label: labels.markets },
   { href: logisticsHref, label: labels.logistics },
+  { href: newsHref, label: labels.news },
   { href: aboutHref, label: labels.about },
   { href: contactHref, label: labels.contact },
 ];
@@ -126,6 +129,7 @@ const dialogId = `site-mobile-menu-${lang}`;
         <a
           href={`mailto:${translation.pages.contact.email}`}
           class="text-[11px] font-semibold text-white/65 transition hover:text-white"
+          data-copy-email={translation.pages.contact.email}
         >
           {translation.pages.contact.email}
         </a>
@@ -144,10 +148,13 @@ const dialogId = `site-mobile-menu-${lang}`;
   <div class="mx-auto flex min-h-[78px] w-full max-w-7xl items-center gap-5 px-4 sm:px-6 lg:px-8">
     <a href={base} class="flex min-w-0 shrink-0 items-center gap-3" aria-label={translation.labels.brand}>
       <img
-        src="/logo.png"
+        src="/logo.webp"
         alt={translation.labels.brand}
         class="h-12 w-12 shrink-0 object-contain"
       />
+      <p class="max-w-[180px] text-[11px] font-extrabold leading-tight text-[#19266A] sm:hidden">
+        {translation.labels.brand}
+      </p>
       <div class="hidden min-w-0 sm:block">
         <p class="max-w-[250px] truncate text-[9px] font-extrabold uppercase tracking-[0.2em] text-[#19266A]/45">
           {labels.tagline}
@@ -288,7 +295,7 @@ const dialogId = `site-mobile-menu-${lang}`;
   <div class="site-menu-panel">
     <div class="site-menu-mobile-header">
       <a href={base} class="flex min-w-0 items-center gap-3" data-site-menu-link>
-        <img src="/logo.png" alt="" class="h-11 w-11 shrink-0 object-contain" />
+        <img src="/logo.webp" alt="" class="h-11 w-11 shrink-0 object-contain" />
         <div class="min-w-0">
           <p class="truncate text-[9px] font-black uppercase tracking-[0.18em] text-[#19266A]/40">{labels.tagline}</p>
           <p class="truncate text-sm font-extrabold text-[#19266A] sm:text-base">{translation.labels.brand}</p>
@@ -340,12 +347,21 @@ const dialogId = `site-mobile-menu-${lang}`;
           </a>
 
           <a
+            href={newsHref}
+            data-site-menu-link
+            class:list={['mobile-primary-link', isActive(newsHref) && 'mobile-primary-link--active']}
+          >
+            <span>{labels.news}</span>
+            <span class="mobile-primary-index">04</span>
+          </a>
+
+          <a
             href={aboutHref}
             data-site-menu-link
             class:list={['mobile-primary-link', isActive(aboutHref) && 'mobile-primary-link--active']}
           >
             <span>{labels.about}</span>
-            <span class="mobile-primary-index">04</span>
+            <span class="mobile-primary-index">05</span>
           </a>
 
           <a
@@ -354,7 +370,7 @@ const dialogId = `site-mobile-menu-${lang}`;
             class:list={['mobile-primary-link', isActive(contactHref) && 'mobile-primary-link--active']}
           >
             <span>{labels.contact}</span>
-            <span class="mobile-primary-index">05</span>
+            <span class="mobile-primary-index">06</span>
           </a>
         </div>
       </section>

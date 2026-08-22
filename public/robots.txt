@@ -1,6 +1,4 @@
 User-agent: *
 Allow: /
 
-# The sitemap is only emitted once SITE_URL is set (see .env.example), because
-# @astrojs/sitemap needs an absolute site URL. Add the line below once it is:
-#   Sitemap: https://your-domain.com/sitemap-index.xml
+Sitemap: https://www.zardasht-co.com/sitemap-index.xml

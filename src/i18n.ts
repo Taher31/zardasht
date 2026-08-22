@@ -1,4 +1,6 @@
-﻿
+﻿import contactData from './data/contact.json';
+import productsData from './data/products.json';
+
 export type LanguageCode = "en" | "fa" | "ar" | "ru";
 
 export interface Translation {
@@ -16,12 +18,14 @@ export interface Translation {
       contact: string;
       tradeMap: string;
       quality: string;
+      news: string;
     };
     trade: {
       tagline: string;
       inquiry: string;
       productGroups: string;
       viewAllProducts: string;
+      downloadCatalog: string;
       energyBitumen: string;
       metalsSteel: string;
       agriculturalCommodities: string;
@@ -126,6 +130,7 @@ export interface Translation {
       email: string;
       quickLinks: string[];
       whatsappIntro: string;
+      whatsappGreeting: string;
       form: {
         name: string;
         company: string;
@@ -147,6 +152,17 @@ export interface Translation {
       pillars: { title: string; description: string; badge: string }[];
       processTitle: string;
       process: { title: string; description: string }[];
+    };
+    news: {
+      eyebrow: string;
+      title: string;
+      intro: string;
+      homeTitle: string;
+      homeIntro: string;
+      readMore: string;
+      allNews: string;
+      back: string;
+      empty: string;
     };
     tradeMap: {
       title: string;
@@ -204,12 +220,14 @@ const en: Omit<Translation, 'lang' | 'dir'> = {
       contact: 'Contact',
       tradeMap: 'Trade Map',
       quality: 'Quality',
+      news: 'News',
     },
     trade: {
       tagline: 'International Commodity Trading · Central Asia · Russia',
       inquiry: 'Send Trade Inquiry',
       productGroups: 'Product Groups',
       viewAllProducts: 'View all products',
+      downloadCatalog: 'Download Product Catalog (PDF)',
       energyBitumen: 'Energy & Bitumen',
       metalsSteel: 'Metals & Steel',
       agriculturalCommodities: 'Agricultural Commodities',
@@ -293,48 +311,7 @@ const en: Omit<Translation, 'lang' | 'dir'> = {
       title: 'Commodity groups for regional trade',
       intro: 'Our portfolio spans industrial, agricultural, and textile commodities. Final specifications, origin, quantity, and delivery terms are confirmed for each transaction.',
       cta: 'Send Trade Inquiry',
-      sections: [
-        {
-          id: 'energy-bitumen', badge: 'EB', title: 'Energy & Bitumen',
-          description: 'Bitumen export supply with a current focus on Uzbekistan and qualified regional buyers.',
-          products: [
-            { name: 'Bitumen exports', description: 'Supply for Uzbekistan and other regional opportunities based on agreed specification and availability.', tag: 'Export' },
-            { name: 'Specification matching', description: 'Grade, packaging, and commercial requirements are confirmed against each inquiry.', tag: 'Specs' },
-            { name: 'Logistics planning', description: 'Route and shipment mode are selected according to destination, volume, and delivery terms.', tag: 'Logistics' },
-            { name: 'Commercial quotation', description: 'Quotes are structured around quantity, destination, required specification, and Incoterm.', tag: 'Trade' },
-          ],
-        },
-        {
-          id: 'metals-steel', badge: 'MS', title: 'Metals & Steel',
-          description: 'Iron and steel products for buyers across Central Asian markets.',
-          products: [
-            { name: 'Product scope', description: 'Iron and steel products sourced and supplied according to the buyer’s requested category.', tag: 'Products' },
-            { name: 'Specification matching', description: 'Dimensions, grade, standard, and quantity are aligned before commercial confirmation.', tag: 'Specs' },
-            { name: 'Supplier coordination', description: 'Available supplier options are evaluated against specification, timing, and commercial terms.', tag: 'Sourcing' },
-            { name: 'Regional delivery', description: 'Export planning is organized for Central Asian destinations on a transaction-by-transaction basis.', tag: 'Export' },
-          ],
-        },
-        {
-          id: 'agricultural-commodities', badge: 'AG', title: 'Agricultural Commodities',
-          description: 'Barley from Russia alongside pulses, grains, and selected agricultural commodities.',
-          products: [
-            { name: 'Barley from Russia', description: 'Russian-origin barley sourced for import based on required specification and volume.', tag: 'Barley' },
-            { name: 'Pulses & grains', description: 'Pulses and grain opportunities remain part of the wider agricultural trading portfolio.', tag: 'Agriculture' },
-            { name: 'Quality requirements', description: 'Commercial specifications and inspection requirements are agreed before purchase confirmation.', tag: 'Specs' },
-            { name: 'Supply planning', description: 'Spot and repeat requirements are evaluated according to origin availability and destination.', tag: 'Supply' },
-          ],
-        },
-        {
-          id: 'textile-raw-materials', badge: 'TX', title: 'Textile Raw Materials',
-          description: 'Silk yarn imports and specification-led sourcing for textile raw materials.',
-          products: [
-            { name: 'Silk yarn imports', description: 'Silk yarn is sourced for import according to the buyer’s required specification and quantity.', tag: 'Silk Yarn' },
-            { name: 'Specification matching', description: 'Count, quality, packaging, and other technical requirements are confirmed per inquiry.', tag: 'Specs' },
-            { name: 'Supplier coordination', description: 'Supplier offers are compared against quality, commercial terms, and delivery requirements.', tag: 'Sourcing' },
-            { name: 'Import execution', description: 'Commercial and logistics steps are coordinated from supplier confirmation through delivery.', tag: 'Import' },
-          ],
-        },
-      ],
+      sections: productsData.en,
     },
     solutions: {
       eyebrow: 'Trade & Logistics',
@@ -394,12 +371,10 @@ const en: Omit<Translation, 'lang' | 'dir'> = {
       eyebrow: 'Trade inquiry',
       title: 'Tell us what you need to buy or sell',
       intro: 'Share the commodity, specification, quantity, origin or destination, and preferred delivery terms so our trade team can evaluate the opportunity.',
-      address: 'Razavi Khorasan Province, Mashhad, District 1, Sanabad St, No. 32, Iran',
-      addressLabel: 'Address',
-      phone: '+98 (0) 000-000-0000',
-      email: 'sales@Zardasht.com',
+      ...contactData.en,
       quickLinks: ['Send Trade Inquiry', 'Explore Products', 'View Trade Map'],
       whatsappIntro: 'Hello, I would like to discuss a commodity trade inquiry.',
+      whatsappGreeting: "Hello, I'm contacting you from your website (Zardasht Mahd Binaloud Trading).",
       form: {
         name: 'Full name', company: 'Company name', country: 'Country', email: 'Work email', phone: 'Phone / WhatsApp',
         product: 'Commodity & specification', quantity: 'Quantity', destination: 'Origin / destination', incoterms: 'Preferred delivery terms',
@@ -422,6 +397,17 @@ const en: Omit<Translation, 'lang' | 'dir'> = {
         { title: '3) Documentation', description: 'Shipping and compliance documentation is prepared to match destination requirements.' },
         { title: '4) Delivery confirmation', description: 'Shipment details are confirmed against the agreed terms through to delivery.' },
       ],
+    },
+    news: {
+      eyebrow: 'Newsroom',
+      title: 'Company news',
+      intro: 'Meetings, visits and events from our trade activity across the region.',
+      homeTitle: 'Latest news',
+      homeIntro: 'Recent meetings, visits and events.',
+      readMore: 'Read more',
+      allNews: 'All news',
+      back: 'Back to news',
+      empty: 'No news published yet.',
     },
     tradeMap: {
       title: 'Trade Map',
@@ -466,12 +452,14 @@ const fa: Omit<Translation, 'lang' | 'dir'> = {
       contact: 'تماس',
       tradeMap: 'نقشه تجارت',
       quality: 'کیفیت',
+      news: 'اخبار',
     },
     trade: {
       tagline: 'بازرگانی بین‌المللی کالا · آسیای مرکزی · روسیه',
       inquiry: 'ارسال درخواست تجاری',
       productGroups: 'گروه‌های کالایی',
       viewAllProducts: 'مشاهده همه محصولات',
+      downloadCatalog: 'دانلود کاتالوگ محصولات (PDF)',
       energyBitumen: 'انرژی و قیر',
       metalsSteel: 'فلزات و فولاد',
       agriculturalCommodities: 'محصولات کشاورزی',
@@ -555,48 +543,7 @@ const fa: Omit<Translation, 'lang' | 'dir'> = {
       title: 'گروه‌های کالایی برای تجارت منطقه‌ای',
       intro: 'سبد ما شامل کالاهای صنعتی، کشاورزی و مواد اولیه نساجی است. مشخصات نهایی، مبدأ، مقدار و شرایط تحویل برای هر معامله جداگانه تأیید می‌شود.',
       cta: 'ارسال درخواست تجاری',
-      sections: [
-        {
-          id: 'energy-bitumen', badge: 'EB', title: 'انرژی و قیر',
-          description: 'تأمین صادراتی قیر با تمرکز فعلی بر ازبکستان و خریداران مناسب منطقه.',
-          products: [
-            { name: 'صادرات قیر', description: 'تأمین برای ازبکستان و فرصت‌های منطقه‌ای بر اساس مشخصات توافق‌شده و موجودی.', tag: 'صادرات' },
-            { name: 'تطبیق مشخصات', description: 'گرید، نوع بسته‌بندی و نیازهای تجاری برای هر درخواست به‌طور جداگانه تأیید می‌شود.', tag: 'مشخصات' },
-            { name: 'برنامه‌ریزی لجستیک', description: 'مسیر و روش حمل بر اساس مقصد، حجم و شرایط تحویل انتخاب می‌شود.', tag: 'لجستیک' },
-            { name: 'پیشنهاد تجاری', description: 'قیمت‌گذاری بر اساس مقدار، مقصد، مشخصات موردنیاز و شرایط تحویل انجام می‌شود.', tag: 'تجارت' },
-          ],
-        },
-        {
-          id: 'metals-steel', badge: 'MS', title: 'فلزات و فولاد',
-          description: 'آهن و محصولات فولادی برای خریداران بازارهای آسیای مرکزی.',
-          products: [
-            { name: 'دامنه محصولات', description: 'آهن و محصولات فولادی مطابق گروه کالایی موردنیاز خریدار تأمین می‌شود.', tag: 'محصولات' },
-            { name: 'تطبیق مشخصات', description: 'ابعاد، گرید، استاندارد و مقدار پیش از تأیید تجاری هماهنگ می‌شود.', tag: 'مشخصات' },
-            { name: 'هماهنگی تأمین‌کننده', description: 'گزینه‌های تأمین بر اساس مشخصات، زمان و شرایط تجاری ارزیابی می‌شوند.', tag: 'تأمین' },
-            { name: 'تحویل منطقه‌ای', description: 'برنامه صادرات برای مقاصد آسیای مرکزی متناسب با هر معامله تنظیم می‌شود.', tag: 'صادرات' },
-          ],
-        },
-        {
-          id: 'agricultural-commodities', badge: 'AG', title: 'کالاهای کشاورزی',
-          description: 'جو از روسیه در کنار حبوبات، غلات و کالاهای کشاورزی منتخب.',
-          products: [
-            { name: 'جو از روسیه', description: 'جو با مبدأ روسیه بر اساس مشخصات و حجم موردنیاز برای واردات تأمین می‌شود.', tag: 'جو' },
-            { name: 'حبوبات و غلات', description: 'حبوبات و فرصت‌های مرتبط با غلات همچنان بخشی از سبد گسترده کشاورزی شرکت هستند.', tag: 'کشاورزی' },
-            { name: 'الزامات کیفی', description: 'مشخصات تجاری و الزامات بازرسی پیش از تأیید خرید توافق می‌شوند.', tag: 'مشخصات' },
-            { name: 'برنامه تأمین', description: 'نیازهای موردی یا تکرارشونده بر اساس موجودی مبدأ و مقصد ارزیابی می‌شوند.', tag: 'تأمین' },
-          ],
-        },
-        {
-          id: 'textile-raw-materials', badge: 'TX', title: 'مواد اولیه نساجی',
-          description: 'واردات نخ ابریشم و تأمین مواد اولیه نساجی بر مبنای مشخصات فنی.',
-          products: [
-            { name: 'واردات نخ ابریشم', description: 'نخ ابریشم مطابق مشخصات و مقدار موردنیاز برای واردات تأمین می‌شود.', tag: 'نخ ابریشم' },
-            { name: 'تطبیق مشخصات', description: 'نمره، کیفیت، بسته‌بندی و سایر الزامات فنی برای هر درخواست تأیید می‌شود.', tag: 'مشخصات' },
-            { name: 'هماهنگی تأمین‌کننده', description: 'پیشنهادهای تأمین بر اساس کیفیت، شرایط تجاری و نیاز تحویل مقایسه می‌شوند.', tag: 'تأمین' },
-            { name: 'اجرای واردات', description: 'مراحل تجاری و لجستیکی از تأیید تأمین‌کننده تا تحویل هماهنگ می‌شود.', tag: 'واردات' },
-          ],
-        },
-      ],
+      sections: productsData.fa,
     },
     solutions: {
       eyebrow: 'تجارت و لجستیک',
@@ -652,11 +599,10 @@ const fa: Omit<Translation, 'lang' | 'dir'> = {
       eyebrow: 'درخواست تجاری',
       title: 'بگویید قصد خرید یا فروش چه کالایی را دارید',
       intro: 'نام کالا، مشخصات، مقدار، مبدأ یا مقصد و شرایط تحویل موردنظر را ارسال کنید تا تیم بازرگانی فرصت معامله را بررسی کند.',
-      address: 'استان خراسان رضوی، مشهد، منطقه ۱، خیابان سناباد، پلاک ۳۲، ایران',
-      addressLabel: 'آدرس',
-      phone: '+98 (0) 000-000-0000', email: 'sales@Zardasht.com',
+      ...contactData.fa,
       quickLinks: ['ارسال درخواست تجاری', 'مشاهده محصولات', 'مشاهده نقشه تجارت'],
       whatsappIntro: 'سلام، مایل به بررسی یک درخواست تجاری کالا هستم.',
+      whatsappGreeting: 'سلام، از طریق وب‌سایت شما (بازرگانی زردشت مهد بینالود) در تماس هستم.',
       form: {
         name: 'نام و نام خانوادگی', company: 'نام شرکت', country: 'کشور', email: 'ایمیل کاری', phone: 'تلفن / واتساپ',
         product: 'کالا و مشخصات', quantity: 'مقدار', destination: 'مبدأ / مقصد', incoterms: 'شرایط تحویل ترجیحی',
@@ -679,6 +625,17 @@ const fa: Omit<Translation, 'lang' | 'dir'> = {
         { title: '۳) مستندسازی', description: 'مدارک حمل و انطباق مطابق با الزامات مقصد آماده می‌شود.' },
         { title: '۴) تأیید تحویل', description: 'جزئیات محموله تا تحویل نهایی مطابق شرایط توافق‌شده تأیید می‌شود.' },
       ],
+    },
+    news: {
+      eyebrow: 'اتاق خبر',
+      title: 'اخبار شرکت',
+      intro: 'دیدارها، بازدیدها و رویدادهای مرتبط با فعالیت تجاری ما در منطقه.',
+      homeTitle: 'آخرین اخبار',
+      homeIntro: 'دیدارها، بازدیدها و رویدادهای اخیر.',
+      readMore: 'ادامه مطلب',
+      allNews: 'همه اخبار',
+      back: 'بازگشت به اخبار',
+      empty: 'هنوز خبری منتشر نشده است.',
     },
     tradeMap: {
       title: 'نقشه تجارت',
@@ -725,12 +682,14 @@ const ar: Omit<Translation, 'lang' | 'dir'> = {
       contact: 'اتصل بنا',
       tradeMap: 'خريطة التجارة',
       quality: 'الجودة',
+      news: 'الأخبار',
     },
     trade: {
       tagline: 'تجارة السلع الدولية · آسيا الوسطى · روسيا',
       inquiry: 'إرسال استفسار تجاري',
       productGroups: 'فئات المنتجات',
       viewAllProducts: 'عرض جميع المنتجات',
+      downloadCatalog: 'تنزيل كتالوج المنتجات (PDF)',
       energyBitumen: 'الطاقة والبيتومين',
       metalsSteel: 'المعادن والصلب',
       agriculturalCommodities: 'السلع الزراعية',
@@ -813,32 +772,7 @@ const ar: Omit<Translation, 'lang' | 'dir'> = {
       eyebrow: 'المنتجات', title: 'مجموعات سلعية للتجارة الإقليمية',
       intro: 'تشمل محفظتنا السلع الصناعية والزراعية والمواد الخام للنسيج. يتم تأكيد المواصفات النهائية والمنشأ والكمية وشروط التسليم لكل صفقة.',
       cta: 'إرسال استفسار تجاري',
-      sections: [
-        { id: 'energy-bitumen', badge: 'EB', title: 'الطاقة والبيتومين', description: 'توريد البيتومين للتصدير مع تركيز حالي على أوزبكستان والمشترين المؤهلين إقليميًا.', products: [
-          { name: 'تصدير البيتومين', description: 'توريد إلى أوزبكستان وفرص إقليمية حسب المواصفات المتفق عليها والتوفر.', tag: 'تصدير' },
-          { name: 'مطابقة المواصفات', description: 'يتم تأكيد الدرجة والتعبئة والمتطلبات التجارية لكل استفسار.', tag: 'مواصفات' },
-          { name: 'تخطيط اللوجستيات', description: 'يتم اختيار المسار وطريقة الشحن حسب الوجهة والحجم وشروط التسليم.', tag: 'لوجستيات' },
-          { name: 'العرض التجاري', description: 'يتم إعداد العرض وفق الكمية والوجهة والمواصفات وشروط التسليم.', tag: 'تجارة' },
-        ]},
-        { id: 'metals-steel', badge: 'MS', title: 'المعادن والصلب', description: 'منتجات الحديد والصلب للمشترين في أسواق آسيا الوسطى.', products: [
-          { name: 'نطاق المنتجات', description: 'توريد منتجات الحديد والصلب وفق الفئة المطلوبة من المشتري.', tag: 'منتجات' },
-          { name: 'مطابقة المواصفات', description: 'تتم مواءمة الأبعاد والدرجة والمعيار والكمية قبل التأكيد التجاري.', tag: 'مواصفات' },
-          { name: 'تنسيق الموردين', description: 'تقييم خيارات الموردين حسب المواصفات والتوقيت والشروط التجارية.', tag: 'توريد' },
-          { name: 'التسليم الإقليمي', description: 'تخطيط التصدير لوجهات آسيا الوسطى حسب كل صفقة.', tag: 'تصدير' },
-        ]},
-        { id: 'agricultural-commodities', badge: 'AG', title: 'السلع الزراعية', description: 'الشعير من روسيا إلى جانب البقول والحبوب والسلع الزراعية المختارة.', products: [
-          { name: 'الشعير من روسيا', description: 'توريد الشعير الروسي للاستيراد حسب المواصفات والحجم المطلوبين.', tag: 'شعير' },
-          { name: 'البقول والحبوب', description: 'تبقى فرص البقول والحبوب جزءًا من المحفظة الزراعية الأوسع.', tag: 'زراعة' },
-          { name: 'متطلبات الجودة', description: 'يتم الاتفاق على المواصفات ومتطلبات الفحص قبل تأكيد الشراء.', tag: 'مواصفات' },
-          { name: 'تخطيط التوريد', description: 'تقييم الاحتياجات الفورية والمتكررة وفق توفر المنشأ والوجهة.', tag: 'توريد' },
-        ]},
-        { id: 'textile-raw-materials', badge: 'TX', title: 'المواد الخام للنسيج', description: 'استيراد خيوط الحرير وتوريد المواد الخام للنسيج حسب المواصفات.', products: [
-          { name: 'استيراد خيوط الحرير', description: 'توريد خيوط الحرير للاستيراد حسب المواصفات والكمية المطلوبة.', tag: 'حرير' },
-          { name: 'مطابقة المواصفات', description: 'تأكيد العدد والجودة والتعبئة والمتطلبات الفنية لكل استفسار.', tag: 'مواصفات' },
-          { name: 'تنسيق الموردين', description: 'مقارنة عروض الموردين حسب الجودة والشروط التجارية ومتطلبات التسليم.', tag: 'توريد' },
-          { name: 'تنفيذ الاستيراد', description: 'تنسيق الخطوات التجارية واللوجستية من تأكيد المورد حتى التسليم.', tag: 'استيراد' },
-        ]},
-      ],
+      sections: productsData.ar,
     },
     solutions: {
       eyebrow: 'التجارة واللوجستيات', title: 'تجارة عابرة للحدود من التوريد إلى التسليم',
@@ -881,9 +815,10 @@ const ar: Omit<Translation, 'lang' | 'dir'> = {
     contact: {
       eyebrow: 'استفسار تجاري', title: 'أخبرنا بما تريد شراءه أو بيعه',
       intro: 'أرسل السلعة والمواصفات والكمية والمنشأ أو الوجهة وشروط التسليم المفضلة ليقيّم فريق التجارة الفرصة.',
-      address: 'محافظة خراسان الرضوية، مشهد، المنطقة 1، شارع سناباد، رقم 32، إيران', addressLabel: 'العنوان', phone: '+98 (0) 000-000-0000', email: 'sales@Zardasht.com',
+      ...contactData.ar,
       quickLinks: ['إرسال استفسار تجاري', 'استعراض المنتجات', 'عرض خريطة التجارة'],
       whatsappIntro: 'مرحبًا، أرغب في مناقشة استفسار تجاري بخصوص سلعة.',
+      whatsappGreeting: 'مرحبًا، أتواصل معكم من خلال موقعكم الإلكتروني (زردشت مهد بينالود للتجارة).',
       form: { name: 'الاسم الكامل', company: 'اسم الشركة', country: 'الدولة', email: 'البريد المهني', phone: 'الهاتف / واتساب', product: 'السلعة والمواصفات', quantity: 'الكمية', destination: 'المنشأ / الوجهة', incoterms: 'شروط التسليم المفضلة', message: 'ملاحظات / متطلبات', submit: 'إرسال الاستفسار' },
     },
     quality: {
@@ -902,6 +837,17 @@ const ar: Omit<Translation, 'lang' | 'dir'> = {
         { title: '3) التوثيق', description: 'تُعد مستندات الشحن والامتثال لتتوافق مع متطلبات الوجهة.' },
         { title: '4) تأكيد التسليم', description: 'تُؤكَّد تفاصيل الشحنة وفق الشروط المتفق عليها حتى التسليم.' },
       ],
+    },
+    news: {
+      eyebrow: 'غرفة الأخبار',
+      title: 'أخبار الشركة',
+      intro: 'اجتماعات وزيارات وفعاليات من نشاطنا التجاري في المنطقة.',
+      homeTitle: 'أحدث الأخبار',
+      homeIntro: 'اجتماعات وزيارات وفعاليات حديثة.',
+      readMore: 'اقرأ المزيد',
+      allNews: 'كل الأخبار',
+      back: 'العودة إلى الأخبار',
+      empty: 'لم يتم نشر أي أخبار بعد.',
     },
     tradeMap: {
       title: 'خريطة التجارة',
@@ -948,12 +894,14 @@ const ru: Omit<Translation, 'lang' | 'dir'> = {
       contact: 'Контакты',
       tradeMap: 'Карта торговли',
       quality: 'Качество',
+      news: 'Новости',
     },
     trade: {
       tagline: 'Международная торговля · Центральная Азия · Россия',
       inquiry: 'Отправить торговый запрос',
       productGroups: 'Товарные группы',
       viewAllProducts: 'Все продукты',
+      downloadCatalog: 'Скачать каталог продукции (PDF)',
       energyBitumen: 'Энергия и битум',
       metalsSteel: 'Металлы и сталь',
       agriculturalCommodities: 'Сельхозпродукция',
@@ -1027,32 +975,7 @@ const ru: Omit<Translation, 'lang' | 'dir'> = {
     products: {
       eyebrow: 'Товары', title: 'Товарные группы для региональной торговли',
       intro: 'Наш портфель охватывает промышленные, сельскохозяйственные и текстильные товары. Финальные спецификации, происхождение, объем и условия поставки подтверждаются по каждой сделке.', cta: 'Отправить торговый запрос',
-      sections: [
-        { id: 'energy-bitumen', badge: 'EB', title: 'Энергетика и битум', description: 'Экспортные поставки битума с текущим фокусом на Узбекистан и подходящих региональных покупателей.', products: [
-          { name: 'Экспорт битума', description: 'Поставки в Узбекистан и другие региональные направления по согласованной спецификации и наличию.', tag: 'Экспорт' },
-          { name: 'Соответствие спецификации', description: 'Марка, упаковка и коммерческие требования подтверждаются для каждого запроса.', tag: 'Спецификация' },
-          { name: 'Логистическое планирование', description: 'Маршрут и способ перевозки выбираются с учетом назначения, объема и условий поставки.', tag: 'Логистика' },
-          { name: 'Коммерческое предложение', description: 'Цена формируется с учетом объема, назначения, спецификации и условий поставки.', tag: 'Торговля' },
-        ]},
-        { id: 'metals-steel', badge: 'MS', title: 'Металлы и сталь', description: 'Железо и стальная продукция для покупателей в Центральной Азии.', products: [
-          { name: 'Ассортимент', description: 'Железо и стальная продукция поставляются в соответствии с требуемой категорией покупателя.', tag: 'Товары' },
-          { name: 'Соответствие спецификации', description: 'Размеры, марка, стандарт и объем согласуются до коммерческого подтверждения.', tag: 'Спецификация' },
-          { name: 'Работа с поставщиками', description: 'Варианты поставок оцениваются по спецификации, срокам и коммерческим условиям.', tag: 'Сорсинг' },
-          { name: 'Региональная поставка', description: 'Экспортное планирование для направлений Центральной Азии организуется по каждой сделке.', tag: 'Экспорт' },
-        ]},
-        { id: 'agricultural-commodities', badge: 'AG', title: 'Сельхозтовары', description: 'Ячмень из России, а также бобовые, зерновые и отдельные сельскохозяйственные товары.', products: [
-          { name: 'Ячмень из России', description: 'Ячмень российского происхождения закупается для импорта по требуемой спецификации и объему.', tag: 'Ячмень' },
-          { name: 'Бобовые и зерновые', description: 'Бобовые и зерновые остаются частью более широкого сельскохозяйственного портфеля.', tag: 'Сельхоз' },
-          { name: 'Требования к качеству', description: 'Коммерческие спецификации и требования к инспекции согласуются до подтверждения закупки.', tag: 'Спецификация' },
-          { name: 'Планирование поставок', description: 'Разовые и повторные потребности оцениваются по доступности происхождения и назначению.', tag: 'Поставка' },
-        ]},
-        { id: 'textile-raw-materials', badge: 'TX', title: 'Текстильное сырье', description: 'Импорт шелковой пряжи и поставки текстильного сырья по спецификации.', products: [
-          { name: 'Импорт шелковой пряжи', description: 'Шелковая пряжа закупается для импорта по требуемой спецификации и объему.', tag: 'Шелк' },
-          { name: 'Соответствие спецификации', description: 'Номер, качество, упаковка и другие технические требования подтверждаются по запросу.', tag: 'Спецификация' },
-          { name: 'Работа с поставщиками', description: 'Предложения поставщиков сравниваются по качеству, условиям и требованиям к поставке.', tag: 'Сорсинг' },
-          { name: 'Импортное исполнение', description: 'Коммерческие и логистические шаги координируются от подтверждения поставщика до доставки.', tag: 'Импорт' },
-        ]},
-      ],
+      sections: productsData.ru,
     },
     solutions: {
       eyebrow: 'Торговля и логистика', title: 'Трансграничная торговля от закупки до поставки',
@@ -1094,9 +1017,10 @@ const ru: Omit<Translation, 'lang' | 'dir'> = {
     contact: {
       eyebrow: 'Торговый запрос', title: 'Расскажите, что вы хотите купить или продать',
       intro: 'Укажите товар, спецификацию, объем, происхождение или назначение и предпочтительные условия поставки, чтобы наша торговая команда могла оценить возможность.',
-      address: 'Провинция Разави-Хорасан, Мешхед, район 1, ул. Санабад, 32, Иран', addressLabel: 'Адрес', phone: '+98 (0) 000-000-0000', email: 'sales@Zardasht.com',
+      ...contactData.ru,
       quickLinks: ['Отправить торговый запрос', 'Смотреть товары', 'Карта торговли'],
       whatsappIntro: 'Здравствуйте, хочу обсудить торговый запрос по товару.',
+      whatsappGreeting: 'Здравствуйте, я обращаюсь к вам через ваш сайт (Zardasht Mahd Binaloud Trading).',
       form: { name: 'Имя и фамилия', company: 'Компания', country: 'Страна', email: 'Рабочий email', phone: 'Телефон / WhatsApp', product: 'Товар и спецификация', quantity: 'Объем', destination: 'Происхождение / назначение', incoterms: 'Предпочтительные условия поставки', message: 'Примечания / требования', submit: 'Отправить запрос' },
     },
     quality: {
@@ -1115,6 +1039,17 @@ const ru: Omit<Translation, 'lang' | 'dir'> = {
         { title: '3) Документы', description: 'Отгрузочные и разрешительные документы готовятся в соответствии с требованиями направления.' },
         { title: '4) Подтверждение доставки', description: 'Детали поставки подтверждаются по согласованным условиям вплоть до доставки.' },
       ],
+    },
+    news: {
+      eyebrow: 'Пресс-центр',
+      title: 'Новости компании',
+      intro: 'Встречи, визиты и события из нашей торговой деятельности в регионе.',
+      homeTitle: 'Последние новости',
+      homeIntro: 'Недавние встречи, визиты и события.',
+      readMore: 'Подробнее',
+      allNews: 'Все новости',
+      back: 'Назад к новостям',
+      empty: 'Новостей пока нет.',
     },
     tradeMap: {
       title: 'Карта торговли',

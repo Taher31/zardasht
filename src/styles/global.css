@@ -183,7 +183,8 @@ html {
 
 .trade-hero__panel.is-active { flex-grow: 1.9; }
 
-.trade-hero__panel img {
+.trade-hero__panel img,
+.trade-hero__panel video {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -194,7 +195,8 @@ html {
   transition: filter 800ms ease, transform 4s cubic-bezier(.2, .75, .2, 1);
 }
 
-.trade-hero__panel.is-active img {
+.trade-hero__panel.is-active img,
+.trade-hero__panel.is-active video {
   filter: saturate(1.05) contrast(1.05) brightness(.92);
   transform: scale(1);
 }
@@ -505,6 +507,7 @@ html[dir='rtl'] .trade-hero__scrim {
 @media (prefers-reduced-motion: reduce) {
   .trade-hero__panel,
   .trade-hero__panel img,
+  .trade-hero__panel video,
   .trade-hero__panel-name,
   .trade-button,
   .trade-hero__lane { transition: none; }

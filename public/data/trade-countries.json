@@ -1,108 +1,199 @@
-[{
-    "country_code": "CN",
-    "country_name": "Togo",
-    "capital": "Tashkent",
-    "currency": "UZS - Uzbekistani som",
-    "status": true,
-    "notes": "Bitumen exports and silk yarn imports, based on agreed specification and delivery terms.",
-    "main_exports": ["Bitumen"],
-    "main_imports": ["Silk yarn"],
-    "compliance_notes": "Export and import documentation confirmed per shipment.",
-    "page_slug": "uzbekistan"
-  },{
-    "country_code": "VE",
-    "country_name": "Venezuela",
-    "capital": "Tashkent",
-    "currency": "UZS - Uzbekistani som",
-    "status": true,
-    "notes": "Bitumen exports and silk yarn imports, based on agreed specification and delivery terms.",
-    "main_exports": ["Bitumen"],
-    "main_imports": ["Silk yarn"],
-    "compliance_notes": "Export and import documentation confirmed per shipment.",
-    "page_slug": "uzbekistan"
-  },
-  {
-    "country_code": "UZ",
-    "country_name": "Uzbekistan",
-    "capital": "Tashkent",
-    "currency": "UZS - Uzbekistani som",
-    "status": true,
-    "notes": "Bitumen exports and silk yarn imports, based on agreed specification and delivery terms.",
-    "main_exports": ["Bitumen"],
-    "main_imports": ["Silk yarn"],
-    "compliance_notes": "Export and import documentation confirmed per shipment.",
-    "page_slug": "uzbekistan"
-  },
-  {
-    "country_code": "RU",
-    "country_name": "Russia",
-    "capital": "Moscow",
-    "currency": "RUB - Russian ruble",
-    "status": true,
-    "notes": "Barley sourced for import as part of our agricultural commodity portfolio.",
-    "main_exports": [],
-    "main_imports": ["Barley"],
-    "compliance_notes": "Quality specification and shipping documentation confirmed per shipment.",
-    "page_slug": "russia"
-  },
-  {
-    "country_code": "IQ",
-    "country_name": "Iraq",
-    "capital": "Baghdad",
-    "currency": "IQD - Iraqi dinar",
-    "status": true,
-    "notes": "Bitumen export destination, supplied against agreed specification and delivery terms.",
-    "main_exports": ["Bitumen"],
-    "main_imports": [],
-    "compliance_notes": "Export documentation confirmed per shipment.",
-    "page_slug": "iraq"
-  },
-  {
-    "country_code": "KZ",
-    "country_name": "Kazakhstan",
-    "capital": "Astana",
-    "currency": "KZT - Kazakhstani tenge",
-    "status": true,
-    "notes": "Iron and steel export destination across Central Asian markets.",
-    "main_exports": ["Iron and steel products"],
-    "main_imports": [],
-    "compliance_notes": "Export documentation confirmed per shipment.",
-    "page_slug": "kazakhstan"
-  },
-  {
-    "country_code": "TM",
-    "country_name": "Turkmenistan",
-    "capital": "Ashgabat",
-    "currency": "TMT - Turkmenistani manat",
-    "status": true,
-    "notes": "Iron and steel export destination across Central Asian markets.",
-    "main_exports": ["Iron and steel products"],
-    "main_imports": [],
-    "compliance_notes": "Export documentation confirmed per shipment.",
-    "page_slug": "turkmenistan"
-  },
-  {
-    "country_code": "TJ",
-    "country_name": "Tajikistan",
-    "capital": "Dushanbe",
-    "currency": "TJS - Tajikistani somoni",
-    "status": true,
-    "notes": "Iron and steel export destination across Central Asian markets.",
-    "main_exports": ["Iron and steel products"],
-    "main_imports": [],
-    "compliance_notes": "Export documentation confirmed per shipment.",
-    "page_slug": "tajikistan"
-  },
-  {
-    "country_code": "KG",
-    "country_name": "Kyrgyzstan",
-    "capital": "Bishkek",
-    "currency": "KGS - Kyrgyzstani som",
-    "status": true,
-    "notes": "Iron and steel export destination across Central Asian markets.",
-    "main_exports": ["Iron and steel products"],
-    "main_imports": [],
-    "compliance_notes": "Export documentation confirmed per shipment.",
-    "page_slug": "kyrgyzstan"
-  }
+[
+    {
+        "country_code": "IQ",
+        "country_name": "Iraq",
+        "capital": "Baghdad",
+        "currency": "IQD - Iraqi dinar",
+        "status": true,
+        "notes": "Bitumen, steel, and agricultural commodity exports to Iraqi buyers, based on agreed specification and delivery terms.",
+        "main_exports": [
+            "Bitumen",
+            "Iron & steel products",
+            "Agricultural commodities"
+        ],
+        "main_imports": [],
+        "compliance_notes": "Export and import documentation confirmed per shipment.",
+        "page_slug": "iraq"
+    },
+    {
+        "country_code": "AE",
+        "country_name": "United Arab Emirates",
+        "capital": "Abu Dhabi",
+        "currency": "AED - UAE dirham",
+        "status": true,
+        "notes": "Agricultural and steel exports paired with industrial equipment sourcing through the UAE's regional trade hub, based on agreed specification and delivery terms.",
+        "main_exports": [
+            "Agricultural commodities",
+            "Iron & steel products"
+        ],
+        "main_imports": [
+            "Industrial equipment & spare parts"
+        ],
+        "compliance_notes": "Export and import documentation confirmed per shipment.",
+        "page_slug": "uae"
+    },
+    {
+        "country_code": "OM",
+        "country_name": "Oman",
+        "capital": "Muscat",
+        "currency": "OMR - Omani rial",
+        "status": true,
+        "notes": "Bitumen and agricultural commodity exports shipped via Gulf maritime routes, based on agreed specification and delivery terms.",
+        "main_exports": [
+            "Bitumen",
+            "Agricultural commodities"
+        ],
+        "main_imports": [],
+        "compliance_notes": "Export and import documentation confirmed per shipment.",
+        "page_slug": "oman"
+    },
+    {
+        "country_code": "UZ",
+        "country_name": "Uzbekistan",
+        "capital": "Tashkent",
+        "currency": "UZS - Uzbekistani som",
+        "status": true,
+        "notes": "Bitumen exports and silk yarn imports, based on agreed specification and delivery terms.",
+        "main_exports": [
+            "Bitumen"
+        ],
+        "main_imports": [
+            "Silk yarn"
+        ],
+        "compliance_notes": "Export and import documentation confirmed per shipment.",
+        "page_slug": "uzbekistan"
+    },
+    {
+        "country_code": "KZ",
+        "country_name": "Kazakhstan",
+        "capital": "Astana",
+        "currency": "KZT - Kazakhstani tenge",
+        "status": true,
+        "notes": "Steel exports and barley and grain imports, based on agreed specification and delivery terms.",
+        "main_exports": [
+            "Iron & steel products"
+        ],
+        "main_imports": [
+            "Barley",
+            "Grains"
+        ],
+        "compliance_notes": "Export and import documentation confirmed per shipment.",
+        "page_slug": "kazakhstan"
+    },
+    {
+        "country_code": "TM",
+        "country_name": "Turkmenistan",
+        "capital": "Ashgabat",
+        "currency": "TMT - Turkmenistan manat",
+        "status": true,
+        "notes": "Bitumen and steel exports with textile raw material imports, based on agreed specification and delivery terms.",
+        "main_exports": [
+            "Bitumen",
+            "Iron & steel products"
+        ],
+        "main_imports": [
+            "Textile raw materials"
+        ],
+        "compliance_notes": "Export and import documentation confirmed per shipment.",
+        "page_slug": "turkmenistan"
+    },
+    {
+        "country_code": "TJ",
+        "country_name": "Tajikistan",
+        "capital": "Dushanbe",
+        "currency": "TJS - Tajikistani somoni",
+        "status": true,
+        "notes": "Steel exports and silk yarn imports, based on agreed specification and delivery terms.",
+        "main_exports": [
+            "Iron & steel products"
+        ],
+        "main_imports": [
+            "Silk yarn"
+        ],
+        "compliance_notes": "Export and import documentation confirmed per shipment.",
+        "page_slug": "tajikistan"
+    },
+    {
+        "country_code": "KG",
+        "country_name": "Kyrgyzstan",
+        "capital": "Bishkek",
+        "currency": "KGS - Kyrgyzstani som",
+        "status": true,
+        "notes": "Steel and agricultural commodity exports with textile raw material imports, based on agreed specification and delivery terms.",
+        "main_exports": [
+            "Iron & steel products",
+            "Agricultural commodities"
+        ],
+        "main_imports": [
+            "Textile raw materials"
+        ],
+        "compliance_notes": "Export and import documentation confirmed per shipment.",
+        "page_slug": "kyrgyzstan"
+    },
+    {
+        "country_code": "RU",
+        "country_name": "Russia",
+        "capital": "Moscow",
+        "currency": "RUB - Russian ruble",
+        "status": true,
+        "notes": "Barley and grain imports from Russia, a core part of our agricultural commodity portfolio, based on agreed specification and delivery terms.",
+        "main_exports": [],
+        "main_imports": [
+            "Barley",
+            "Grains"
+        ],
+        "compliance_notes": "Export and import documentation confirmed per shipment.",
+        "page_slug": "russia"
+    },
+    {
+        "country_code": "TR",
+        "country_name": "Turkey",
+        "capital": "Ankara",
+        "currency": "TRY - Turkish lira",
+        "status": true,
+        "notes": "Steel and agricultural commodity exports with textile raw material imports, based on agreed specification and delivery terms.",
+        "main_exports": [
+            "Iron & steel products",
+            "Agricultural commodities"
+        ],
+        "main_imports": [
+            "Textile raw materials"
+        ],
+        "compliance_notes": "Export and import documentation confirmed per shipment.",
+        "page_slug": "turkey"
+    },
+    {
+        "country_code": "CN",
+        "country_name": "China",
+        "capital": "Beijing",
+        "currency": "CNY - Chinese yuan renminbi",
+        "status": true,
+        "notes": "Textile raw material and industrial equipment imports balanced against agricultural commodity exports, based on agreed specification and delivery terms.",
+        "main_exports": [
+            "Agricultural commodities"
+        ],
+        "main_imports": [
+            "Textile raw materials",
+            "Industrial equipment & spare parts"
+        ],
+        "compliance_notes": "Export and import documentation confirmed per shipment.",
+        "page_slug": "china"
+    },
+    {
+        "country_code": "MN",
+        "country_name": "Mongolia",
+        "capital": "Ulaanbaatar",
+        "currency": "MNT - Mongolian tögrög",
+        "status": true,
+        "notes": "Cashmere, wool, and livestock product imports paired with steel exports via the regional rail corridor, based on agreed specification and delivery terms.",
+        "main_exports": [
+            "Iron & steel products"
+        ],
+        "main_imports": [
+            "Cashmere & wool",
+            "Livestock & meat"
+        ],
+        "compliance_notes": "Export and import documentation confirmed per shipment.",
+        "page_slug": "mongolia"
+    }
 ]

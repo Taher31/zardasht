@@ -1,0 +1,97 @@
+:root {
+  --ink: #19266A;
+  --ink-soft: #4b5568;
+  --border: #dde1ea;
+  --bg: #f5f6fa;
+  --danger: #b3261e;
+  --ok: #1a7f3c;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  background: var(--bg);
+  color: #1c2333;
+}
+
+.topbar {
+  background: var(--ink);
+  color: #fff;
+  padding: 0.9rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.topbar a { color: #fff; text-decoration: none; }
+.topbar nav a { margin-inline-end: 1rem; opacity: 0.85; }
+.topbar nav a:hover { opacity: 1; text-decoration: underline; }
+
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 1.75rem 1.5rem 4rem;
+}
+
+h1 { font-size: 1.5rem; margin-bottom: 1rem; }
+h2 { font-size: 1.15rem; color: var(--ink); }
+
+.card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+}
+
+table { width: 100%; border-collapse: collapse; }
+th, td { text-align: left; padding: 0.6rem 0.5rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+th { color: var(--ink-soft); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.03em; }
+
+label { display: block; font-weight: 600; margin: 1rem 0 0.3rem; font-size: 0.9rem; }
+label:first-child { margin-top: 0; }
+input[type=text], input[type=date], input[type=email], input[type=password], input[type=file], textarea, select {
+  width: 100%;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font: inherit;
+}
+textarea { resize: vertical; }
+
+.lang-tabs { display: flex; gap: 0.4rem; margin: 1rem 0 0.5rem; }
+.lang-tabs button {
+  border: 1px solid var(--border);
+  background: #fff;
+  border-radius: 6px;
+  padding: 0.35rem 0.8rem;
+  cursor: pointer;
+  font-weight: 600;
+}
+.lang-tabs button.active { background: var(--ink); color: #fff; border-color: var(--ink); }
+.lang-panel { display: none; }
+.lang-panel.active { display: block; }
+
+.btn {
+  display: inline-block;
+  border: none;
+  border-radius: 6px;
+  padding: 0.6rem 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+.btn-primary { background: var(--ink); color: #fff; }
+.btn-danger { background: var(--danger); color: #fff; }
+.btn-secondary { background: #fff; color: var(--ink); border: 1px solid var(--border); }
+
+.actions { display: flex; gap: 0.6rem; margin-top: 1.25rem; }
+
+.flash-ok { background: #eaf6ee; border: 1px solid var(--ok); color: var(--ok); padding: 0.7rem 1rem; border-radius: 8px; margin-bottom: 1rem; }
+.flash-error { background: #fbeceb; border: 1px solid var(--danger); color: var(--danger); padding: 0.7rem 1rem; border-radius: 8px; margin-bottom: 1rem; }
+.help { color: var(--ink-soft); font-size: 0.85rem; margin-top: 0.25rem; }
+.thumb { max-width: 120px; border-radius: 6px; border: 1px solid var(--border); }
+.copy-link { font-size: 0.8rem; margin-inline-start: 0.5rem; }

@@ -1,0 +1,458 @@
+{
+    "en": [
+        {
+            "id": "energy-bitumen",
+            "badge": "EB",
+            "title": "Energy & Bitumen",
+            "description": "Bitumen export supply with a current focus on Uzbekistan and qualified regional buyers.",
+            "products": [
+                {
+                    "name": "Bitumen exports",
+                    "description": "Supply for Uzbekistan and other regional opportunities based on agreed specification and availability.",
+                    "tag": "Export"
+                },
+                {
+                    "name": "Specification matching",
+                    "description": "Grade, packaging, and commercial requirements are confirmed against each inquiry.",
+                    "tag": "Specs"
+                },
+                {
+                    "name": "Logistics planning",
+                    "description": "Route and shipment mode are selected according to destination, volume, and delivery terms.",
+                    "tag": "Logistics"
+                },
+                {
+                    "name": "Commercial quotation",
+                    "description": "Quotes are structured around quantity, destination, required specification, and Incoterm.",
+                    "tag": "Trade"
+                }
+            ]
+        },
+        {
+            "id": "metals-steel",
+            "badge": "MS",
+            "title": "Metals & Steel",
+            "description": "Iron and steel products for buyers across Central Asian markets.",
+            "products": [
+                {
+                    "name": "Product scope",
+                    "description": "Iron and steel products sourced and supplied according to the buyer’s requested category.",
+                    "tag": "Products"
+                },
+                {
+                    "name": "Specification matching",
+                    "description": "Dimensions, grade, standard, and quantity are aligned before commercial confirmation.",
+                    "tag": "Specs"
+                },
+                {
+                    "name": "Supplier coordination",
+                    "description": "Available supplier options are evaluated against specification, timing, and commercial terms.",
+                    "tag": "Sourcing"
+                },
+                {
+                    "name": "Regional delivery",
+                    "description": "Export planning is organized for Central Asian destinations on a transaction-by-transaction basis.",
+                    "tag": "Export"
+                }
+            ]
+        },
+        {
+            "id": "agricultural-commodities",
+            "badge": "AG",
+            "title": "Agricultural Commodities",
+            "description": "Barley from Russia alongside pulses, grains, and selected agricultural commodities.",
+            "products": [
+                {
+                    "name": "Barley from Russia",
+                    "description": "Russian-origin barley sourced for import based on required specification and volume.",
+                    "tag": "Barley"
+                },
+                {
+                    "name": "Pulses & grains",
+                    "description": "Pulses and grain opportunities remain part of the wider agricultural trading portfolio.",
+                    "tag": "Agriculture"
+                },
+                {
+                    "name": "Quality requirements",
+                    "description": "Commercial specifications and inspection requirements are agreed before purchase confirmation.",
+                    "tag": "Specs"
+                },
+                {
+                    "name": "Supply planning",
+                    "description": "Spot and repeat requirements are evaluated according to origin availability and destination.",
+                    "tag": "Supply"
+                }
+            ]
+        },
+        {
+            "id": "textile-raw-materials",
+            "badge": "TX",
+            "title": "Textile Raw Materials",
+            "description": "Silk yarn imports and specification-led sourcing for textile raw materials.",
+            "products": [
+                {
+                    "name": "Silk yarn imports",
+                    "description": "Silk yarn is sourced for import according to the buyer’s required specification and quantity.",
+                    "tag": "Silk Yarn"
+                },
+                {
+                    "name": "Specification matching",
+                    "description": "Count, quality, packaging, and other technical requirements are confirmed per inquiry.",
+                    "tag": "Specs"
+                },
+                {
+                    "name": "Supplier coordination",
+                    "description": "Supplier offers are compared against quality, commercial terms, and delivery requirements.",
+                    "tag": "Sourcing"
+                },
+                {
+                    "name": "Import execution",
+                    "description": "Commercial and logistics steps are coordinated from supplier confirmation through delivery.",
+                    "tag": "Import"
+                }
+            ]
+        }
+    ],
+    "fa": [
+        {
+            "id": "energy-bitumen",
+            "badge": "EB",
+            "title": "انرژی و قیر",
+            "description": "تأمین صادراتی قیر با تمرکز فعلی بر ازبکستان و خریداران مناسب منطقه.",
+            "products": [
+                {
+                    "name": "صادرات قیر",
+                    "description": "تأمین برای ازبکستان و فرصت‌های منطقه‌ای بر اساس مشخصات توافق‌شده و موجودی.",
+                    "tag": "صادرات"
+                },
+                {
+                    "name": "تطبیق مشخصات",
+                    "description": "گرید، نوع بسته‌بندی و نیازهای تجاری برای هر درخواست به‌طور جداگانه تأیید می‌شود.",
+                    "tag": "مشخصات"
+                },
+                {
+                    "name": "برنامه‌ریزی لجستیک",
+                    "description": "مسیر و روش حمل بر اساس مقصد، حجم و شرایط تحویل انتخاب می‌شود.",
+                    "tag": "لجستیک"
+                },
+                {
+                    "name": "پیشنهاد تجاری",
+                    "description": "قیمت‌گذاری بر اساس مقدار، مقصد، مشخصات موردنیاز و شرایط تحویل انجام می‌شود.",
+                    "tag": "تجارت"
+                }
+            ]
+        },
+        {
+            "id": "metals-steel",
+            "badge": "MS",
+            "title": "فلزات و فولاد",
+            "description": "آهن و محصولات فولادی برای خریداران بازارهای آسیای مرکزی.",
+            "products": [
+                {
+                    "name": "دامنه محصولات",
+                    "description": "آهن و محصولات فولادی مطابق گروه کالایی موردنیاز خریدار تأمین می‌شود.",
+                    "tag": "محصولات"
+                },
+                {
+                    "name": "تطبیق مشخصات",
+                    "description": "ابعاد، گرید، استاندارد و مقدار پیش از تأیید تجاری هماهنگ می‌شود.",
+                    "tag": "مشخصات"
+                },
+                {
+                    "name": "هماهنگی تأمین‌کننده",
+                    "description": "گزینه‌های تأمین بر اساس مشخصات، زمان و شرایط تجاری ارزیابی می‌شوند.",
+                    "tag": "تأمین"
+                },
+                {
+                    "name": "تحویل منطقه‌ای",
+                    "description": "برنامه صادرات برای مقاصد آسیای مرکزی متناسب با هر معامله تنظیم می‌شود.",
+                    "tag": "صادرات"
+                }
+            ]
+        },
+        {
+            "id": "agricultural-commodities",
+            "badge": "AG",
+            "title": "کالاهای کشاورزی",
+            "description": "جو از روسیه در کنار حبوبات، غلات و کالاهای کشاورزی منتخب.",
+            "products": [
+                {
+                    "name": "جو از روسیه",
+                    "description": "جو با مبدأ روسیه بر اساس مشخصات و حجم موردنیاز برای واردات تأمین می‌شود.",
+                    "tag": "جو"
+                },
+                {
+                    "name": "حبوبات و غلات",
+                    "description": "حبوبات و فرصت‌های مرتبط با غلات همچنان بخشی از سبد گسترده کشاورزی شرکت هستند.",
+                    "tag": "کشاورزی"
+                },
+                {
+                    "name": "الزامات کیفی",
+                    "description": "مشخصات تجاری و الزامات بازرسی پیش از تأیید خرید توافق می‌شوند.",
+                    "tag": "مشخصات"
+                },
+                {
+                    "name": "برنامه تأمین",
+                    "description": "نیازهای موردی یا تکرارشونده بر اساس موجودی مبدأ و مقصد ارزیابی می‌شوند.",
+                    "tag": "تأمین"
+                }
+            ]
+        },
+        {
+            "id": "textile-raw-materials",
+            "badge": "TX",
+            "title": "مواد اولیه نساجی",
+            "description": "واردات نخ ابریشم و تأمین مواد اولیه نساجی بر مبنای مشخصات فنی.",
+            "products": [
+                {
+                    "name": "واردات نخ ابریشم",
+                    "description": "نخ ابریشم مطابق مشخصات و مقدار موردنیاز برای واردات تأمین می‌شود.",
+                    "tag": "نخ ابریشم"
+                },
+                {
+                    "name": "تطبیق مشخصات",
+                    "description": "نمره، کیفیت، بسته‌بندی و سایر الزامات فنی برای هر درخواست تأیید می‌شود.",
+                    "tag": "مشخصات"
+                },
+                {
+                    "name": "هماهنگی تأمین‌کننده",
+                    "description": "پیشنهادهای تأمین بر اساس کیفیت، شرایط تجاری و نیاز تحویل مقایسه می‌شوند.",
+                    "tag": "تأمین"
+                },
+                {
+                    "name": "اجرای واردات",
+                    "description": "مراحل تجاری و لجستیکی از تأیید تأمین‌کننده تا تحویل هماهنگ می‌شود.",
+                    "tag": "واردات"
+                }
+            ]
+        }
+    ],
+    "ar": [
+        {
+            "id": "energy-bitumen",
+            "badge": "EB",
+            "title": "الطاقة والبيتومين",
+            "description": "توريد البيتومين للتصدير مع تركيز حالي على أوزبكستان والمشترين المؤهلين إقليميًا.",
+            "products": [
+                {
+                    "name": "تصدير البيتومين",
+                    "description": "توريد إلى أوزبكستان وفرص إقليمية حسب المواصفات المتفق عليها والتوفر.",
+                    "tag": "تصدير"
+                },
+                {
+                    "name": "مطابقة المواصفات",
+                    "description": "يتم تأكيد الدرجة والتعبئة والمتطلبات التجارية لكل استفسار.",
+                    "tag": "مواصفات"
+                },
+                {
+                    "name": "تخطيط اللوجستيات",
+                    "description": "يتم اختيار المسار وطريقة الشحن حسب الوجهة والحجم وشروط التسليم.",
+                    "tag": "لوجستيات"
+                },
+                {
+                    "name": "العرض التجاري",
+                    "description": "يتم إعداد العرض وفق الكمية والوجهة والمواصفات وشروط التسليم.",
+                    "tag": "تجارة"
+                }
+            ]
+        },
+        {
+            "id": "metals-steel",
+            "badge": "MS",
+            "title": "المعادن والصلب",
+            "description": "منتجات الحديد والصلب للمشترين في أسواق آسيا الوسطى.",
+            "products": [
+                {
+                    "name": "نطاق المنتجات",
+                    "description": "توريد منتجات الحديد والصلب وفق الفئة المطلوبة من المشتري.",
+                    "tag": "منتجات"
+                },
+                {
+                    "name": "مطابقة المواصفات",
+                    "description": "تتم مواءمة الأبعاد والدرجة والمعيار والكمية قبل التأكيد التجاري.",
+                    "tag": "مواصفات"
+                },
+                {
+                    "name": "تنسيق الموردين",
+                    "description": "تقييم خيارات الموردين حسب المواصفات والتوقيت والشروط التجارية.",
+                    "tag": "توريد"
+                },
+                {
+                    "name": "التسليم الإقليمي",
+                    "description": "تخطيط التصدير لوجهات آسيا الوسطى حسب كل صفقة.",
+                    "tag": "تصدير"
+                }
+            ]
+        },
+        {
+            "id": "agricultural-commodities",
+            "badge": "AG",
+            "title": "السلع الزراعية",
+            "description": "الشعير من روسيا إلى جانب البقول والحبوب والسلع الزراعية المختارة.",
+            "products": [
+                {
+                    "name": "الشعير من روسيا",
+                    "description": "توريد الشعير الروسي للاستيراد حسب المواصفات والحجم المطلوبين.",
+                    "tag": "شعير"
+                },
+                {
+                    "name": "البقول والحبوب",
+                    "description": "تبقى فرص البقول والحبوب جزءًا من المحفظة الزراعية الأوسع.",
+                    "tag": "زراعة"
+                },
+                {
+                    "name": "متطلبات الجودة",
+                    "description": "يتم الاتفاق على المواصفات ومتطلبات الفحص قبل تأكيد الشراء.",
+                    "tag": "مواصفات"
+                },
+                {
+                    "name": "تخطيط التوريد",
+                    "description": "تقييم الاحتياجات الفورية والمتكررة وفق توفر المنشأ والوجهة.",
+                    "tag": "توريد"
+                }
+            ]
+        },
+        {
+            "id": "textile-raw-materials",
+            "badge": "TX",
+            "title": "المواد الخام للنسيج",
+            "description": "استيراد خيوط الحرير وتوريد المواد الخام للنسيج حسب المواصفات.",
+            "products": [
+                {
+                    "name": "استيراد خيوط الحرير",
+                    "description": "توريد خيوط الحرير للاستيراد حسب المواصفات والكمية المطلوبة.",
+                    "tag": "حرير"
+                },
+                {
+                    "name": "مطابقة المواصفات",
+                    "description": "تأكيد العدد والجودة والتعبئة والمتطلبات الفنية لكل استفسار.",
+                    "tag": "مواصفات"
+                },
+                {
+                    "name": "تنسيق الموردين",
+                    "description": "مقارنة عروض الموردين حسب الجودة والشروط التجارية ومتطلبات التسليم.",
+                    "tag": "توريد"
+                },
+                {
+                    "name": "تنفيذ الاستيراد",
+                    "description": "تنسيق الخطوات التجارية واللوجستية من تأكيد المورد حتى التسليم.",
+                    "tag": "استيراد"
+                }
+            ]
+        }
+    ],
+    "ru": [
+        {
+            "id": "energy-bitumen",
+            "badge": "EB",
+            "title": "Энергетика и битум",
+            "description": "Экспортные поставки битума с текущим фокусом на Узбекистан и подходящих региональных покупателей.",
+            "products": [
+                {
+                    "name": "Экспорт битума",
+                    "description": "Поставки в Узбекистан и другие региональные направления по согласованной спецификации и наличию.",
+                    "tag": "Экспорт"
+                },
+                {
+                    "name": "Соответствие спецификации",
+                    "description": "Марка, упаковка и коммерческие требования подтверждаются для каждого запроса.",
+                    "tag": "Спецификация"
+                },
+                {
+                    "name": "Логистическое планирование",
+                    "description": "Маршрут и способ перевозки выбираются с учетом назначения, объема и условий поставки.",
+                    "tag": "Логистика"
+                },
+                {
+                    "name": "Коммерческое предложение",
+                    "description": "Цена формируется с учетом объема, назначения, спецификации и условий поставки.",
+                    "tag": "Торговля"
+                }
+            ]
+        },
+        {
+            "id": "metals-steel",
+            "badge": "MS",
+            "title": "Металлы и сталь",
+            "description": "Железо и стальная продукция для покупателей в Центральной Азии.",
+            "products": [
+                {
+                    "name": "Ассортимент",
+                    "description": "Железо и стальная продукция поставляются в соответствии с требуемой категорией покупателя.",
+                    "tag": "Товары"
+                },
+                {
+                    "name": "Соответствие спецификации",
+                    "description": "Размеры, марка, стандарт и объем согласуются до коммерческого подтверждения.",
+                    "tag": "Спецификация"
+                },
+                {
+                    "name": "Работа с поставщиками",
+                    "description": "Варианты поставок оцениваются по спецификации, срокам и коммерческим условиям.",
+                    "tag": "Сорсинг"
+                },
+                {
+                    "name": "Региональная поставка",
+                    "description": "Экспортное планирование для направлений Центральной Азии организуется по каждой сделке.",
+                    "tag": "Экспорт"
+                }
+            ]
+        },
+        {
+            "id": "agricultural-commodities",
+            "badge": "AG",
+            "title": "Сельхозтовары",
+            "description": "Ячмень из России, а также бобовые, зерновые и отдельные сельскохозяйственные товары.",
+            "products": [
+                {
+                    "name": "Ячмень из России",
+                    "description": "Ячмень российского происхождения закупается для импорта по требуемой спецификации и объему.",
+                    "tag": "Ячмень"
+                },
+                {
+                    "name": "Бобовые и зерновые",
+                    "description": "Бобовые и зерновые остаются частью более широкого сельскохозяйственного портфеля.",
+                    "tag": "Сельхоз"
+                },
+                {
+                    "name": "Требования к качеству",
+                    "description": "Коммерческие спецификации и требования к инспекции согласуются до подтверждения закупки.",
+                    "tag": "Спецификация"
+                },
+                {
+                    "name": "Планирование поставок",
+                    "description": "Разовые и повторные потребности оцениваются по доступности происхождения и назначению.",
+                    "tag": "Поставка"
+                }
+            ]
+        },
+        {
+            "id": "textile-raw-materials",
+            "badge": "TX",
+            "title": "Текстильное сырье",
+            "description": "Импорт шелковой пряжи и поставки текстильного сырья по спецификации.",
+            "products": [
+                {
+                    "name": "Импорт шелковой пряжи",
+                    "description": "Шелковая пряжа закупается для импорта по требуемой спецификации и объему.",
+                    "tag": "Шелк"
+                },
+                {
+                    "name": "Соответствие спецификации",
+                    "description": "Номер, качество, упаковка и другие технические требования подтверждаются по запросу.",
+                    "tag": "Спецификация"
+                },
+                {
+                    "name": "Работа с поставщиками",
+                    "description": "Предложения поставщиков сравниваются по качеству, условиям и требованиям к поставке.",
+                    "tag": "Сорсинг"
+                },
+                {
+                    "name": "Импортное исполнение",
+                    "description": "Коммерческие и логистические шаги координируются от подтверждения поставщика до доставки.",
+                    "tag": "Импорт"
+                }
+            ]
+        }
+    ]
+}
