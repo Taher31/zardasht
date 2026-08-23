@@ -90,6 +90,7 @@ export interface Translation {
       eyebrow: string;
       title: string;
       intro: string;
+      rail: { eyebrow: string; title: string; description: string };
       solutions: { title: string; description: string; tags: string[] }[];
       outcomesTitle: string;
       outcomes: { title: string; description: string }[];
@@ -317,6 +318,11 @@ const en: Omit<Translation, 'lang' | 'dir'> = {
       eyebrow: 'Trade & Logistics',
       title: 'Cross-border trade from sourcing to delivery',
       intro: 'We coordinate the commercial and logistics steps required to move different commodities between supplier and destination markets.',
+      rail: {
+        eyebrow: 'Rail Freight',
+        title: 'Bulk volumes move by rail',
+        description: 'Rail carries our heaviest lanes. Bitumen, steel and grain travel in wagon loads across Central Asia and Russia, where wagon availability and border transit shape the schedule more than distance does.',
+      },
       solutions: [
         { title: 'International sourcing', description: 'Supplier options are evaluated against specification, availability, price, and delivery requirements.', tags: ['Sourcing', 'Suppliers', 'Specs'] },
         { title: 'Export execution', description: 'Export transactions are structured around destination, product specification, quantity, and agreed commercial terms.', tags: ['Export', 'Terms', 'Destination'] },
@@ -549,6 +555,11 @@ const fa: Omit<Translation, 'lang' | 'dir'> = {
       eyebrow: 'تجارت و لجستیک',
       title: 'تجارت فرامرزی از تأمین تا تحویل',
       intro: 'مراحل تجاری و لجستیکی لازم برای جابه‌جایی کالا میان بازار تأمین و مقصد را هماهنگ می‌کنیم.',
+      rail: {
+        eyebrow: 'حمل ریلی',
+        title: 'جابه‌جایی محموله‌های فله با ریل',
+        description: 'سنگین‌ترین مسیرهای ما با ریل جابه‌جا می‌شود؛ قیر، فولاد و غلات در واگن، در سراسر آسیای مرکزی و روسیه، جایی که موجودی واگن و ترانزیت مرزی بیش از مسافت، زمان‌بندی را تعیین می‌کند.',
+      },
       solutions: [
         { title: 'تأمین بین‌المللی', description: 'گزینه‌های تأمین بر اساس مشخصات، موجودی، قیمت و الزامات تحویل ارزیابی می‌شوند.', tags: ['تأمین', 'فروشنده', 'مشخصات'] },
         { title: 'اجرای صادرات', description: 'معاملات صادراتی بر اساس مقصد، مشخصات کالا، مقدار و شرایط تجاری توافق‌شده تنظیم می‌شوند.', tags: ['صادرات', 'شرایط', 'مقصد'] },
@@ -777,6 +788,11 @@ const ar: Omit<Translation, 'lang' | 'dir'> = {
     solutions: {
       eyebrow: 'التجارة واللوجستيات', title: 'تجارة عابرة للحدود من التوريد إلى التسليم',
       intro: 'ننسق الخطوات التجارية واللوجستية المطلوبة لنقل السلع بين أسواق التوريد والوجهة.',
+      rail: {
+        eyebrow: 'الشحن بالسكك',
+        title: 'نقل الشحنات السائبة بالسكك الحديدية',
+        description: 'تنقل السكك الحديدية أثقل مساراتنا: البيتومين والحديد والحبوب في عربات عبر آسيا الوسطى وروسيا، حيث يحدد توفر العربات والعبور الحدودي الجدول الزمني أكثر من المسافة.',
+      },
       solutions: [
         { title: 'التوريد الدولي', description: 'تقييم خيارات الموردين وفق المواصفات والتوفر والسعر ومتطلبات التسليم.', tags: ['توريد', 'موردون', 'مواصفات'] },
         { title: 'تنفيذ التصدير', description: 'هيكلة معاملات التصدير حسب الوجهة والمواصفات والكمية والشروط المتفق عليها.', tags: ['تصدير', 'شروط', 'وجهة'] },
@@ -980,6 +996,11 @@ const ru: Omit<Translation, 'lang' | 'dir'> = {
     solutions: {
       eyebrow: 'Торговля и логистика', title: 'Трансграничная торговля от закупки до поставки',
       intro: 'Мы координируем коммерческие и логистические шаги, необходимые для перемещения товаров между рынками поставок и назначения.',
+      rail: {
+        eyebrow: 'Ж/д перевозки',
+        title: 'Навалочные объемы идут по железной дороге',
+        description: 'По железной дороге проходят наши самые тяжелые направления: битум, сталь и зерно едут вагонами через Центральную Азию и Россию, где график определяют наличие вагонов и пограничный транзит, а не расстояние.',
+      },
       solutions: [
         { title: 'Международный сорсинг', description: 'Поставщики оцениваются по спецификации, наличию, цене и требованиям к доставке.', tags: ['Сорсинг', 'Поставщики', 'Спецификация'] },
         { title: 'Экспортное исполнение', description: 'Экспортные сделки структурируются с учетом назначения, спецификации, объема и согласованных условий.', tags: ['Экспорт', 'Условия', 'Назначение'] },
