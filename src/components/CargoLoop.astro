@@ -1,8 +1,9 @@
 ---
-// Looping ZMB vehicle that rides across the top edge of the footer, above the
-// footer links. It carries the footer's own navy, so it reads as the top strip
-// of the footer rather than a separate band. `variant` picks the vehicle:
-// sea-freight pages get a cargo ship, the rest get a road truck.
+// Looping ZMB vehicle that crosses the bottom of the main content area. The
+// band carries the footer's navy so it reads as the footer extending upward,
+// with the lane/waterline as its top edge. `variant` picks the vehicle:
+// sea-freight pages get a cargo ship, the rest get a road truck (mapped in
+// Layout.astro).
 interface Props {
   variant?: 'truck' | 'ship';
   dir?: 'ltr' | 'rtl';
@@ -81,6 +82,7 @@ const { variant = 'truck', dir = 'ltr' } = Astro.props;
 <style>
   .cargo-loop {
     position: relative;
+    margin-top: clamp(40px, 6vw, 64px);
     height: clamp(58px, 7vw, 78px);
     overflow: hidden;
     pointer-events: none;

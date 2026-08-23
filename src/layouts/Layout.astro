@@ -5,6 +5,7 @@ import type { Translation, LanguageCode } from '../i18n';
 import { languages, withLanguagePrefix, stripLangFromPath, defaultLang } from '../i18n';
 import '../styles/global.css';
 import CallButton from '../components/CallButton.astro';
+import CargoLoop from '../components/CargoLoop.astro';
 
 interface Props {
   title: string;
@@ -55,6 +56,15 @@ const alternateLinks = languages.map((language) => ({
 }));
 const xDefault = `${origin}${withLanguagePrefix(defaultLang, pathWithoutLang)}`;
 const ogImage = `${origin}/logo.png`;
+
+// Sea-freight pages close with a cargo ship; every other page gets the truck.
+// Add or remove a route here to change which vehicle a page loops.
+const shipRoutes = ['/logistics', '/trade-map'];
+const cargoVariant = shipRoutes.some(
+  (route) => pathWithoutLang === route || pathWithoutLang.startsWith(`${route}/`),
+)
+  ? 'ship'
+  : 'truck';
 
 const organizationSchema = {
   '@context': 'https://schema.org',
@@ -133,6 +143,7 @@ const websiteSchema = {
 
     <main class="flex-1">
       <slot />
+      <CargoLoop variant={cargoVariant} dir={dir} />
     </main>
 
     <Footer lang={lang} translation={translation} />
