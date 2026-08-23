@@ -90,7 +90,7 @@ export interface Translation {
       eyebrow: string;
       title: string;
       intro: string;
-      rail: { eyebrow: string; title: string };
+      partners: { eyebrow: string; title: string };
       solutions: { title: string; description: string; tags: string[] }[];
       outcomesTitle: string;
       outcomes: { title: string; description: string }[];
@@ -318,9 +318,9 @@ const en: Omit<Translation, 'lang' | 'dir'> = {
       eyebrow: 'Trade & Logistics',
       title: 'Cross-border trade from sourcing to delivery',
       intro: 'We coordinate the commercial and logistics steps required to move different commodities between supplier and destination markets.',
-      rail: {
-        eyebrow: 'Rail Freight',
-        title: 'Bulk cargo by rail',
+      partners: {
+        eyebrow: 'Partners',
+        title: 'Meeting partners in person',
       },
       solutions: [
         { title: 'International sourcing', description: 'Supplier options are evaluated against specification, availability, price, and delivery requirements.', tags: ['Sourcing', 'Suppliers', 'Specs'] },
@@ -554,9 +554,9 @@ const fa: Omit<Translation, 'lang' | 'dir'> = {
       eyebrow: 'تجارت و لجستیک',
       title: 'تجارت فرامرزی از تأمین تا تحویل',
       intro: 'مراحل تجاری و لجستیکی لازم برای جابه‌جایی کالا میان بازار تأمین و مقصد را هماهنگ می‌کنیم.',
-      rail: {
-        eyebrow: 'حمل ریلی',
-        title: 'حمل فله با ریل',
+      partners: {
+        eyebrow: 'شرکا',
+        title: 'دیدار حضوری با شرکا',
       },
       solutions: [
         { title: 'تأمین بین‌المللی', description: 'گزینه‌های تأمین بر اساس مشخصات، موجودی، قیمت و الزامات تحویل ارزیابی می‌شوند.', tags: ['تأمین', 'فروشنده', 'مشخصات'] },
@@ -786,9 +786,9 @@ const ar: Omit<Translation, 'lang' | 'dir'> = {
     solutions: {
       eyebrow: 'التجارة واللوجستيات', title: 'تجارة عابرة للحدود من التوريد إلى التسليم',
       intro: 'ننسق الخطوات التجارية واللوجستية المطلوبة لنقل السلع بين أسواق التوريد والوجهة.',
-      rail: {
-        eyebrow: 'الشحن بالسكك',
-        title: 'شحن سائب بالسكك',
+      partners: {
+        eyebrow: 'الشركاء',
+        title: 'لقاء الشركاء مباشرةً',
       },
       solutions: [
         { title: 'التوريد الدولي', description: 'تقييم خيارات الموردين وفق المواصفات والتوفر والسعر ومتطلبات التسليم.', tags: ['توريد', 'موردون', 'مواصفات'] },
@@ -993,9 +993,9 @@ const ru: Omit<Translation, 'lang' | 'dir'> = {
     solutions: {
       eyebrow: 'Торговля и логистика', title: 'Трансграничная торговля от закупки до поставки',
       intro: 'Мы координируем коммерческие и логистические шаги, необходимые для перемещения товаров между рынками поставок и назначения.',
-      rail: {
-        eyebrow: 'Ж/д перевозки',
-        title: 'Навалочные грузы по ж/д',
+      partners: {
+        eyebrow: 'Партнёры',
+        title: 'Встречи с партнёрами лично',
       },
       solutions: [
         { title: 'Международный сорсинг', description: 'Поставщики оцениваются по спецификации, наличию, цене и требованиям к доставке.', tags: ['Сорсинг', 'Поставщики', 'Спецификация'] },

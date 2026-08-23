@@ -1,0 +1,20 @@
+---
+import Page from '../[lang]/trade-map/[code].astro';
+import fs from 'node:fs';
+import path from 'node:path';
+
+export async function getStaticPaths() {
+  const dataPath = path.join(process.cwd(), 'public', 'data', 'trade-countries.json');
+  const tradeCountries = JSON.parse(fs.readFileSync(dataPath, 'utf-8'));
+  return tradeCountries
+    .filter((c) => c.status)
+    .map((country) => ({
+      params: { code: country.country_code.toLowerCase() },
+      props: { country },
+    }));
+}
+
+const { country } = Astro.props;
+---
+
+<Page country={country} lang="en" />

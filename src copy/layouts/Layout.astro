@@ -1,0 +1,200 @@
+---
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import type { Translation, LanguageCode } from '../i18n';
+import { languages, withLanguagePrefix, stripLangFromPath, defaultLang } from '../i18n';
+import '../styles/global.css';
+import CallButton from '../components/CallButton.astro';
+import CargoLoop from '../components/CargoLoop.astro';
+
+interface Props {
+  title: string;
+  lang: LanguageCode;
+  translation: Translation;
+}
+
+const { title, lang, translation } = Astro.props;
+const dir = translation.dir;
+const brand = translation.labels.brand;
+const metaTitle = `${title} - ${brand}`;
+
+const metaDescriptions: Record<LanguageCode, string> = {
+  en: 'International commodity trading across Central Asia and Russia, including bitumen, steel and metals, agricultural commodities, and textile raw materials.',
+  fa: 'بازرگانی بین‌المللی کالا در آسیای مرکزی و روسیه؛ شامل قیر، آهن و فولاد، محصولات کشاورزی و مواد اولیه نساجی.',
+  ar: 'شركة تجارة سلع دولية تعمل في آسيا الوسطى وروسيا، بما في ذلك البيتومين والحديد والصلب والسلع الزراعية والمواد الخام النسيجية.',
+  ru: 'Международная торговля товарами в Центральной Азии и России: битум, металлы и сталь, сельскохозяйственная продукция и текстильное сырьё.',
+};
+
+const description = metaDescriptions[lang] ?? metaDescriptions.en;
+const localeMap: Record<LanguageCode, string> = { en: 'en_US', fa: 'fa_IR', ar: 'ar', ru: 'ru_RU' };
+const ogLocale = localeMap[lang] ?? lang;
+const alternateOgLocales = languages
+  .filter((language) => language.code !== lang)
+  .map((language) => localeMap[language.code] ?? language.code);
+
+const { pathname } = Astro.url;
+const origin = (Astro.site ?? Astro.url).origin;
+const keywords = [
+  'international commodity trading',
+  'Central Asia trading company',
+  'bitumen exporter Uzbekistan',
+  'steel exporter Central Asia',
+  'barley importer Russia',
+  'agricultural commodities trading',
+  'silk yarn importer',
+  'textile raw materials trading',
+  'cross-border trade Central Asia',
+  'commodity logistics',
+];
+
+const pathWithoutLang = stripLangFromPath(pathname);
+const canonicalPath = lang === defaultLang ? pathWithoutLang : pathname;
+const canonical = `${origin}${canonicalPath}`;
+const alternateLinks = languages.map((language) => ({
+  href: `${origin}${withLanguagePrefix(language.code, pathWithoutLang)}`,
+  hreflang: language.code,
+}));
+const xDefault = `${origin}${withLanguagePrefix(defaultLang, pathWithoutLang)}`;
+const ogImage = `${origin}/logo.png`;
+
+// Sea-freight pages close with a cargo ship; every other page gets the truck.
+// Add or remove a route here to change which vehicle a page loops.
+const shipRoutes = ['/logistics', '/trade-map'];
+const cargoVariant = shipRoutes.some(
+  (route) => pathWithoutLang === route || pathWithoutLang.startsWith(`${route}/`),
+)
+  ? 'ship'
+  : 'truck';
+
+const organizationSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: brand,
+  url: origin,
+  logo: `${origin}/logo.png`,
+  description,
+  areaServed: ['Central Asia', 'Russia', 'Uzbekistan'],
+  knowsAbout: [
+    'Bitumen trading',
+    'Steel and metals trading',
+    'Agricultural commodities',
+    'Barley trading',
+    'Silk yarn and textile raw materials',
+    'Cross-border logistics',
+  ],
+  sameAs: [] as string[],
+};
+
+const websiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: brand,
+  url: origin,
+  inLanguage: lang,
+};
+---
+
+<!DOCTYPE html>
+<html lang={lang} dir={dir} class:list={{ rtl: dir === 'rtl' }}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/logo.png" type="image/png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/fonts/vazirmatn.css" />
+
+    <title>{metaTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="keywords" content={keywords.join(', ')} />
+    <meta name="robots" content="index,follow" />
+    <meta name="language" content={lang} />
+    <meta name="theme-color" content="#19266A" />
+
+    <link rel="canonical" href={canonical} />
+    {alternateLinks.map((link) => (
+      <link rel="alternate" href={link.href} hreflang={link.hreflang} />
+    ))}
+    <link rel="alternate" href={xDefault} hreflang="x-default" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={metaTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:site_name" content={brand} />
+    <meta property="og:locale" content={ogLocale} />
+    {alternateOgLocales.map((locale) => (
+      <meta property="og:locale:alternate" content={locale} />
+    ))}
+    <meta property="og:image" content={ogImage} />
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={metaTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <script type="application/ld+json" set:html={JSON.stringify(organizationSchema)}></script>
+    <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)}></script>
+  </head>
+  <body class:list={[dir === 'rtl' ? 'rtl' : 'ltr', 'min-h-screen bg-slate-50 text-slate-900 flex flex-col']}>
+    <Header lang={lang} translation={translation} />
+
+    <main class="flex-1">
+      <slot />
+      <CargoLoop variant={cargoVariant} dir={dir} />
+    </main>
+
+    <Footer lang={lang} translation={translation} />
+    <CallButton lang={lang} translation={translation} />
+
+    <script>
+      // Any link marked data-copy-email copies its address to the clipboard
+      // instead of navigating, across every page (header, footer, contact card).
+      const copiedLabels: Record<string, string> = {
+        en: 'Copied!',
+        fa: 'کپی شد!',
+        ar: 'تم النسخ!',
+        ru: 'Скопировано!',
+      };
+
+      document.addEventListener('click', (event) => {
+        if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+
+        const target = event.target;
+        if (!(target instanceof Element)) return;
+        const trigger = target.closest('[data-copy-email]');
+        if (!(trigger instanceof HTMLElement)) return;
+
+        const email = trigger.dataset.copyEmail;
+        if (!email) return;
+
+        event.preventDefault();
+
+        const openMailClient = () => {
+          window.location.href = `mailto:${email}`;
+        };
+
+        if (!navigator.clipboard?.writeText) {
+          openMailClient();
+          return;
+        }
+
+        navigator.clipboard.writeText(email).then(() => {
+          if (trigger.dataset.copied === 'true') return;
+          trigger.dataset.copied = 'true';
+
+          const original = trigger.textContent;
+          const lang = document.documentElement.lang || 'en';
+          trigger.textContent = copiedLabels[lang] ?? copiedLabels.en;
+
+          window.setTimeout(() => {
+            trigger.textContent = original;
+            delete trigger.dataset.copied;
+          }, 1600);
+        }).catch(openMailClient);
+      });
+    </script>
+  </body>
+</html>
