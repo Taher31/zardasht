@@ -242,7 +242,9 @@ const { variant = 'truck', dir = 'ltr' } = Astro.props;
     /** Slow waver, as real horns are never perfectly steady. */
     wobble: number;
     wobbleHz: number;
-    /** Convolution reverb: how big the space around it sounds. */
+    /** Convolution reverb: how big the space around it sounds. Tuned by ear
+     *  against measured tail levels — the ship sits ~13dB under the blast
+     *  0.3s after it stops, and is gone inside 1.5s. */
     tail: number;
     wet: number;
     level: number;
@@ -263,7 +265,7 @@ const { variant = 'truck', dir = 'ltr' } = Astro.props;
       wobble: 0.05,
       wobbleHz: 4.6,
       tail: 2.6,
-      wet: 0.36,
+      wet: 1.1,
       level: 0.32,
     },
     // Classic two-tone road air horn: brighter, buzzier, snaps on, short room.
@@ -279,7 +281,7 @@ const { variant = 'truck', dir = 'ltr' } = Astro.props;
       wobble: 0.03,
       wobbleHz: 6.5,
       tail: 1.1,
-      wet: 0.2,
+      wet: 0.5,
       level: 0.26,
     },
   };
@@ -306,7 +308,7 @@ const { variant = 'truck', dir = 'ltr' } = Astro.props;
       const data = ir.getChannelData(channel);
       for (let i = 0; i < length; i += 1) {
         const remaining = 1 - i / length;
-        data[i] = (Math.random() * 2 - 1) * remaining ** 2.4;
+        data[i] = (Math.random() * 2 - 1) * remaining ** 1.2;
       }
     }
 
@@ -352,10 +354,11 @@ const { variant = 'truck', dir = 'ltr' } = Astro.props;
     limiter.connect(master).connect(audio.destination);
 
     const dry = audio.createGain();
-    dry.gain.value = 1 - voice.wet * 0.5;
+    dry.gain.value = 0.92;
     dry.connect(limiter);
 
     const room = audio.createConvolver();
+    room.normalize = true; // wet is tuned against normalised IR gain
     room.buffer = impulseFor(audio, kind);
     const wet = audio.createGain();
     wet.gain.value = voice.wet;
