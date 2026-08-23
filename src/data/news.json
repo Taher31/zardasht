@@ -1,9 +1,48 @@
 [
     {
+        "slug": "khorasan-razavi-delegation-uzbekistan",
+        "date": "2026-08-23",
+        "image": "/images/CEO.webp",
+        "featured": true,
+        "title": {
+            "en": "CEO joins the Khorasan Razavi economic delegation to Uzbekistan",
+            "fa": "حضور مدیرعامل در سفر هیئت اقتصادی خراسان رضوی به ازبکستان",
+            "ar": "مشاركة الرئيس التنفيذي في زيارة الوفد الاقتصادي لخراسان رضوي إلى أوزبكستان",
+            "ru": "Генеральный директор в составе экономической делегации Хорасан-Резави в Узбекистане"
+        },
+        "excerpt": {
+            "en": "Mr. Majid Rokhsati travelled with the Khorasan Razavi economic delegation to Uzbekistan for meetings with trade bodies and Uzbek companies.",
+            "fa": "آقای مجید رخصتی در قالب هیئت اقتصادی خراسان رضوی به ازبکستان سفر کرد و در نشست‌های تجاری و دیدار با شرکت‌های ازبک حضور یافت.",
+            "ar": "سافر السيد مجيد رخصتي ضمن الوفد الاقتصادي لخراسان رضوي إلى أوزبكستان للمشاركة في لقاءات مع الجهات التجارية والشركات الأوزبكية.",
+            "ru": "Г-н Маджид Рохсати посетил Узбекистан в составе экономической делегации Хорасан-Резави для встреч с торговыми организациями и узбекскими компаниями."
+        },
+        "body": {
+            "en": [
+                "Mr. Majid Rokhsati, Chief Executive Officer, joined the Khorasan Razavi economic delegation on its visit to Uzbekistan.",
+                "The programme included joint sessions with provincial and Uzbek trade bodies, followed by meetings at Uzbek companies including BMB Holding.",
+                "Uzbekistan is one of our active markets, covering bitumen exports and silk yarn imports. The visit focused on strengthening those existing relationships and reviewing further opportunities."
+            ],
+            "fa": [
+                "آقای مجید رخصتی، مدیرعامل شرکت، در سفر هیئت اقتصادی خراسان رضوی به ازبکستان حضور یافت.",
+                "برنامه این سفر شامل نشست‌های مشترک با نهادهای تجاری استان و ازبکستان و سپس دیدار با شرکت‌های ازبک از جمله هلدینگ BMB بود.",
+                "ازبکستان یکی از بازارهای فعال ما در حوزه صادرات قیر و واردات نخ ابریشم است. تمرکز این سفر بر تقویت همین روابط و بررسی فرصت‌های جدید بود."
+            ],
+            "ar": [
+                "شارك السيد مجيد رخصتي، الرئيس التنفيذي، في زيارة الوفد الاقتصادي لخراسان رضوي إلى أوزبكستان.",
+                "تضمن البرنامج جلسات مشتركة مع الجهات التجارية في المحافظة وأوزبكستان، تلتها لقاءات مع شركات أوزبكية من بينها مجموعة BMB القابضة.",
+                "أوزبكستان أحد أسواقنا النشطة في تصدير البيتومين واستيراد خيوط الحرير، وركزت الزيارة على تعزيز هذه العلاقات القائمة وبحث فرص إضافية."
+            ],
+            "ru": [
+                "Генеральный директор г-н Маджид Рохсати принял участие в поездке экономической делегации Хорасан-Резави в Узбекистан.",
+                "Программа включала совместные встречи с торговыми организациями провинции и Узбекистана, а затем визиты в узбекские компании, в том числе в BMB Holding.",
+                "Узбекистан — один из наших активных рынков: экспорт битума и импорт шелковой пряжи. Поездка была посвящена укреплению этих связей и рассмотрению новых возможностей."
+            ]
+        }
+    },
+    {
         "slug": "uzbekistan-chamber-delegation",
         "date": "2026-07-15",
         "image": "/images/01_global_shipping_port.webp",
-        "featured": true,
         "title": {
             "en": "Visit to Uzbekistan with the Chamber of Commerce delegation",
             "fa": "بازدید از ازبکستان با هیئت اتاق بازرگانی",
@@ -39,7 +78,6 @@
         "slug": "factory-visit",
         "date": "2026-06-02",
         "image": "/images/03_metals_steel.webp",
-        "featured": true,
         "title": {
             "en": "Production facility visit",
             "fa": "بازدید از کارخانه",
@@ -75,7 +113,6 @@
         "slug": "general-assembly-address",
         "date": "2026-04-21",
         "image": "/images/08_warehouse_logistics.webp",
-        "featured": true,
         "title": {
             "en": "Address at the general assembly",
             "fa": "سخنرانی در مجمع عمومی",
