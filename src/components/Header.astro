@@ -105,7 +105,7 @@ const productGroups = [
 const mainLinks = [
   { href: base, label: labels.home },
   { href: marketsHref, label: labels.markets },
-  { href: logisticsHref, label: labels.logistics },
+  // { href: logisticsHref, label: labels.logistics }, // hidden until the logistics page is built out
   { href: newsHref, label: labels.news },
   { href: aboutHref, label: labels.about },
   { href: contactHref, label: labels.contact },
@@ -337,6 +337,7 @@ const dialogId = `site-mobile-menu-${lang}`;
             <span class="mobile-primary-index">02</span>
           </a>
 
+          {/* Hidden until the logistics page is built out — restore by removing this wrapper.
           <a
             href={logisticsHref}
             data-site-menu-link
@@ -345,6 +346,7 @@ const dialogId = `site-mobile-menu-${lang}`;
             <span>{labels.logistics}</span>
             <span class="mobile-primary-index">03</span>
           </a>
+          */}
 
           <a
             href={newsHref}
@@ -352,7 +354,7 @@ const dialogId = `site-mobile-menu-${lang}`;
             class:list={['mobile-primary-link', isActive(newsHref) && 'mobile-primary-link--active']}
           >
             <span>{labels.news}</span>
-            <span class="mobile-primary-index">04</span>
+            <span class="mobile-primary-index">03</span>
           </a>
 
           <a
@@ -361,7 +363,7 @@ const dialogId = `site-mobile-menu-${lang}`;
             class:list={['mobile-primary-link', isActive(aboutHref) && 'mobile-primary-link--active']}
           >
             <span>{labels.about}</span>
-            <span class="mobile-primary-index">05</span>
+            <span class="mobile-primary-index">04</span>
           </a>
 
           <a
@@ -370,7 +372,7 @@ const dialogId = `site-mobile-menu-${lang}`;
             class:list={['mobile-primary-link', isActive(contactHref) && 'mobile-primary-link--active']}
           >
             <span>{labels.contact}</span>
-            <span class="mobile-primary-index">06</span>
+            <span class="mobile-primary-index">05</span>
           </a>
         </div>
       </section>

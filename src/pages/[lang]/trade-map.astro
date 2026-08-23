@@ -23,13 +23,6 @@ const mapStrings = {
   dealsLabel: t.pages.tradeMap.dealsLabel,
   totalLabel: t.pages.tradeMap.totalLabel,
 };
-const fxStrings = {
-  title: t.pages.tradeMap.fxTitle,
-  baseLabel: t.pages.tradeMap.fxBaseLabel,
-  updatedLabel: t.pages.tradeMap.fxUpdatedLabel,
-  loading: t.pages.tradeMap.fxLoading,
-  error: t.pages.tradeMap.fxError,
-};
 
 // Names come from the shared country-locale module so the map, the mobile
 // cards and the per-country detail pages never drift apart.
@@ -81,48 +74,11 @@ const namedCountries = activeCountries.map((country) => ({
         </a>
       ))}
     </div>
-
-    <div class="mt-6 flex flex-wrap items-center gap-3 text-sm text-slate-600">
-      <span class="inline-flex items-center gap-2 rounded-full bg-brand-light px-3 py-1 font-semibold text-brand-dark">
-        {t.pages.tradeMap.highlightLegend}
-      </span>
-      <span class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 font-semibold text-slate-700">
-        {t.pages.tradeMap.greyLegend}
-      </span>
-    </div>
-
-    <div class="mt-6 card space-y-3 p-5" id="fx-rates">
-      <div class="flex flex-wrap items-center justify-between gap-2">
-        <p class="text-xs font-semibold uppercase tracking-[0.22em] text-brand-dark/70">
-          {t.pages.tradeMap.fxTitle}
-        </p>
-        <p class="text-xs text-slate-500" id="fx-base">
-          {t.pages.tradeMap.fxBaseLabel}: IRR
-        </p>
-      </div>
-      <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        <div class="stat-tile">
-          <span class="text-sm font-bold text-brand" id="fx-irr-usd">—</span>
-          <span class="text-xs uppercase tracking-[0.18em] text-slate-600">USD</span>
-        </div>
-        <div class="stat-tile">
-          <span class="text-sm font-bold text-brand" id="fx-irr-aed">—</span>
-          <span class="text-xs uppercase tracking-[0.18em] text-slate-600">AED</span>
-        </div>
-      </div>
-      <p class="text-xs text-slate-500" id="fx-meta">{t.pages.tradeMap.fxLoading}</p>
-    </div>
-
-    <p class="mt-4 text-center text-sm text-slate-600">
-      {t.pages.tradeMap.selectPrompt}
-    </p>
   </section>
 
   <script type="application/json" id="trade-data" set:html={JSON.stringify(activeCountries)}></script>
   <script type="application/json" id="map-locale" set:html={JSON.stringify(mapStrings)}></script>
-  <script type="application/json" id="fx-locale" set:html={JSON.stringify(fxStrings)}></script>
 
   <script src="/vendor/d3.min.js" defer></script>
   <script src="/scripts/trade-map.js" defer></script>
-  <script src="/scripts/fx-rates.js" defer></script>
 </Layout>
