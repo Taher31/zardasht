@@ -1,6 +1,7 @@
 ---
 import type { Translation, LanguageCode } from '../i18n';
-import { withLanguagePrefix } from '../i18n';
+import { withLanguagePrefix, stripLangFromPath } from '../i18n';
+import CargoLoop from './CargoLoop.astro';
 import { WHATSAPP_URL } from '../config/contact';
 
 interface Props {
@@ -10,6 +11,16 @@ interface Props {
 
 const { lang, translation } = Astro.props;
 const currentYear = new Date().getFullYear();
+
+// Sea-freight pages close with a cargo ship; every other page gets the truck.
+// Add or remove a route here to change which vehicle a page loops.
+const shipRoutes = ['/logistics', '/trade-map'];
+const pathWithoutLang = stripLangFromPath(Astro.url.pathname);
+const cargoVariant = shipRoutes.some(
+  (route) => pathWithoutLang === route || pathWithoutLang.startsWith(`${route}/`),
+)
+  ? 'ship'
+  : 'truck';
 const whatsappGreetingUrl = `${WHATSAPP_URL}?text=${encodeURIComponent(translation.pages.contact.whatsappGreeting)}`;
 
 const companyLinks = [
@@ -34,6 +45,8 @@ const directLinks = [
 ---
 
 <footer dir={translation.dir} class:list={["mt-16 bg-[#10184A] text-white", { 'rtl-footer': translation.dir === 'rtl' }]}>
+  <CargoLoop variant={cargoVariant} dir={translation.dir} />
+
   <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-14">
     <div class="grid grid-cols-1 gap-10 text-start md:grid-cols-2 lg:grid-cols-[1.25fr,0.75fr,0.75fr,1fr]">
       <div class="space-y-5">

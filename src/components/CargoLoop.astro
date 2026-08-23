@@ -1,0 +1,300 @@
+---
+// Looping ZMB vehicle that rides across the top edge of the footer, above the
+// footer links. It carries the footer's own navy, so it reads as the top strip
+// of the footer rather than a separate band. `variant` picks the vehicle:
+// sea-freight pages get a cargo ship, the rest get a road truck.
+interface Props {
+  variant?: 'truck' | 'ship';
+  dir?: 'ltr' | 'rtl';
+}
+
+const { variant = 'truck', dir = 'ltr' } = Astro.props;
+---
+
+<div class="cargo-loop" data-variant={variant} data-dir={dir} aria-hidden="true">
+  <span class="cargo-loop__lane"></span>
+  <span class="cargo-loop__vehicle">
+    {variant === 'ship' ? (
+      <svg viewBox="0 0 176 62" role="presentation" focusable="false">
+        <!-- container stacks -->
+        <g>
+          <rect x="54" y="28" width="17" height="11" rx="1" fill="#F3C623" />
+          <rect x="73" y="28" width="17" height="11" rx="1" fill="#EEF1FB" />
+          <rect x="92" y="28" width="17" height="11" rx="1" fill="#5C74D8" />
+          <rect x="111" y="28" width="17" height="11" rx="1" fill="#EEF1FB" />
+          <rect x="130" y="28" width="17" height="11" rx="1" fill="#F3C623" />
+          <rect x="149" y="28" width="17" height="11" rx="1" fill="#5C74D8" />
+
+          <rect x="54" y="16" width="17" height="11" rx="1" fill="#EEF1FB" />
+          <rect x="73" y="16" width="17" height="11" rx="1" fill="#5C74D8" />
+          <rect x="92" y="16" width="17" height="11" rx="1" fill="#F3C623" />
+          <rect x="111" y="16" width="17" height="11" rx="1" fill="#EEF1FB" />
+          <rect x="130" y="16" width="17" height="11" rx="1" fill="#5C74D8" />
+
+          <rect x="58" y="4" width="17" height="11" rx="1" fill="#5C74D8" />
+          <rect x="77" y="4" width="17" height="11" rx="1" fill="#F3C623" />
+          <rect x="96" y="4" width="17" height="11" rx="1" fill="#EEF1FB" />
+        </g>
+
+        <!-- bridge + funnel -->
+        <rect x="26" y="6" width="11" height="11" rx="1.5" fill="#EEF1FB" />
+        <rect x="26" y="8.5" width="11" height="3.4" fill="#F3C623" />
+        <rect x="18" y="16" width="30" height="24" rx="2" fill="#EEF1FB" />
+        <g fill="#10184A" fill-opacity=".72">
+          <rect x="22" y="20" width="5" height="4" rx="1" /><rect x="29" y="20" width="5" height="4" rx="1" />
+          <rect x="36" y="20" width="5" height="4" rx="1" /><rect x="43" y="20" width="4" height="4" rx="1" />
+          <rect x="22" y="28" width="5" height="4" rx="1" /><rect x="29" y="28" width="5" height="4" rx="1" />
+          <rect x="36" y="28" width="5" height="4" rx="1" /><rect x="43" y="28" width="4" height="4" rx="1" />
+        </g>
+
+        <!-- hull -->
+        <path d="M10 40h158l-12 14H24q-10 0-14-8z" fill="#F3C623" />
+        <path d="M12 41.6h154" stroke="#10184A" stroke-opacity=".38" stroke-width="1.6" stroke-linecap="round" />
+        <text x="96" y="51" text-anchor="middle" font-family="Manrope, system-ui, sans-serif" font-size="8.5" font-weight="800" letter-spacing="1.1" fill="#10184A">ZMB CO</text>
+      </svg>
+    ) : (
+      <svg viewBox="0 0 148 56" role="presentation" focusable="false">
+        <!-- trailer -->
+        <rect x="2" y="6" width="90" height="32" rx="3" fill="#F3C623" />
+        <path d="M7 13h80M7 31h80" stroke="#10184A" stroke-opacity=".2" stroke-width="1.3" stroke-linecap="round" />
+        <text x="47" y="27" text-anchor="middle" font-family="Manrope, system-ui, sans-serif" font-size="13" font-weight="800" letter-spacing="1" fill="#10184A">ZMB CO</text>
+
+        <!-- cab -->
+        <path d="M96 10h21q3 0 5 4l5 10h10q3 0 3 3v11H96z" fill="#DDAE13" />
+        <path d="M101 14h11v10h-11zM116 15h2l4 9h-6z" fill="#10184A" fill-opacity=".75" />
+
+        <!-- chassis, lamps -->
+        <rect x="4" y="37" width="132" height="3" rx="1.5" fill="#070C24" />
+        <circle cx="138" cy="32" r="2.4" fill="#FFF3C4" />
+        <rect x="2" y="30" width="3" height="5" rx="1.5" fill="#E4572E" />
+
+        <!-- wheels (gold rim keeps them readable against the navy band) -->
+        <g transform="translate(20 43)"><circle r="7.5" fill="#070C24" /><circle r="7.5" fill="none" stroke="#F3C623" stroke-opacity=".45" stroke-width="1.3" /><g class="cargo-loop__hub"><circle r="2.6" fill="#F3C623" /><path d="M0-5.6V5.6M-5.6 0H5.6" stroke="#F3C623" stroke-opacity=".5" stroke-width="1.2" /></g></g>
+        <g transform="translate(38 43)"><circle r="7.5" fill="#070C24" /><circle r="7.5" fill="none" stroke="#F3C623" stroke-opacity=".45" stroke-width="1.3" /><g class="cargo-loop__hub"><circle r="2.6" fill="#F3C623" /><path d="M0-5.6V5.6M-5.6 0H5.6" stroke="#F3C623" stroke-opacity=".5" stroke-width="1.2" /></g></g>
+        <g transform="translate(102 43)"><circle r="7.5" fill="#070C24" /><circle r="7.5" fill="none" stroke="#F3C623" stroke-opacity=".45" stroke-width="1.3" /><g class="cargo-loop__hub"><circle r="2.6" fill="#F3C623" /><path d="M0-5.6V5.6M-5.6 0H5.6" stroke="#F3C623" stroke-opacity=".5" stroke-width="1.2" /></g></g>
+        <g transform="translate(128 43)"><circle r="7.5" fill="#070C24" /><circle r="7.5" fill="none" stroke="#F3C623" stroke-opacity=".45" stroke-width="1.3" /><g class="cargo-loop__hub"><circle r="2.6" fill="#F3C623" /><path d="M0-5.6V5.6M-5.6 0H5.6" stroke="#F3C623" stroke-opacity=".5" stroke-width="1.2" /></g></g>
+      </svg>
+    )}
+  </span>
+</div>
+
+<style>
+  .cargo-loop {
+    position: relative;
+    height: clamp(58px, 7vw, 78px);
+    overflow: hidden;
+    pointer-events: none;
+    /* Footer navy, so the band and the footer below read as one block. */
+    background: #10184A;
+    /* The band sits at the very bottom of long pages, so it is off-screen most
+       of the time. This lets the browser skip its rendering work entirely until
+       it scrolls into view; the explicit height above keeps layout stable. */
+    content-visibility: auto;
+    contain-intrinsic-size: auto clamp(58px, 7vw, 78px);
+  }
+
+  .cargo-loop__lane {
+    position: absolute;
+    inset-inline: 0;
+    bottom: 6px;
+    height: 2px;
+    background: repeating-linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.28) 0 22px,
+      transparent 22px 46px
+    );
+  }
+
+  /* Sea variant: the lane becomes a drifting waterline. It overhangs both edges
+     by one wave tile so a one-tile transform loops seamlessly — sliding the
+     layer beats animating background-position, which repaints the strip every
+     frame instead of running on the compositor. */
+  .cargo-loop[data-variant='ship'] .cargo-loop__lane {
+    inset-inline: -80px;
+    bottom: 4px;
+    height: 12px;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='12' viewBox='0 0 80 12'%3E%3Cpath d='M0 8q10-6 20 0t20 0t20 0t20 0' fill='none' stroke='%23FFFFFF' stroke-opacity='.3' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") repeat-x left center / 80px 12px;
+    animation: cargo-loop-water 3s linear infinite;
+  }
+
+  /* The band itself stays click-through; only the vehicle takes the horn click. */
+  .cargo-loop__vehicle {
+    position: absolute;
+    left: 0;
+    bottom: 4px;
+    display: block;
+    width: clamp(96px, 11vw, 148px);
+    animation: cargo-loop-drive 17s linear infinite;
+    will-change: transform;
+    pointer-events: auto;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .cargo-loop[data-variant='ship'] .cargo-loop__vehicle {
+    bottom: 2px;
+    width: clamp(118px, 14vw, 184px);
+    animation-duration: 26s;
+  }
+
+  /* SVG hit-testing is per-shape, so clicks would fall through the gaps between
+     containers. Handing the whole box to the wrapper makes the vehicle an easy
+     target while it is moving. */
+  .cargo-loop__vehicle svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    pointer-events: none;
+    filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.38));
+    animation: cargo-loop-bob 0.42s ease-in-out infinite alternate;
+  }
+
+  .cargo-loop[data-variant='ship'] .cargo-loop__vehicle svg {
+    animation: cargo-loop-roll 2.4s ease-in-out infinite alternate;
+  }
+
+  .cargo-loop__hub {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: cargo-loop-spin 0.55s linear infinite;
+  }
+
+  /* RTL pages read right-to-left, so the vehicle travels — and faces — that way. */
+  .cargo-loop[data-dir='rtl'] .cargo-loop__vehicle {
+    animation-name: cargo-loop-drive-rtl;
+  }
+
+  /* Mirroring the vehicle also mirrors its lettering — flip the wordmark back. */
+  .cargo-loop[data-dir='rtl'] .cargo-loop__vehicle text {
+    transform: scaleX(-1);
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+
+  @keyframes cargo-loop-drive {
+    from { transform: translateX(-190px); }
+    to { transform: translateX(calc(100vw + 30px)); }
+  }
+
+  @keyframes cargo-loop-drive-rtl {
+    from { transform: translateX(calc(100vw + 30px)) scaleX(-1); }
+    to { transform: translateX(-190px) scaleX(-1); }
+  }
+
+  @keyframes cargo-loop-bob {
+    from { transform: translateY(0); }
+    to { transform: translateY(-1px); }
+  }
+
+  @keyframes cargo-loop-roll {
+    from { transform: translateY(1px) rotate(-0.7deg); }
+    to { transform: translateY(-1.5px) rotate(0.7deg); }
+  }
+
+  @keyframes cargo-loop-spin {
+    to { transform: rotate(360deg); }
+  }
+
+  @keyframes cargo-loop-water {
+    to { transform: translateX(-80px); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cargo-loop__vehicle,
+    .cargo-loop__vehicle svg,
+    .cargo-loop__hub,
+    .cargo-loop[data-variant='ship'] .cargo-loop__lane {
+      animation: none;
+    }
+
+    .cargo-loop__vehicle {
+      transform: translateX(8vw);
+    }
+
+    .cargo-loop[data-dir='rtl'] .cargo-loop__vehicle {
+      transform: translateX(calc(92vw - 100%)) scaleX(-1);
+    }
+  }
+</style>
+
+<script>
+  // Clicking the vehicle sounds its horn. The tone is synthesised with Web
+  // Audio rather than loaded from a file: no asset to download, and nothing at
+  // all is allocated until someone actually clicks — browsers block audio
+  // before a user gesture anyway, so building the context up front is wasted.
+  type Horn = 'ship' | 'truck';
+
+  const AudioCtor =
+    window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+
+  let ctx: AudioContext | null = null;
+  let quietUntil = 0;
+
+  // [frequency, gain] pairs. The ship is a deep, slow blast; the truck is a
+  // brighter two-tone air horn.
+  const VOICES: Record<Horn, { partials: [number, number][]; duration: number; attack: number; peak: number; cutoff: number }> = {
+    ship: {
+      partials: [[65, 0.55], [97.5, 0.36], [130, 0.2], [195, 0.09]],
+      duration: 1.9,
+      attack: 0.16,
+      peak: 0.28,
+      cutoff: 900,
+    },
+    truck: {
+      partials: [[311, 0.4], [415, 0.3], [622, 0.13], [830, 0.07]],
+      duration: 0.65,
+      attack: 0.02,
+      peak: 0.2,
+      cutoff: 2600,
+    },
+  };
+
+  const honk = (kind: Horn) => {
+    if (!AudioCtor) return;
+
+    ctx ??= new AudioCtor();
+    if (ctx.state === 'suspended') void ctx.resume();
+
+    const start = ctx.currentTime;
+    if (start < quietUntil) return; // ignore rapid re-clicks so blasts never stack
+
+    const voice = VOICES[kind];
+    const end = start + voice.duration;
+    quietUntil = start + voice.duration * 0.6;
+
+    const out = ctx.createGain();
+    out.gain.setValueAtTime(0.0001, start);
+    out.gain.exponentialRampToValueAtTime(voice.peak, start + voice.attack);
+    out.gain.setValueAtTime(voice.peak, start + voice.duration * 0.55);
+    out.gain.exponentialRampToValueAtTime(0.0001, end);
+
+    const tone = ctx.createBiquadFilter();
+    tone.type = 'lowpass';
+    tone.frequency.value = voice.cutoff;
+    tone.Q.value = 0.7;
+    tone.connect(out).connect(ctx.destination);
+
+    for (const [frequency, gain] of voice.partials) {
+      // Two oscillators per partial, very slightly apart, so they beat against
+      // each other the way a real horn wavers.
+      for (const [index, offset] of [0, 0.7].entries()) {
+        const osc = ctx.createOscillator();
+        osc.type = index === 0 ? 'sawtooth' : 'sine';
+        osc.frequency.setValueAtTime(frequency + offset, start);
+        osc.frequency.linearRampToValueAtTime((frequency + offset) * 0.985, end); // horn sags as it dies
+        const level = ctx.createGain();
+        level.gain.value = gain * (index === 0 ? 0.55 : 0.45);
+        osc.connect(level).connect(tone);
+        osc.start(start);
+        osc.stop(end + 0.05);
+      }
+    }
+  };
+
+  const band = document.querySelector<HTMLElement>('.cargo-loop');
+  const vehicle = band?.querySelector<HTMLElement>('.cargo-loop__vehicle');
+
+  vehicle?.addEventListener('click', () => {
+    honk(band?.dataset.variant === 'ship' ? 'ship' : 'truck');
+  });
+</script>
