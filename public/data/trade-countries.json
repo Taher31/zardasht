@@ -1,4 +1,17 @@
-[
+    [  {
+        "country_code": "VE",
+        "country_name": "Venezuela",
+        "capital": "Caracas",
+        "currency": "VES - Venezuelan bolívar",
+        "status": true,
+        "notes": "Bitumen, steel, and agricultural commodity exports to Venezuelan buyers, subject to agreed specifications, delivery terms, and applicable compliance requirements.",
+        "main_exports": [
+
+        ],
+        "main_imports": ["coco"],
+        "compliance_notes": "Export and import documentation, counterparty screening, sanctions compliance, and payment terms confirmed per shipment.",
+        "page_slug": "venezuela"
+    },
     {
         "country_code": "IQ",
         "country_name": "Iraq",

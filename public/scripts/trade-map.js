@@ -94,7 +94,7 @@
 
   // Iran is the home base and uses the local brand asset; markets use flagcdn,
   // which the country detail pages and mobile cards already rely on.
-  const flagSources = new Map([['IR', '/images/iran-flag.jpg']]);
+  const flagSources = new Map([['IR', '/images/iran-flag.webp']]);
   tradeData.forEach((entry) => {
     const code = normalizeCode(entry.country_code);
     if (code && !flagSources.has(code)) {

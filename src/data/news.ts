@@ -4,9 +4,9 @@ import newsData from './news.json';
 /**
  * Company news / blog posts.
  *
- * Content is managed through the admin panel (see admin/README-EXPORT.md).
- * This file no longer holds the posts directly — it reads them from
- * news.json, which the admin panel's export regenerates.
+ * Content lives in news.json (same folder). Edit that file directly to add,
+ * change, or remove a post — see the shape of NewsPost below for the fields
+ * each entry needs (title/excerpt/body must have all four languages).
  */
 export interface NewsPost {
   slug: string;

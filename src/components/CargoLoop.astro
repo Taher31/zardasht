@@ -218,35 +218,110 @@ const { variant = 'truck', dir = 'ltr' } = Astro.props;
 </style>
 
 <script>
-  // Clicking the vehicle sounds its horn. The tone is synthesised with Web
-  // Audio rather than loaded from a file: no asset to download, and nothing at
-  // all is allocated until someone actually clicks — browsers block audio
-  // before a user gesture anyway, so building the context up front is wasted.
+  // Clicking the vehicle sounds its horn. Everything is synthesised with Web
+  // Audio rather than loaded from a file: no asset, no extra request, and
+  // nothing at all is built until the first click — browsers block audio before
+  // a user gesture anyway, so preparing it up front would be wasted work.
   type Horn = 'ship' | 'truck';
+
+  interface Voice {
+    /** Horn bells, as [frequency, level]. Two bells a fifth/fourth apart is
+     *  what gives a real horn its chord rather than a single flat pitch. */
+    bells: [number, number][];
+    /** Relative amplitude of each harmonic — the timbre. Index 0 is DC. */
+    harmonics: number[];
+    duration: number;
+    attack: number;
+    /** Pitch at the very start, as a ratio. Air pressure builds before the
+     *  reed settles, so a real horn slides up onto its note. */
+    bend: number;
+    cutoff: number;
+    /** Breath/air rush around the onset. */
+    air: number;
+    airHz: number;
+    /** Slow waver, as real horns are never perfectly steady. */
+    wobble: number;
+    wobbleHz: number;
+    /** Convolution reverb: how big the space around it sounds. */
+    tail: number;
+    wet: number;
+    level: number;
+  }
+
+  const VOICES: Record<Horn, Voice> = {
+    // Deep single-note ship's typhon with a fifth above it, heard across open
+    // water — long attack, long tail.
+    ship: {
+      bells: [[68, 1], [102, 0.4]],
+      harmonics: [0, 1, 0.85, 0.7, 0.5, 0.38, 0.3, 0.2, 0.14, 0.1, 0.07, 0.05, 0.03, 0.02],
+      duration: 2.5,
+      attack: 0.24,
+      bend: 0.93,
+      cutoff: 1150,
+      air: 0.16,
+      airHz: 380,
+      wobble: 0.05,
+      wobbleHz: 4.6,
+      tail: 2.6,
+      wet: 0.36,
+      level: 0.32,
+    },
+    // Classic two-tone road air horn: brighter, buzzier, snaps on, short room.
+    truck: {
+      bells: [[300, 1], [400, 0.85]],
+      harmonics: [0, 1, 0.9, 0.75, 0.62, 0.5, 0.42, 0.33, 0.26, 0.2, 0.15, 0.11, 0.08, 0.06, 0.04],
+      duration: 0.85,
+      attack: 0.03,
+      bend: 0.965,
+      cutoff: 3400,
+      air: 0.1,
+      airHz: 1400,
+      wobble: 0.03,
+      wobbleHz: 6.5,
+      tail: 1.1,
+      wet: 0.2,
+      level: 0.26,
+    },
+  };
 
   const AudioCtor =
     window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
 
   let ctx: AudioContext | null = null;
+  let noise: AudioBuffer | null = null;
   let quietUntil = 0;
+  const waves = new Map<Horn, PeriodicWave>();
+  const impulses = new Map<Horn, AudioBuffer>();
 
-  // [frequency, gain] pairs. The ship is a deep, slow blast; the truck is a
-  // brighter two-tone air horn.
-  const VOICES: Record<Horn, { partials: [number, number][]; duration: number; attack: number; peak: number; cutoff: number }> = {
-    ship: {
-      partials: [[65, 0.55], [97.5, 0.36], [130, 0.2], [195, 0.09]],
-      duration: 1.9,
-      attack: 0.16,
-      peak: 0.28,
-      cutoff: 900,
-    },
-    truck: {
-      partials: [[311, 0.4], [415, 0.3], [622, 0.13], [830, 0.07]],
-      duration: 0.65,
-      attack: 0.02,
-      peak: 0.2,
-      cutoff: 2600,
-    },
+  /** Exponentially decaying noise — a serviceable stand-in for a real space. */
+  const impulseFor = (audio: AudioContext, kind: Horn) => {
+    let ir = impulses.get(kind);
+    if (ir) return ir;
+
+    const { tail } = VOICES[kind];
+    const length = Math.floor(audio.sampleRate * tail);
+    ir = audio.createBuffer(2, length, audio.sampleRate);
+
+    for (let channel = 0; channel < 2; channel += 1) {
+      const data = ir.getChannelData(channel);
+      for (let i = 0; i < length; i += 1) {
+        const remaining = 1 - i / length;
+        data[i] = (Math.random() * 2 - 1) * remaining ** 2.4;
+      }
+    }
+
+    impulses.set(kind, ir);
+    return ir;
+  };
+
+  const waveFor = (audio: AudioContext, kind: Horn) => {
+    let wave = waves.get(kind);
+    if (wave) return wave;
+
+    const { harmonics } = VOICES[kind];
+    wave = audio.createPeriodicWave(new Float32Array(harmonics.length), Float32Array.from(harmonics));
+    waves.set(kind, wave);
+    return wave;
   };
 
   const honk = (kind: Horn) => {
@@ -255,40 +330,113 @@ const { variant = 'truck', dir = 'ltr' } = Astro.props;
     ctx ??= new AudioCtor();
     if (ctx.state === 'suspended') void ctx.resume();
 
-    const start = ctx.currentTime;
+    const audio = ctx;
+    const start = audio.currentTime + 0.02;
     if (start < quietUntil) return; // ignore rapid re-clicks so blasts never stack
 
     const voice = VOICES[kind];
     const end = start + voice.duration;
-    quietUntil = start + voice.duration * 0.6;
+    quietUntil = start + voice.duration * 0.55;
 
-    const out = ctx.createGain();
-    out.gain.setValueAtTime(0.0001, start);
-    out.gain.exponentialRampToValueAtTime(voice.peak, start + voice.attack);
-    out.gain.setValueAtTime(voice.peak, start + voice.duration * 0.55);
-    out.gain.exponentialRampToValueAtTime(0.0001, end);
+    // Catches any peak the layers add up to, so the horn can be full without
+    // ever clipping.
+    const limiter = audio.createDynamicsCompressor();
+    limiter.threshold.value = -8;
+    limiter.knee.value = 6;
+    limiter.ratio.value = 12;
+    limiter.attack.value = 0.004;
+    limiter.release.value = 0.18;
 
-    const tone = ctx.createBiquadFilter();
+    const master = audio.createGain();
+    master.gain.value = voice.level;
+    limiter.connect(master).connect(audio.destination);
+
+    const dry = audio.createGain();
+    dry.gain.value = 1 - voice.wet * 0.5;
+    dry.connect(limiter);
+
+    const room = audio.createConvolver();
+    room.buffer = impulseFor(audio, kind);
+    const wet = audio.createGain();
+    wet.gain.value = voice.wet;
+    room.connect(wet).connect(limiter);
+
+    const env = audio.createGain();
+    env.gain.setValueAtTime(0.0001, start);
+    env.gain.exponentialRampToValueAtTime(1, start + voice.attack);
+    env.gain.setValueAtTime(1, start + voice.duration * 0.62);
+    env.gain.exponentialRampToValueAtTime(0.0001, end);
+    env.connect(dry);
+    env.connect(room);
+
+    // Brightens as the pressure comes up, then darkens as it dies away.
+    const tone = audio.createBiquadFilter();
     tone.type = 'lowpass';
-    tone.frequency.value = voice.cutoff;
-    tone.Q.value = 0.7;
-    tone.connect(out).connect(ctx.destination);
+    tone.Q.value = 0.9;
+    tone.frequency.setValueAtTime(voice.cutoff * 0.4, start);
+    tone.frequency.linearRampToValueAtTime(voice.cutoff, start + voice.attack * 1.5);
+    tone.frequency.linearRampToValueAtTime(voice.cutoff * 0.55, end);
+    tone.connect(env);
 
-    for (const [frequency, gain] of voice.partials) {
-      // Two oscillators per partial, very slightly apart, so they beat against
-      // each other the way a real horn wavers.
-      for (const [index, offset] of [0, 0.7].entries()) {
-        const osc = ctx.createOscillator();
-        osc.type = index === 0 ? 'sawtooth' : 'sine';
-        osc.frequency.setValueAtTime(frequency + offset, start);
-        osc.frequency.linearRampToValueAtTime((frequency + offset) * 0.985, end); // horn sags as it dies
-        const level = ctx.createGain();
-        level.gain.value = gain * (index === 0 ? 0.55 : 0.45);
-        osc.connect(level).connect(tone);
+    const wobble = audio.createOscillator();
+    wobble.frequency.value = voice.wobbleHz;
+    const wobbleDepth = audio.createGain();
+    wobbleDepth.gain.value = voice.wobble;
+    wobble.connect(wobbleDepth).connect(env.gain);
+    wobble.start(start);
+    wobble.stop(end);
+
+    const wave = waveFor(audio, kind);
+
+    for (const [frequency, level] of voice.bells) {
+      // Two oscillators per bell, a fraction apart, so they beat against each
+      // other the way a real horn wavers.
+      for (const offset of [-0.7, 0.7]) {
+        const osc = audio.createOscillator();
+        osc.setPeriodicWave(wave);
+
+        const target = frequency + offset;
+        osc.frequency.setValueAtTime(target * voice.bend, start);
+        osc.frequency.exponentialRampToValueAtTime(target, start + voice.attack * 0.9);
+        osc.frequency.setValueAtTime(target, start + voice.duration * 0.62);
+        osc.frequency.linearRampToValueAtTime(target * 0.975, end); // sags as the air runs out
+
+        const bell = audio.createGain();
+        bell.gain.value = level * 0.5;
+        osc.connect(bell).connect(tone);
         osc.start(start);
         osc.stop(end + 0.05);
       }
     }
+
+    if (!noise) {
+      const length = Math.floor(audio.sampleRate * 2);
+      noise = audio.createBuffer(1, length, audio.sampleRate);
+      const data = noise.getChannelData(0);
+      for (let i = 0; i < length; i += 1) data[i] = Math.random() * 2 - 1;
+    }
+
+    // The rush of air, loudest as the horn opens.
+    const air = audio.createBufferSource();
+    air.buffer = noise;
+    air.loop = true;
+    const airBand = audio.createBiquadFilter();
+    airBand.type = 'bandpass';
+    airBand.frequency.value = voice.airHz;
+    airBand.Q.value = 0.8;
+    const airLevel = audio.createGain();
+    airLevel.gain.setValueAtTime(0.0001, start);
+    airLevel.gain.exponentialRampToValueAtTime(voice.air, start + voice.attack * 0.6);
+    airLevel.gain.exponentialRampToValueAtTime(voice.air * 0.09, start + voice.attack * 3);
+    airLevel.gain.exponentialRampToValueAtTime(0.0001, end);
+    air.connect(airBand).connect(airLevel);
+    airLevel.connect(dry);
+    airLevel.connect(room);
+    air.start(start);
+    air.stop(end + 0.05);
+
+    // Let the reverb ring out, then drop the whole graph.
+    window.setTimeout(() => master.disconnect(), (voice.duration + voice.tail + 0.4) * 1000);
   };
 
   const band = document.querySelector<HTMLElement>('.cargo-loop');

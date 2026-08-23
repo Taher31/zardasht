@@ -1,8 +1,0 @@
-Options -Indexes
-
-# Belt-and-suspenders in case this ever ends up reachable at /admin/config or
-# /admin/db directly (e.g. wrong document root on a shared host) — normally
-# these live outside public/ entirely and Apache never sees them.
-<FilesMatch "\.(sql|md)$">
-  Require all denied
-</FilesMatch>
