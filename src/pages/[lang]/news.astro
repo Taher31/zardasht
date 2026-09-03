@@ -1,7 +1,9 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import { getTranslation, resolveLang, withLanguagePrefix, localizedLanguages } from '../../i18n';
+import { metaDescription } from '../../data/meta-descriptions';
 import { getNewsPosts, formatNewsDate } from '../../data/news';
+import { imageSize } from '../../data/image-size';
 
 export function getStaticPaths() {
   return localizedLanguages.map((language) => ({ params: { lang: language.code } }));
@@ -19,7 +21,13 @@ const posts = getNewsPosts(lang).map((post) => ({
 const [lead, ...rest] = posts;
 ---
 
-<Layout title={t.pages.news.title} lang={lang} translation={t}>
+<Layout
+  title={t.pages.news.title}
+  lang={lang}
+  translation={t}
+  description={metaDescription(lang, 'news') ?? t.pages.news.intro}
+  breadcrumbs={[{ name: t.pages.news.title, href: withLanguagePrefix(lang, '/news') }]}
+>
   <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16">
     <div class="text-center">
       <p class="section-eyebrow">{t.pages.news.eyebrow}</p>
@@ -40,6 +48,7 @@ const [lead, ...rest] = posts;
             alt=""
             loading="eager"
             class="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105"
+            {...imageSize(lead.image)}
           />
         </div>
         <div class="flex flex-col justify-center gap-4 p-6 sm:p-9">
@@ -66,6 +75,7 @@ const [lead, ...rest] = posts;
                 alt=""
                 loading="lazy"
                 class="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105"
+                {...imageSize(post.image)}
               />
             </div>
             <div class="flex flex-1 flex-col gap-3 p-5">

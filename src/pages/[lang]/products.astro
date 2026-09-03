@@ -2,6 +2,9 @@
 import Layout from '../../layouts/Layout.astro';
 import ProductCard from '../../components/ProductCard.astro';
 import { getTranslation, resolveLang, withLanguagePrefix, localizedLanguages } from '../../i18n';
+import { metaDescription } from '../../data/meta-descriptions';
+import { imageSize } from '../../data/image-size';
+import { groupAccents, groupFallbackImage } from '../../data/product-groups';
 
 export function getStaticPaths() {
   return localizedLanguages.map((language) => ({ params: { lang: language.code } }));
@@ -11,16 +14,17 @@ const lang = resolveLang(Astro.props.lang ?? Astro.params.lang);
 const t = getTranslation(lang);
 const stats = t.pages.home.stats;
 
-const sectionAccents: Record<string, { code: string; note: string; image: string; video?: string }> = {
-  'energy-bitumen': { code: '01', note: 'EB', image: '/images/02_bitumen.webp', video: '/video/02_bitumen.mp4' },
-  'metals-steel': { code: '02', note: 'MS', image: '/images/03_metals_steel.webp' },
-  'agricultural-commodities': { code: '03', note: 'AG', image: '/images/04_agricultural_grain.webp', video: '/video/04_agricultural_grain.mp4' },
-  'textile-raw-materials': { code: '04', note: 'TX', image: '/images/05_textile_yarn.webp' },
-};
-const fallbackImage = '/images/06_road_logistics_truck.webp';
+const sectionAccents = groupAccents;
+const fallbackImage = groupFallbackImage;
 ---
 
-<Layout title={t.pages.products.title} lang={lang} translation={t}>
+<Layout
+  title={t.pages.products.title}
+  lang={lang}
+  translation={t}
+  description={metaDescription(lang, 'products') ?? t.pages.products.intro}
+  breadcrumbs={[{ name: t.pages.products.title, href: withLanguagePrefix(lang, '/products') }]}
+>
   <main>
     <section>
       <div class="mx-auto grid max-w-6xl gap-8 px-4 py-12 sm:px-6 sm:py-16 lg:grid-cols-[1.15fr,0.85fr] lg:items-end">
@@ -39,7 +43,7 @@ const fallbackImage = '/images/06_road_logistics_truck.webp';
           <div class="mt-5 grid grid-cols-2 gap-3">
             {t.pages.products.sections.map((section) => (
               <a
-                href={`#${section.id}`}
+                href={withLanguagePrefix(lang, `/products/${section.id}`)}
                 class="group overflow-hidden rounded-2xl border border-white/10 bg-white/5 transition hover:border-[#F3C623]/50 hover:bg-white/10"
               >
                 <div class="relative h-16 w-full overflow-hidden">
@@ -50,6 +54,7 @@ const fallbackImage = '/images/06_road_logistics_truck.webp';
                     data-fallback-image
                     data-fallback={fallbackImage}
                     class="h-full w-full object-cover opacity-70 transition duration-500 group-hover:scale-105 group-hover:opacity-90"
+                    {...imageSize(sectionAccents[section.id]?.image ?? fallbackImage)}
                   />
                   <div class="absolute inset-0 bg-gradient-to-t from-[#10184A] via-[#10184A]/30 to-transparent"></div>
                   <span class="absolute start-2 top-2 text-[10px] font-bold uppercase tracking-[0.18em] text-[#F3C623]">{section.badge}</span>
@@ -83,17 +88,17 @@ const fallbackImage = '/images/06_road_logistics_truck.webp';
                     <video
                       class="absolute inset-0 h-full w-full object-cover opacity-100"
                       poster={accent.image}
-                      autoplay
                       muted
                       loop
                       playsinline
-                      preload="metadata"
+                      preload="none"
                       aria-hidden="true"
                       data-fallback-video
                       data-fallback={accent.image}
-                    >
-                      <source src={accent.video} type="video/mp4" />
-                    </video>
+                      data-fallback-width={imageSize(accent.image).width}
+                      data-fallback-height={imageSize(accent.image).height}
+                      data-video-src={accent.video}
+                    ></video>
                   ) : (
                     <img
                       src={accent.image}
@@ -102,6 +107,7 @@ const fallbackImage = '/images/06_road_logistics_truck.webp';
                       data-fallback-image
                       data-fallback={fallbackImage}
                       class="absolute inset-0 h-full w-full object-cover opacity-100"
+                      {...imageSize(accent.image)}
                     />
                   )}
                   <div class="absolute inset-0 bg-gradient-to-br from-[#10184A]/95 via-[#10184A]/85 to-[#0b1440]/95"></div>
@@ -207,6 +213,10 @@ const fallbackImage = '/images/06_road_logistics_truck.webp';
         image.alt = '';
         image.loading = 'lazy';
         image.className = video.className;
+        // Sizes travel on the element so the swapped-in still reserves the
+        // same box the video occupied.
+        if (video.dataset.fallbackWidth) image.width = Number(video.dataset.fallbackWidth);
+        if (video.dataset.fallbackHeight) image.height = Number(video.dataset.fallbackHeight);
         video.replaceWith(image);
       }, { once: true });
     });

@@ -19,6 +19,7 @@ export interface CountryLocalePack {
 export const countryLocale: Partial<Record<LanguageCode, CountryLocalePack>> = {
   fa: {
     names: {
+      VE: 'ونزوئلا',
       IQ: 'عراق',
       AE: 'امارات متحده عربی',
       OM: 'عمان',
@@ -33,6 +34,7 @@ export const countryLocale: Partial<Record<LanguageCode, CountryLocalePack>> = {
       MN: 'مغولستان',
     },
     notes: {
+      VE: 'صادرات قیر، فولاد و محصولات کشاورزی به خریداران ونزوئلایی، بر اساس مشخصات، شرایط تحویل و الزامات انطباق توافق‌شده.',
       IQ: 'صادرات قیر، فولاد و محصولات کشاورزی به خریداران عراقی، بر اساس مشخصات و شرایط تحویل توافق‌شده.',
       AE: 'صادرات محصولات کشاورزی و فولاد همراه با تأمین تجهیزات صنعتی از طریق مرکز تجاری امارات، بر اساس مشخصات و شرایط تحویل توافق‌شده.',
       OM: 'صادرات قیر و محصولات کشاورزی از طریق مسیرهای دریایی خلیج فارس، بر اساس مشخصات و شرایط تحویل توافق‌شده.',
@@ -64,6 +66,7 @@ export const countryLocale: Partial<Record<LanguageCode, CountryLocalePack>> = {
   },
   ar: {
     names: {
+      VE: 'فنزويلا',
       IQ: 'العراق',
       AE: 'الإمارات العربية المتحدة',
       OM: 'عُمان',
@@ -78,6 +81,7 @@ export const countryLocale: Partial<Record<LanguageCode, CountryLocalePack>> = {
       MN: 'منغوليا',
     },
     notes: {
+      VE: 'تصدير البيتومين والصلب والسلع الزراعية إلى المشترين الفنزويليين، وفق المواصفات وشروط التسليم ومتطلبات الامتثال المتفق عليها.',
       IQ: 'تصدير البيتومين والصلب والسلع الزراعية إلى المشترين العراقيين، وفق المواصفات وشروط التسليم المتفق عليها.',
       AE: 'تصدير السلع الزراعية والصلب مع توريد المعدات الصناعية عبر مركز الإمارات التجاري الإقليمي، وفق المواصفات وشروط التسليم المتفق عليها.',
       OM: 'تصدير البيتومين والسلع الزراعية عبر الطرق البحرية الخليجية، وفق المواصفات وشروط التسليم المتفق عليها.',
@@ -109,6 +113,7 @@ export const countryLocale: Partial<Record<LanguageCode, CountryLocalePack>> = {
   },
   ru: {
     names: {
+      VE: 'Венесуэла',
       IQ: 'Ирак',
       AE: 'ОАЭ',
       OM: 'Оман',
@@ -123,6 +128,7 @@ export const countryLocale: Partial<Record<LanguageCode, CountryLocalePack>> = {
       MN: 'Монголия',
     },
     notes: {
+      VE: 'Экспорт битума, стали и сельскохозяйственной продукции венесуэльским покупателям на основании согласованных спецификаций, условий поставки и требований комплаенса.',
       IQ: 'Экспорт битума, стали и сельскохозяйственной продукции иракским покупателям на основании согласованных спецификаций и условий поставки.',
       AE: 'Экспорт сельскохозяйственной продукции и стали наряду с поставками промышленного оборудования через региональный торговый центр ОАЭ, на основании согласованных спецификаций и условий поставки.',
       OM: 'Экспорт битума и сельскохозяйственной продукции морскими маршрутами через Персидский залив, на основании согласованных спецификаций и условий поставки.',
@@ -164,3 +170,12 @@ export const normalizeCountryCode = (code: string) => String(code || '').trim().
 /** Country name in the active language, falling back to the English JSON value. */
 export const localizedCountryName = (lang: LanguageCode, code: string, fallback: string) =>
   countryLocale[lang]?.names?.[normalizeCountryCode(code)] ?? fallback;
+
+/**
+ * Flag served from this origin rather than a CDN, so the site keeps working
+ * on a network that cannot reach one. Adding a country to
+ * trade-countries.json also means saving its flag as
+ * public/images/flags/<lowercase code>.png.
+ */
+export const countryFlagPath = (code: string) =>
+  `/images/flags/${normalizeCountryCode(code).toLowerCase()}.png`;

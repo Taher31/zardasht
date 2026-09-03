@@ -1,8 +1,10 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import { getTranslation, resolveLang, withLanguagePrefix, localizedLanguages } from '../../i18n';
-import { localizedCountryName, normalizeCountryCode } from '../../data/country-locale';
+import { metaDescription } from '../../data/meta-descriptions';
+import { localizedCountryName, normalizeCountryCode, countryFlagPath } from '../../data/country-locale';
 import { getNewsPosts, formatNewsDate } from '../../data/news';
+import { imageSize } from '../../data/image-size';
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -25,6 +27,7 @@ const tradeImages = {
   textile: '/images/05_textile_yarn.webp',
   logistics: '/images/06_road_logistics_truck.webp',
   rail: '/images/07_rail_logistics.webp',
+  warehouse: '/images/08_warehouse_logistics.webp',
 } as const;
 
 const categoryImages: Record<string, string> = {
@@ -32,6 +35,8 @@ const categoryImages: Record<string, string> = {
   'metals-steel': tradeImages.steel,
   'agricultural-commodities': tradeImages.agriculture,
   'textile-raw-materials': tradeImages.textile,
+  // Bagged goods on pallets — how polymer grades and dry chemicals actually ship.
+  'chemicals-petrochemicals': tradeImages.warehouse,
 };
 
 const railLogisticsVideo = '/video/07_rail_logistics.mp4';
@@ -42,7 +47,9 @@ const categoryVideos: Record<string, string> = {
 };
 
 const categoriesWithSpecs = categories.map((category) => {
-  const fragment = category.href.split('#')[1];
+  // Each category now links to its own page (/products/<id>), so the id is
+  // the last path segment rather than a fragment.
+  const fragment = category.href.split('/').pop() ?? '';
   const productSection = productSections.find((section) => section.id === fragment);
   return {
     ...category,
@@ -53,13 +60,41 @@ const categoriesWithSpecs = categories.map((category) => {
 });
 
 const faq = t.pages.home.faq;
-const trustBadges = t.pages.home.trustBadges;
-const trustBadgeChips = trustBadges.slice(0, 2);
 const logisticsCards = t.pages.solutions.solutions;
-const exportSteps = t.pages.solutions.outcomes;
-
+// Heroicons outline paths, drawn at 24x24 — index-aligned with logisticsCards
+// (sourcing, inspection, freight, customs, delivery, payment).
+const solutionIcons = [
+  'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4',
+  'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z',
+  'M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0zM13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8 0h2m-2 0V8a1 1 0 011-1h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01.052.316V16a1 1 0 01-1 1h-1',
+  'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z',
+  'M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0zM15 11a3 3 0 11-6 0 3 3 0 016 0z',
+  'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z',
+];
 // One panel per commodity group; the portrait photos suit vertical panels.
+// Only 4 show at once, but the rotation script cycles through every group —
+// heroQueue is the full list (serialized below) it pulls the next one from.
 const heroPanels = categoriesWithSpecs.slice(0, 4);
+// The panel images are also carried with their intrinsic size: the rotation
+// script builds <img> elements at runtime, and without width/height those
+// would be the only images on the page that can still shift the layout.
+const heroQueue = categoriesWithSpecs.map(({ href, name, badge, image, video }) => ({
+  href,
+  name,
+  badge,
+  image,
+  video,
+  ...imageSize(image),
+}));
+
+// Controls for the commodity-group slider (not covered by the shared i18n labels).
+const sliderChrome = {
+  en: { region: 'Commodity groups', prev: 'Previous commodity groups', next: 'Next commodity groups' },
+  fa: { region: 'گروه‌های کالایی', prev: 'گروه‌های کالایی قبلی', next: 'گروه‌های کالایی بعدی' },
+  ar: { region: 'مجموعات السلع', prev: 'مجموعات السلع السابقة', next: 'مجموعات السلع التالية' },
+  ru: { region: 'Товарные группы', prev: 'Предыдущие товарные группы', next: 'Следующие товарные группы' },
+} as const;
+const sliderLabels = sliderChrome[lang] ?? sliderChrome.en;
 // Real import/export lanes, shown as a rail under the headline.
 const heroLanes = t.pages.home.industries.slice(0, 4);
 
@@ -80,7 +115,7 @@ const marketFlags = activeCountries.map(
       code,
       name: localizedCountryName(lang, code, country.country_name),
       href: withLanguagePrefix(lang, `/trade-map/${code.toLowerCase()}`),
-      flag: `https://flagcdn.com/w160/${code.toLowerCase()}.png`,
+      flag: countryFlagPath(code),
       angle: (360 / activeMarketCount) * index,
     };
   },
@@ -113,11 +148,30 @@ const counters = t.pages.home.counters.map((counter) => {
   const value = derivedCounterValues[counter.key] ?? counter.value;
   return { ...counter, value, display: counterFormatter.format(value) };
 });
+
+// The FAQ block further down is real on-page content, so it can be declared
+// as FAQPage and become eligible for the expandable result in search.
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  inLanguage: lang,
+  mainEntity: faq.map((item) => ({
+    '@type': 'Question',
+    name: item.question,
+    acceptedAnswer: { '@type': 'Answer', text: item.answer },
+  })),
+};
 ---
 
-<Layout title={t.pages.home.title} lang={lang} translation={t}>
+<Layout
+  title={t.pages.home.title}
+  lang={lang}
+  translation={t}
+  description={metaDescription(lang, 'home') ?? t.pages.home.heroSubtitle}
+  schema={[faqSchema]}
+>
 
-  <section class="trade-hero" data-trade-hero aria-label={t.pages.home.title}>
+  <section class="trade-hero" data-trade-hero data-hero-queue={JSON.stringify(heroQueue)} aria-label={t.pages.home.title}>
     <div class="trade-hero__panels">
       {heroPanels.map((panel, index) => (
         <a
@@ -126,29 +180,32 @@ const counters = t.pages.home.counters.map((counter) => {
           data-hero-panel={index}
           aria-label={panel.name}
         >
-          {panel.video ? (
-            <video
-              poster={panel.image}
-              autoplay
-              muted
-              loop
-              playsinline
-              preload="metadata"
-              aria-hidden="true"
-              data-fallback-video
-              data-fallback={tradeImages.logistics}
-            >
-              <source src={panel.video} type="video/mp4" />
-            </video>
-          ) : (
-            <img
-              src={panel.image}
-              alt=""
-              loading={index === 0 ? 'eager' : 'lazy'}
-              data-fallback-image
-              data-fallback={tradeImages.logistics}
-            />
-          )}
+          <span class="trade-hero__panel-media">
+            {panel.video ? (
+              <video
+                poster={panel.image}
+                muted
+                loop
+                playsinline
+                preload="none"
+                aria-hidden="true"
+                data-fallback-video
+                data-fallback={tradeImages.logistics}
+                data-fallback-width={imageSize(tradeImages.logistics).width}
+                data-fallback-height={imageSize(tradeImages.logistics).height}
+                data-video-src={panel.video}
+              ></video>
+            ) : (
+              <img
+                src={panel.image}
+                alt=""
+                loading={index === 0 ? 'eager' : 'lazy'}
+                data-fallback-image
+                data-fallback={tradeImages.logistics}
+                {...imageSize(panel.image)}
+              />
+            )}
+          </span>
           <span class="trade-hero__panel-badge">{panel.badge}</span>
           <span class="trade-hero__panel-name">{panel.name}</span>
         </a>
@@ -202,8 +259,8 @@ const counters = t.pages.home.counters.map((counter) => {
     </div>
   </section>
 
-  <section class="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16">
-    <div class="mb-10 text-center">
+  <section class="mx-auto max-w-[1400px] px-4 py-12 sm:px-6 sm:py-16">
+    <div class="mx-auto mb-10 max-w-3xl text-center">
       <p class="section-eyebrow">{t.pages.home.eyebrow}</p>
       <h2 class="section-title">{t.pages.home.categoriesTitle}</h2>
       <span class="section-accent" aria-hidden="true"></span>
@@ -212,39 +269,116 @@ const counters = t.pages.home.counters.map((counter) => {
       </p>
     </div>
 
-    <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-      {categoriesWithSpecs.map((category) => (
-        <article class="card group overflow-hidden transition hover:-translate-y-1 hover:shadow-2xl">
-          <a href={category.href} class="relative block aspect-[4/3] overflow-hidden bg-[#19266A]">
-            <img
-              src={category.image}
-              alt={category.name}
-              loading="lazy"
-              data-fallback-image
-              data-fallback={tradeImages.logistics}
-              class="h-full w-full object-cover transition duration-700 group-hover:scale-105"
-            />
-            <div class="absolute inset-0 bg-gradient-to-t from-[#10184A]/85 via-[#10184A]/15 to-transparent"></div>
-            <span class="absolute start-4 top-4 inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/25 bg-[#10184A]/55 text-xs font-bold text-white backdrop-blur">
-              {category.badge}
-            </span>
-            <h3 class="absolute inset-x-4 bottom-4 text-xl font-semibold text-white">{category.name}</h3>
-          </a>
+    <!-- Auto-scrolling, seamlessly-looping strip. Each group below renders the
+         same cards; the animation slides the track exactly one group's width
+         and then restarts, so the repeat is invisible. The second group is
+         `inert` + aria-hidden so screen readers and Tab only ever reach the
+         real set. Hover/focus pauses the motion (see the style block) so a
+         card can be read or clicked without drifting away underneath.
+         The prev/next arrows live in `.cat-marquee`'s own side padding, one
+         level above the `overflow: hidden` on `.cat-marquee__viewport` — so
+         they sit fully outside the card strip instead of being clipped by it. -->
+    <div class="cat-marquee" data-cat-marquee>
+      <div class="cat-marquee__viewport">
+      <div class="cat-marquee__track" data-cat-track role="group" aria-label={sliderLabels.region}>
+        <div class="cat-marquee__group" data-cat-group>
+          {categoriesWithSpecs.map((category) => (
+            <article class="cat-slide card group overflow-hidden transition hover:-translate-y-1 hover:shadow-2xl">
+              <a href={category.href} class="relative block aspect-[4/3] overflow-hidden bg-[#19266A]">
+                {category.video ? (
+                  <video
+                    poster={category.image}
+                    muted
+                    loop
+                    playsinline
+                    preload="none"
+                    aria-hidden="true"
+                    data-fallback-video
+                    data-fallback={tradeImages.logistics}
+                    data-fallback-width={imageSize(tradeImages.logistics).width}
+                    data-fallback-height={imageSize(tradeImages.logistics).height}
+                    class="h-full w-full object-cover transition duration-700 group-hover:scale-105"
+                    data-video-src={category.video}
+                  ></video>
+                ) : (
+                  <img
+                    src={category.image}
+                    alt={category.name}
+                    loading="lazy"
+                    data-fallback-image
+                    data-fallback={tradeImages.logistics}
+                    class="h-full w-full object-cover transition duration-700 group-hover:scale-105"
+                    {...imageSize(category.image)}
+                  />
+                )}
+                <div class="absolute inset-0 bg-gradient-to-t from-[#10184A]/85 via-[#10184A]/15 to-transparent"></div>
+                <span class="absolute start-4 top-4 inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/25 bg-[#10184A]/55 text-xs font-bold text-white backdrop-blur">
+                  {category.badge}
+                </span>
+                <h3 class="absolute inset-x-4 bottom-4 text-xl font-semibold text-white">{category.name}</h3>
+              </a>
 
-          <div class="flex min-h-[220px] flex-col justify-between gap-5 p-5">
-            <div class="space-y-3">
-              <p class="text-sm leading-7 text-slate-600">{category.description}</p>
-              {category.specLine && (
-                <p class="border-s-2 border-[#F3C623] ps-3 text-xs font-semibold leading-6 text-[#19266A]/75">{category.specLine}</p>
-              )}
-            </div>
-            <a class="inline-flex items-center gap-2 text-sm font-bold text-[#19266A] transition group-hover:gap-3" href={category.href}>
-              {t.pages.home.ctaSecondary}
-              <span aria-hidden="true">→</span>
-            </a>
-          </div>
-        </article>
-      ))}
+              <div class="flex min-h-[220px] flex-col justify-between gap-5 p-5">
+                <div class="space-y-3">
+                  <p class="text-sm leading-7 text-slate-600">{category.description}</p>
+                  {category.specLine && (
+                    <p class="border-s-2 border-[#F3C623] ps-3 text-xs font-semibold leading-6 text-[#19266A]/75">{category.specLine}</p>
+                  )}
+                </div>
+                <a class="inline-flex items-center gap-2 text-sm font-bold text-[#19266A] transition group-hover:gap-3" href={category.href}>
+                  {t.pages.home.ctaSecondary}
+                  <span aria-hidden="true">→</span>
+                </a>
+              </div>
+            </article>
+          ))}
+        </div>
+
+        <div class="cat-marquee__group" aria-hidden="true" inert>
+          {categoriesWithSpecs.map((category) => (
+            <article class="cat-slide card overflow-hidden">
+              <!-- This whole group is aria-hidden + inert — it exists only so
+                   the wrap-around looks seamless, nobody ever actually views
+                   it playing. A real <video> here would autoplay and download
+                   several more megabytes for something no one sees, so the
+                   poster frame stands in for it instead. -->
+              <div class="relative block aspect-[4/3] overflow-hidden bg-[#19266A]">
+                <img src={category.image} alt="" {...imageSize(category.image)} loading="lazy" class="h-full w-full object-cover" />
+                <div class="absolute inset-0 bg-gradient-to-t from-[#10184A]/85 via-[#10184A]/15 to-transparent"></div>
+                <span class="absolute start-4 top-4 inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/25 bg-[#10184A]/55 text-xs font-bold text-white backdrop-blur">
+                  {category.badge}
+                </span>
+                <h3 class="absolute inset-x-4 bottom-4 text-xl font-semibold text-white">{category.name}</h3>
+              </div>
+
+              <div class="flex min-h-[220px] flex-col justify-between gap-5 p-5">
+                <div class="space-y-3">
+                  <p class="text-sm leading-7 text-slate-600">{category.description}</p>
+                  {category.specLine && (
+                    <p class="border-s-2 border-[#F3C623] ps-3 text-xs font-semibold leading-6 text-[#19266A]/75">{category.specLine}</p>
+                  )}
+                </div>
+                <span class="inline-flex items-center gap-2 text-sm font-bold text-[#19266A]">
+                  {t.pages.home.ctaSecondary}
+                  <span aria-hidden="true">→</span>
+                </span>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+      </div>
+
+      <button class="cat-marquee__arrow cat-marquee__arrow--prev" type="button" data-cat-prev aria-label={sliderLabels.prev}>
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="15 5 8 12 15 19"></polyline>
+        </svg>
+      </button>
+      <button class="cat-marquee__arrow cat-marquee__arrow--next" type="button" data-cat-next aria-label={sliderLabels.next}>
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="9 5 16 12 9 19"></polyline>
+        </svg>
+      </button>
     </div>
   </section>
 
@@ -291,7 +425,7 @@ const counters = t.pages.home.counters.map((counter) => {
                 class="flag-chip"
                 data-orbit-link={market.code}
               >
-                <img src={market.flag} alt="" loading="lazy" width="24" height="16" />
+                <img src={market.flag} alt="" loading="lazy" {...imageSize(market.flag)} />
                 {market.name}
               </a>
             </li>
@@ -320,7 +454,7 @@ const counters = t.pages.home.counters.map((counter) => {
             >
               <span class="flag-orbit__spin">
                 <span class="flag-orbit__frame">
-                  {/* Sits behind the flag, so an unreachable flagcdn degrades to
+                  {/* Sits behind the flag, so a missing flag file degrades to
                       the country code instead of a blank tile. */}
                   <span class="flag-orbit__code" aria-hidden="true">{market.code}</span>
                   <img
@@ -328,8 +462,7 @@ const counters = t.pages.home.counters.map((counter) => {
                     src={market.flag}
                     alt=""
                     loading="lazy"
-                    width="70"
-                    height="50"
+                    {...imageSize(market.flag)}
                   />
                 </span>
                 <span class="flag-orbit__label">{market.name}</span>
@@ -339,7 +472,7 @@ const counters = t.pages.home.counters.map((counter) => {
         </div>
 
         <div class="flag-orbit__core">
-          <img src="/images/iran-flag.webp" alt="" class="flag-orbit__core-flag" loading="lazy" />
+          <img src="/images/iran-flag.webp" alt="" class="flag-orbit__core-flag" width="297" height="170" loading="lazy" />
           <span class="flag-orbit__core-text">{t.pages.home.marketsHomeLabel}</span>
         </div>
       </div>
@@ -375,6 +508,7 @@ const counters = t.pages.home.counters.map((counter) => {
                   alt=""
                   loading="lazy"
                   class="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105"
+                  {...imageSize(post.image)}
                 />
               </div>
               <div class="flex flex-1 flex-col gap-3 p-5">
@@ -408,6 +542,7 @@ const counters = t.pages.home.counters.map((counter) => {
         <div class="flex flex-col justify-center p-6 sm:p-10">
           <p class="text-xs font-bold uppercase tracking-[0.25em] text-[#F3C623]">{t.pages.solutions.rail.eyebrow}</p>
           <h3 class="mt-3 text-2xl font-semibold text-white sm:text-3xl">{t.pages.solutions.rail.title}</h3>
+          <p class="mt-4 text-sm leading-7 text-white/70">{t.pages.solutions.rail.body}</p>
         </div>
 
         <!-- Bleeds to the card edge; the parent's rounded corners clip it. -->
@@ -415,47 +550,43 @@ const counters = t.pages.home.counters.map((counter) => {
           <video
             class="absolute inset-0 h-full w-full object-cover"
             poster={tradeImages.rail}
-            autoplay
             muted
             loop
             playsinline
-            preload="metadata"
+            preload="none"
             aria-hidden="true"
             data-fallback-video
             data-fallback={tradeImages.rail}
-          >
-            <source src={railLogisticsVideo} type="video/mp4" />
-          </video>
+            data-fallback-width={imageSize(tradeImages.rail).width}
+            data-fallback-height={imageSize(tradeImages.rail).height}
+            data-video-src={railLogisticsVideo}
+          ></video>
         </div>
       </div>
 
-      <div class="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
-        {logisticsCards.map((solution) => (
-          <div class="rounded-2xl bg-white/10 p-5 ring-1 ring-white/15">
-            <div class="flex items-center justify-between">
-              <h3 class="text-lg font-semibold text-white">{solution.title}</h3>
+      <!-- What the chain covers: one card per capability, icon-led. -->
+      <div class="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {logisticsCards.map((solution, index) => (
+          <div class="rounded-2xl bg-white/10 p-5 ring-1 ring-white/15 transition hover:bg-white/[0.14]">
+            <div class="flex items-start justify-between gap-3">
+              <span class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#F3C623]/15 text-[#F3C623]">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d={solutionIcons[index] ?? solutionIcons[0]} />
+                </svg>
+              </span>
               <span class="badge-chip bg-white/10 text-white">{solution.tags[0]}</span>
             </div>
-            <p class="mt-2 text-sm text-white/80">{solution.description}</p>
-            <div class="mt-3 flex flex-wrap gap-2">
-              {solution.tags.map((tag) => (
-                <span class="rounded-full bg-white/15 px-3 py-1 text-xs font-semibold text-white/80">{tag}</span>
-              ))}
-            </div>
+            <h3 class="mt-4 text-lg font-semibold text-white">{solution.title}</h3>
+            <p class="mt-2 text-sm leading-6 text-white/75">{solution.description}</p>
           </div>
         ))}
       </div>
 
-      <div class="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2">
-        {exportSteps.map((step) => (
-          <div class="rounded-2xl bg-white/10 p-4 ring-1 ring-white/15">
-            <p class="text-sm font-semibold uppercase tracking-[0.18em] text-[#F3C623]">{step.title}</p>
-            <p class="mt-2 text-sm text-white/80">{step.description}</p>
-          </div>
-        ))}
-      </div>
+      <!-- The numbered "how a trade starts" journey used to sit here as
+           well, but it restated the capability cards directly above it. It
+           lives on the logistics page, which the second button links to. -->
 
-      <div class="mt-8 flex flex-wrap justify-center gap-3">
+      <div class="mt-10 flex flex-wrap justify-center gap-3">
         <a class="pill-link bg-[#F3C623] text-[#19266A] shadow-lg shadow-[#F3C623]/40 transition hover:-translate-y-0.5 hover:shadow-xl" href={withLanguagePrefix(lang, '/contact')}>
           {t.pages.home.ctaPrimary}
         </a>
@@ -503,6 +634,76 @@ const counters = t.pages.home.counters.map((counter) => {
       let activeIndex = initialActiveIndex >= 0 ? initialActiveIndex : 0;
       let timer = 0;
 
+      // The DOM only ever holds `panels.length` (4) slots — only that many
+      // commodity groups are ever visible at once — but there can be more
+      // groups than that. `queue` holds all of them; each rotation swaps the
+      // slot leaving the front for the next group in the queue before
+      // sending it to the back, so every group eventually cycles through.
+      const reduceHeroMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      // The panels this script builds are the one place video is attached
+      // without going through the deferred loader in Layout.astro, so the same
+      // affordability test is applied here: a phone, a metered connection or a
+      // reduce-motion preference gets the still frame and downloads no video.
+      const heroVideoAllowed =
+        !reduceHeroMotion && navigator.connection?.saveData !== true && window.innerWidth >= 1024;
+      let queue = [];
+      try {
+        queue = JSON.parse(heroEl.dataset.heroQueue || '[]');
+      } catch {
+        queue = [];
+      }
+      let queueIndex = panels.length;
+
+      const applyPanelContent = (panel, data) => {
+        if (!data) return;
+        panel.href = data.href;
+        panel.setAttribute('aria-label', data.name);
+
+        const badgeEl = panel.querySelector('.trade-hero__panel-badge');
+        if (badgeEl) badgeEl.textContent = data.badge;
+
+        const nameEl = panel.querySelector('.trade-hero__panel-name');
+        if (nameEl) nameEl.textContent = data.name;
+
+        const mediaEl = panel.querySelector('.trade-hero__panel-media');
+        if (!mediaEl) return;
+        mediaEl.textContent = '';
+
+        if (data.video && heroVideoAllowed) {
+          const video = document.createElement('video');
+          video.poster = data.image;
+          video.autoplay = true;
+          video.muted = true;
+          video.loop = true;
+          video.playsInline = true;
+          video.preload = 'none';
+          video.setAttribute('aria-hidden', 'true');
+          const source = document.createElement('source');
+          source.src = data.video;
+          source.type = 'video/mp4';
+          video.appendChild(source);
+          // Same degrade-to-image-on-error behaviour as the server-rendered panels.
+          video.addEventListener('error', () => {
+            const image = document.createElement('img');
+            image.src = data.image;
+            image.alt = '';
+            image.loading = 'lazy';
+            if (data.width) image.width = data.width;
+            if (data.height) image.height = data.height;
+            video.replaceWith(image);
+          }, { once: true });
+          mediaEl.appendChild(video);
+        } else {
+          const image = document.createElement('img');
+          image.src = data.image;
+          image.alt = '';
+          image.loading = 'lazy';
+          if (data.width) image.width = data.width;
+          if (data.height) image.height = data.height;
+          mediaEl.appendChild(image);
+        }
+      };
+
       const setPanel = (nextIndex) => {
         activeIndex = (nextIndex + panels.length) % panels.length;
         panels.forEach((panel, index) => panel.classList.toggle('is-active', index === activeIndex));
@@ -518,6 +719,11 @@ const counters = t.pages.home.counters.map((counter) => {
         if (!panelContainer || panels.length < 2) return;
         const firstPanel = panels.shift();
         if (!firstPanel) return;
+
+        if (queue.length > panels.length + 1) {
+          applyPanelContent(firstPanel, queue[queueIndex % queue.length]);
+          queueIndex++;
+        }
 
         panels.push(firstPanel);
         panelContainer.append(firstPanel);
@@ -569,6 +775,10 @@ const counters = t.pages.home.counters.map((counter) => {
         image.alt = '';
         image.loading = 'lazy';
         image.className = video.className;
+        // Sizes travel on the element so the swapped-in still reserves the
+        // same box the video occupied.
+        if (video.dataset.fallbackWidth) image.width = Number(video.dataset.fallbackWidth);
+        if (video.dataset.fallbackHeight) image.height = Number(video.dataset.fallbackHeight);
         video.replaceWith(image);
       }, { once: true });
     });
@@ -645,5 +855,354 @@ const counters = t.pages.home.counters.map((counter) => {
       }, { once: true });
     });
   </script>
+
+  <script>
+    // Commodity-group carousel. The track holds the real card group plus an
+    // identical, inert duplicate; every few seconds (and on every prev/next
+    // click) the track animates exactly one card's width, then pauses — a
+    // discrete step rather than a continuously drifting ribbon. The offset
+    // wraps at one group's width, and because the duplicate is
+    // pixel-identical to the original the wrap is invisible, so the strip
+    // still reads as infinite.
+    const marquee = document.querySelector('[data-cat-marquee]');
+
+    if (marquee instanceof HTMLElement) {
+      const viewportEl = marquee.querySelector('.cat-marquee__viewport');
+      const track = marquee.querySelector('[data-cat-track]');
+      const group = marquee.querySelector('[data-cat-group]');
+      const prevButton = marquee.querySelector('[data-cat-prev]');
+      const nextButton = marquee.querySelector('[data-cat-next]');
+
+      if (viewportEl instanceof HTMLElement && track instanceof HTMLElement && group instanceof HTMLElement) {
+        const isRtl = document.documentElement.dir === 'rtl';
+        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const stepDuration = 650; // ms per shift
+        const stepEasing = 'cubic-bezier(0.65, 0, 0.35, 1)';
+        const autoAdvanceDelay = 3200; // ms of rest between automatic shifts
+        const pauseAfterInteraction = 4200; // ms the auto-advance stays paused after a manual click
+
+        let offset = 0;
+        let groupWidth = 0;
+        let viewportWidth = 0;
+        let hovering = false;
+        let resumeAt = 0;
+        let timer = 0;
+
+        // The DOM only holds two groups (2 * groupWidth of real content), so
+        // offset must never leave the strip showing past the end of that —
+        // i.e. offset + viewportWidth must stay <= 2 * groupWidth.
+        const measure = () => {
+          groupWidth = group.getBoundingClientRect().width;
+          viewportWidth = viewportEl.getBoundingClientRect().width;
+        };
+
+        const slideStep = () => {
+          const first = group.querySelector('.cat-slide');
+          if (!(first instanceof HTMLElement)) return groupWidth || 1;
+          const trackGap = parseFloat(getComputedStyle(group).columnGap || '0') || 0;
+          return first.getBoundingClientRect().width + trackGap;
+        };
+
+        const render = (animate) => {
+          track.style.transition = animate && !reduceMotion ? `transform ${stepDuration}ms ${stepEasing}` : 'none';
+          const sign = isRtl ? 1 : -1;
+          track.style.transform = `translateX(${sign * offset}px)`;
+        };
+
+        // Instantly (no transition) re-anchor to the visually-identical spot
+        // one group over, so the next animated step always has real DOM
+        // content to move into — the duplicate group makes the two spots
+        // pixel-identical, so the jump is invisible.
+        const snapTo = (nextOffset) => {
+          offset = nextOffset;
+          render(false);
+          void track.offsetWidth; // flush, so the next render() re-enables the transition cleanly
+        };
+
+        // A resize (or a browser zoom change, which is a resize too) can
+        // change groupWidth/viewportWidth out from under a stale offset —
+        // e.g. crossing the breakpoint where the card size changes — so the
+        // safe range has to be re-enforced independently of shift(), not
+        // just inside it.
+        const normalizeOffset = () => {
+          if (groupWidth <= 0) return;
+          let guard = 0;
+          while (offset < 0 && guard++ < 20) offset += groupWidth;
+          while (offset + viewportWidth > groupWidth * 2 && guard++ < 20) offset -= groupWidth;
+        };
+
+        const shift = (direction, animate = true) => {
+          if (groupWidth <= 0) return;
+          const step = slideStep();
+          if (direction < 0 && offset - step < 0) snapTo(offset + groupWidth);
+          else if (direction > 0 && offset + step + viewportWidth > groupWidth * 2) snapTo(offset - groupWidth);
+          offset += direction * step;
+          render(animate);
+        };
+
+        const scheduleNext = () => {
+          window.clearTimeout(timer);
+          timer = window.setTimeout(autoAdvance, autoAdvanceDelay);
+        };
+
+        const autoAdvance = () => {
+          if (!reduceMotion && !hovering && performance.now() >= resumeAt) shift(1);
+          scheduleNext();
+        };
+
+        const nudge = (direction) => {
+          shift(direction);
+          resumeAt = performance.now() + pauseAfterInteraction;
+        };
+
+        prevButton?.addEventListener('click', () => nudge(-1));
+        nextButton?.addEventListener('click', () => nudge(1));
+
+        // Only a real cursor should pause on hover. On touch, `pointerenter`
+        // fires on tap and its matching `pointerleave` is not guaranteed,
+        // which would leave the strip paused for good.
+        marquee.addEventListener('pointerenter', (event) => {
+          if (event.pointerType === 'mouse') hovering = true;
+        });
+        marquee.addEventListener('pointerleave', (event) => {
+          if (event.pointerType === 'mouse') hovering = false;
+        });
+        marquee.addEventListener('focusin', () => { hovering = true; });
+        marquee.addEventListener('focusout', () => { hovering = false; });
+
+        // Drag/swipe. The arrows are hidden on phones, so this is the only
+        // way to move the strip by hand there. `touch-action: pan-y` on the
+        // viewport (see the style block) keeps vertical page scrolling with
+        // the browser and gives us the horizontal axis.
+        let dragging = false;
+        let dragPointerId = null;
+        let dragStartX = 0;
+        let dragStartOffset = 0;
+        let dragMoved = 0;
+        // Dragging toward the page's "next" side must increase offset, which
+        // is the opposite screen direction in RTL.
+        const dragSign = isRtl ? -1 : 1;
+
+        viewportEl.addEventListener('pointerdown', (event) => {
+          if (event.pointerType === 'mouse' && event.button !== 0) return;
+          dragging = true;
+          dragPointerId = event.pointerId;
+          dragStartX = event.clientX;
+          dragStartOffset = offset;
+          dragMoved = 0;
+          resumeAt = performance.now() + pauseAfterInteraction;
+        });
+
+        viewportEl.addEventListener('pointermove', (event) => {
+          if (!dragging || event.pointerId !== dragPointerId) return;
+          const delta = (dragStartX - event.clientX) * dragSign;
+          dragMoved = Math.abs(event.clientX - dragStartX);
+          // Only claim the gesture once it is clearly horizontal, so a
+          // vertical flick still scrolls the page.
+          if (dragMoved < 6) return;
+          if (viewportEl.hasPointerCapture?.(event.pointerId) === false) {
+            viewportEl.setPointerCapture(event.pointerId);
+          }
+          offset = dragStartOffset + delta;
+          // Wrap mid-gesture, not just on release: a finger can drag the
+          // strip straight past either end, and without this it exposes the
+          // blank area beyond the two rendered groups while still held.
+          // dragStartOffset moves by the same amount so the delta the rest
+          // of the gesture is measured against — and the snap on release —
+          // stay correct across the wrap.
+          if (groupWidth > 0) {
+            let guard = 0;
+            while (offset < 0 && guard++ < 20) {
+              offset += groupWidth;
+              dragStartOffset += groupWidth;
+            }
+            while (offset + viewportWidth > groupWidth * 2 && guard++ < 20) {
+              offset -= groupWidth;
+              dragStartOffset -= groupWidth;
+            }
+          }
+          render(false);
+        });
+
+        const endDrag = (event) => {
+          if (!dragging || (event && event.pointerId !== dragPointerId)) return;
+          dragging = false;
+          dragPointerId = null;
+          const step = slideStep();
+          if (step > 0) {
+            // Settle on the nearest whole card rather than wherever the
+            // finger happened to lift.
+            const settled = Math.round((offset - dragStartOffset) / step) * step;
+            offset = dragStartOffset + settled;
+          }
+          normalizeOffset();
+          render(true);
+          resumeAt = performance.now() + pauseAfterInteraction;
+        };
+
+        viewportEl.addEventListener('pointerup', endDrag);
+        viewportEl.addEventListener('pointercancel', endDrag);
+
+        // A drag that moved the strip shouldn't also open the card it ended on.
+        viewportEl.addEventListener('click', (event) => {
+          if (dragMoved > 8) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
+          dragMoved = 0;
+        }, true);
+
+        measure();
+        normalizeOffset();
+        render(false);
+        scheduleNext();
+
+        let resizeTimer = 0;
+        const remeasure = () => {
+          window.clearTimeout(resizeTimer);
+          resizeTimer = window.setTimeout(() => {
+            measure();
+            normalizeOffset();
+            render(false);
+          }, 120);
+        };
+
+        if ('ResizeObserver' in window) {
+          new ResizeObserver(remeasure).observe(group);
+        } else {
+          window.addEventListener('resize', remeasure);
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Stepped auto-advancing loop: the track holds two identical groups side
+       by side. A script (see above) animates translateX by exactly one
+       card's width at a time — on a timer, or on a prev/next click — and
+       wraps at one group's width; because the duplicate group is
+       pixel-identical to the first, the wrap is invisible and the strip
+       reads as infinite. */
+    /* On phones the strip runs edge to edge and is driven by swiping, so it
+       gets no side gutters — reserving 2 * 2.75rem out of a ~343px content
+       box left too little room for a card and clipped it. The arrow gutters
+       only appear from 640px up, where there is width to spare for them. */
+    .cat-marquee {
+      position: relative;
+      padding-inline: 0;
+    }
+
+    @media (min-width: 640px) {
+      .cat-marquee {
+        /* Room for the prev/next arrows, which live here (outside the
+           viewport's overflow: hidden) so they sit clear of the cards
+           instead of being clipped by the strip. */
+        padding-inline: 2.75rem;
+      }
+    }
+
+    /* At the breakpoint where the design targets exactly four visible
+       cards, cap the width to fit four cards + gaps + the two arrow
+       gutters exactly — so no sliver of a fifth card ever peeks in. */
+    @media (min-width: 1024px) {
+      .cat-marquee {
+        max-width: calc(4 * 280px + 3 * 1.5rem + 2 * 2.75rem);
+        margin-inline: auto;
+      }
+    }
+
+    .cat-marquee__viewport {
+      overflow: hidden;
+      padding-block: 0.75rem 1.25rem;
+      /* Vertical flicks stay with the browser's page scroll; the horizontal
+         axis is handled by the drag script above. */
+      touch-action: pan-y;
+    }
+
+    .cat-marquee__track {
+      display: flex;
+      width: max-content;
+      will-change: transform;
+    }
+
+    .cat-marquee__group {
+      display: flex;
+      flex-shrink: 0;
+      gap: 1.5rem;
+      padding-inline-end: 1.5rem;
+    }
+
+    /* One card plus a sliver of the next, so it reads as swipeable. The
+       section's own px-4 takes 2rem, and the leftover 3.5rem leaves that
+       peek — measured against the viewport rather than a percentage, since
+       the track is `width: max-content` and would resolve a % against
+       itself. */
+    .cat-slide {
+      width: calc(100vw - 5.5rem);
+      max-width: 320px;
+      flex-shrink: 0;
+    }
+
+    @media (min-width: 640px) {
+      .cat-slide {
+        width: 300px;
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .cat-slide {
+        width: 280px;
+      }
+    }
+
+    /* Hidden on phones, where the strip is swiped instead — there is no
+       gutter to put them in, and overlaying them would cover the card. */
+    .cat-marquee__arrow {
+      position: absolute;
+      top: 50%;
+      z-index: 2;
+      display: none;
+      height: 2.75rem;
+      width: 2.75rem;
+      align-items: center;
+      justify-content: center;
+      border-radius: 9999px;
+      border: 1px solid rgba(25, 38, 106, 0.12);
+      background: #ffffff;
+      color: #19266a;
+      box-shadow: 0 10px 30px rgba(16, 24, 74, 0.18);
+      transform: translateY(-50%);
+      transition: transform 0.2s ease;
+    }
+
+    @media (min-width: 640px) {
+      .cat-marquee__arrow {
+        display: inline-flex;
+      }
+    }
+
+    .cat-marquee__arrow:hover {
+      transform: translateY(-50%) scale(1.06);
+    }
+
+    .cat-marquee__arrow--prev {
+      inset-inline-start: 0;
+    }
+
+    .cat-marquee__arrow--next {
+      inset-inline-end: 0;
+    }
+
+    /* The chevrons are drawn pointing left/right; mirror them for RTL. */
+    :global([dir='rtl']) .cat-marquee__arrow svg {
+      transform: scaleX(-1);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .cat-marquee__arrow {
+        transition: none;
+      }
+    }
+  </style>
 
 </Layout>

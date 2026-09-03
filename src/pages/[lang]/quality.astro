@@ -1,6 +1,8 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import { getTranslation, resolveLang, withLanguagePrefix, localizedLanguages } from '../../i18n';
+import { metaDescription } from '../../data/meta-descriptions';
+import { imageSize } from '../../data/image-size';
 
 export function getStaticPaths() {
   return localizedLanguages.map((language) => ({ params: { lang: language.code } }));
@@ -16,7 +18,13 @@ const qualityGallery = [
 ];
 ---
 
-<Layout title={t.pages.quality.title} lang={lang} translation={t}>
+<Layout
+  title={t.pages.quality.title}
+  lang={lang}
+  translation={t}
+  description={metaDescription(lang, 'quality') ?? t.pages.quality.intro}
+  breadcrumbs={[{ name: t.pages.quality.title, href: withLanguagePrefix(lang, '/quality') }]}
+>
   <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16">
     <div class="text-center">
       <p class="text-sm font-semibold uppercase tracking-[0.28em] text-brand-dark/80">{t.pages.quality.eyebrow}</p>
@@ -29,7 +37,7 @@ const qualityGallery = [
     <div class="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
       {qualityGallery.map((image) => (
         <div class="card overflow-hidden p-0">
-          <img src={image} alt={t.pages.home.heroImageAlt} class="h-40 w-full object-cover" loading="lazy" />
+          <img src={image} alt={t.pages.home.heroImageAlt} class="h-40 w-full object-cover" loading="lazy" {...imageSize(image)} />
         </div>
       ))}
     </div>

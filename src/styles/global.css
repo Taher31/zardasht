@@ -723,3 +723,1142 @@ html[dir='rtl'] .trade-hero__scrim {
     transition: none;
   }
 }
+
+/* About page — "our people" cards. A cut-out portrait stands on a yellow
+   name/role panel with a faint watermark behind it, three across on desktop.
+   Positioned with logical properties so each card mirrors with the page
+   direction instead of being nailed to one side. */
+.person-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.person-card__stage {
+  position: relative;
+  display: flex;
+  width: 100%;
+  min-height: 220px;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+/* Decorative watermark. Kept in English in every locale — it reads as part
+   of the artwork, not as copy, so it stays out of the a11y tree. Its
+   direction is left alone: Chrome resolves `inset-inline-start` against the
+   element's own direction, so forcing LTR here would strand it on the left
+   of an RTL card instead of opposite the portrait. */
+.person-card__ghost {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 6%;
+  z-index: 0;
+  text-align: start;
+  font-family: 'Manrope', system-ui, sans-serif;
+  font-size: clamp(1.75rem, 6vw, 2.5rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: rgba(25, 38, 106, 0.09);
+  pointer-events: none;
+  user-select: none;
+}
+
+.person-card__photo {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  max-height: 240px;
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+  object-position: bottom center;
+  filter: drop-shadow(0 22px 28px rgba(16, 24, 74, 0.22));
+}
+
+/* A representative's country landmark, standing in for the watermark as the
+   card's backdrop. It sits behind the portrait (z-index below it) and is
+   faded and desaturated so the person in front stays the subject. */
+/* Landmarks vary wildly in shape between countries — St Basil's is tall
+   (0.85:1) while the Registan is wide (1.77:1). Both are therefore given a
+   FIXED BOX (full width of the stage, a set fraction of its height) and left
+   to letterbox inside it via object-fit. Sizing by intrinsic ratio instead
+   would make a wide landmark burst out of the card while a tall one shrank. */
+.rep-card__landmark {
+  position: absolute;
+  z-index: 0;
+  inset-block-end: 0;
+  inset-inline: 0;
+  width: 100%;
+  height: 74%;
+  object-fit: contain;
+  object-position: bottom left;
+  opacity: 0.42;
+  filter: saturate(0.85);
+  pointer-events: none;
+  user-select: none;
+  transition: opacity 350ms ease, filter 350ms ease, transform 450ms ease;
+}
+
+/* Hovering (or keyboard-focusing) the card brings its country forward —
+   full colour and a touch larger — while the portrait stays put in front. */
+.person-card:hover .rep-card__landmark,
+.person-card:focus-within .rep-card__landmark {
+  opacity: 1;
+  filter: saturate(1.05);
+  transform: scale(1.04);
+}
+
+html[dir='rtl'] .rep-card__landmark {
+  object-position: bottom right;
+}
+
+/* Phones: one card per row with room to breathe. The stage gets more height
+   than the shared .person-card default because these cards stack a landmark
+   behind a figure, and the call button is held at the 44px minimum touch
+   target rather than the 40px the desktop button happens to compute to. */
+@media (max-width: 639px) {
+  .rep-card .person-card__stage {
+    min-height: 260px;
+  }
+
+  /* A wide bust at full stage height would span the whole 288px card on a
+     320px phone, touching both edges. Cap the width so the figure always
+     sits inside the card with margin either side. */
+  .rep-card .person-card__photo {
+    max-height: 260px;
+    max-width: 86%;
+  }
+
+  /* The full-colour reveal above is a :hover/:focus-within effect, and phones
+     have neither — a tap fires :active for an instant, not a sustained hover.
+     Left as-is, the landmark would sit at its dim 0.42 resting opacity
+     forever on touch, which is as good as invisible. So touch devices get
+     the "revealed" look as their resting state instead of the faded one. */
+  .rep-card__landmark {
+    height: 68%;
+    object-position: bottom center;
+    opacity: 0.85;
+    filter: saturate(1);
+  }
+
+  html[dir='rtl'] .rep-card__landmark {
+    object-position: bottom center;
+  }
+
+  .rep-card__call {
+    min-height: 44px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rep-card__landmark {
+    transition: opacity 200ms ease;
+  }
+
+  .person-card:hover .rep-card__landmark,
+  .person-card:focus-within .rep-card__landmark {
+    transform: none;
+  }
+}
+
+.person-card__panel {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  border-radius: 22px;
+  background: var(--brand-yellow);
+  padding: 16px 20px;
+  box-shadow: 0 20px 38px -26px rgba(221, 174, 19, 0.95);
+}
+
+@media (min-width: 640px) {
+  .person-card {
+    gap: 0;
+    min-height: 360px;
+  }
+
+  .person-card__stage {
+    min-height: 220px;
+    justify-content: flex-end;
+  }
+
+  .person-card__ghost {
+    inset-block-start: 6%;
+    inset-inline-start: 0;
+  }
+
+  /* The portrait hangs past the stage so the cut-out stands on the yellow
+     panel; the panel's top padding keeps its text clear of the overlap. */
+  .person-card__photo {
+    position: absolute;
+    inset-block-end: -18px;
+    inset-inline-end: 6%;
+    height: 100%;
+    max-height: none;
+    width: 62%;
+  }
+
+  .person-card__panel {
+    padding-block-start: 26px;
+  }
+
+  /* Desktop gives the stage real height, so the landmark can fill it and
+     hang over the panel the same way the portrait does. */
+  .rep-card__landmark {
+    inset-block-end: -18px;
+    height: 96%;
+  }
+
+  /* The two portraits in this section have opposite shapes (a wide bust vs a
+     tall standing figure). A fixed box plus object-fit keeps every card the
+     same height and keeps each figure planted on the panel, whichever it is. */
+  .rep-card .person-card__photo {
+    inset-inline-end: 0;
+    width: 56%;
+    height: 104%;
+    object-position: bottom right;
+  }
+
+  html[dir='rtl'] .rep-card .person-card__photo {
+    object-position: bottom left;
+  }
+}
+
+/* iOS Safari zooms the whole page when a focused form control's text is
+   smaller than 16px, which then leaves the layout scrolled sideways. The
+   design's `text-sm` controls stay as-authored from 640px up; on phones the
+   font is held at the 16px threshold instead. The :not() pairs exist to
+   out-specify Tailwind's `.text-sm` utility, not to exclude much. */
+@media (max-width: 639px) {
+  input:not([type='checkbox']):not([type='radio']),
+  select:not([multiple]),
+  textarea:not([hidden]) {
+    font-size: 16px;
+  }
+}
+
+/* Incoterms cards on the trade map page. The canonical Incoterms grid is far
+   too wide for a phone, so each rule is a <details> that opens into two plain
+   duty columns instead. Logical properties throughout so it mirrors in RTL. */
+.incoterm {
+  border-radius: 16px;
+  background: #fff;
+  outline: 1px solid rgba(25, 38, 106, 0.09);
+  outline-offset: -1px;
+  box-shadow: 0 14px 30px -26px rgba(25, 38, 106, 0.5);
+  transition: outline-color 200ms ease;
+}
+
+.incoterm:hover,
+.incoterm[open] {
+  outline-color: rgba(243, 198, 35, 0.8);
+}
+
+.incoterm__summary {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.incoterm__summary::-webkit-details-marker {
+  display: none;
+}
+
+.incoterm__summary:focus-visible {
+  outline: 2px solid var(--brand-navy);
+  outline-offset: 2px;
+  border-radius: 16px;
+}
+
+/* The three-letter code is the thing people scan for, so it gets the weight. */
+.incoterm__code {
+  flex: none;
+  min-width: 52px;
+  padding: 5px 8px;
+  border-radius: 8px;
+  background: var(--brand-navy);
+  color: var(--brand-yellow);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-align: center;
+  direction: ltr;
+}
+
+.incoterm__chevron {
+  flex: none;
+  margin-inline-start: auto;
+  color: rgba(25, 38, 106, 0.4);
+  transition: transform 220ms ease;
+}
+
+.incoterm[open] .incoterm__chevron {
+  transform: rotate(180deg);
+}
+
+.incoterm__body {
+  padding: 0 16px 16px;
+  border-block-start: 1px solid rgba(25, 38, 106, 0.07);
+  margin-block-start: 2px;
+  padding-block-start: 14px;
+}
+
+/* Risk-transfer bar: the filled portion is ours, the rest is the buyer's, and
+   the marker sits exactly where the handover happens (--risk is set inline
+   per term). Reads left-to-right as origin → destination, and flips in RTL. */
+.incoterm__bar {
+  position: relative;
+  height: 6px;
+  margin: 10px 0 6px;
+  border-radius: 999px;
+  background: rgba(25, 38, 106, 0.12);
+  overflow: visible;
+}
+
+.incoterm__bar-seller {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  width: var(--risk);
+  border-radius: 999px;
+  background: var(--brand-yellow);
+}
+
+.incoterm__bar-marker {
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: var(--risk);
+  width: 12px;
+  height: 12px;
+  margin-inline-start: -6px;
+  border-radius: 50%;
+  background: #fff;
+  outline: 3px solid var(--brand-navy);
+  transform: translateY(-50%);
+}
+
+.incoterm__col-head {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.incoterm__col-head--seller {
+  color: #a07d05;
+}
+
+.incoterm__col-head--buyer {
+  color: rgba(25, 38, 106, 0.55);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .incoterm,
+  .incoterm__chevron {
+    transition: none;
+  }
+}
+
+/* ==========================================================================
+   Responsive hardening
+   --------------------------------------------------------------------------
+   Site-wide rules that make the layout hold up on real phones. Each block
+   below fixes something that was measured as broken, not a guess:
+   touch targets under 44px, 10px type, layout shift from undimensioned
+   images, and long unbroken strings (emails, URLs) forcing horizontal scroll.
+   ========================================================================== */
+
+/* --- 1. Touch targets ----------------------------------------------------
+   `pointer: coarse` scopes this to touch input only, so a mouse-driven
+   desktop keeps its tighter, denser spacing. Inline links inside running
+   copy are deliberately excluded — padding them out would wreck paragraphs;
+   only standalone/navigational links are grown. */
+@media (pointer: coarse) {
+  footer nav a,
+  footer li > a,
+  footer a[href^='mailto:'],
+  footer a[href^='tel:'],
+  footer a[href*='wa.me'],
+  .site-footer-cta a,
+  header nav a,
+  .pill-link,
+  .badge-chip[href],
+  a.flag-chip {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  /* Summary rows are the whole hit area of an accordion, so give them real
+     height rather than relying on their text's line-box. */
+  summary {
+    min-height: 44px;
+  }
+
+  /* On touch each row is already a 44px target, so the mouse-sized gap below
+     stacked on top of it and pushed the mobile footer past a full screen
+     height. The targets stay; the extra gap goes.
+
+     `ul.footer-links` rather than `.footer-links`: the default spacing is
+     declared further down the file, so this needs to win on specificity
+     rather than on order. */
+  ul.footer-links > li + li {
+    margin-top: 0;
+  }
+}
+
+/* Row spacing for the footer link lists is owned here rather than by a
+   `space-y-*` utility: the utility's selector outranks a plain class rule, so
+   the touch override above could never win against it. */
+.footer-links > li + li {
+  margin-top: 0.75rem;
+}
+
+/* --- 2. Fluid type -------------------------------------------------------
+   The 10px labels were legible on a 27" monitor and not much else. These
+   scale with the viewport and never drop below 11px, which is the practical
+   floor for small caps with wide letter-spacing. */
+.text-\[10px\] {
+  font-size: clamp(11px, 0.28vw + 10px, 12px);
+}
+
+/* Section titles were fixed at two sizes with a hard jump at the sm
+   breakpoint; this ramps them smoothly instead. */
+.section-title {
+  font-size: clamp(1.6rem, 1.15rem + 2.1vw, 2.25rem);
+  line-height: 1.15;
+}
+
+/* --- 3. Long strings -----------------------------------------------------
+   Emails, URLs and long product codes have no break opportunities, so on a
+   narrow screen they push the page sideways. Let them wrap instead. */
+a[href^='mailto:'],
+a[href^='tel:'],
+.break-anywhere {
+  overflow-wrap: anywhere;
+}
+
+/* --- 4. Media never overflows its column --------------------------------
+   A blanket guard: whatever intrinsic size an image or video reports, it
+   cannot be wider than the box it sits in. */
+img,
+video,
+svg,
+iframe {
+  max-width: 100%;
+}
+
+/* --- 5. Notched phones ---------------------------------------------------
+   Landscape on an iPhone puts the rounded corner and the home indicator over
+   the page gutters; honour the safe area so nothing hides under them. */
+@supports (padding: max(0px)) {
+  body {
+    padding-inline: env(safe-area-inset-left) env(safe-area-inset-right);
+  }
+}
+
+/* --- 6. Small-phone density ---------------------------------------------
+   Below 380px the standard 1rem page gutter eats too much of the line
+   length, and the big display sizes start to wrap awkwardly. */
+@media (max-width: 379px) {
+  .section-title {
+    font-size: clamp(1.4rem, 5.6vw, 1.7rem);
+  }
+
+  .pill-link {
+    padding-inline: 1rem;
+    font-size: 0.8125rem;
+  }
+}
+
+/* --- Incoterms responsibility matrix (desktop only) ---------------------- */
+.incoterm-matrix {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  font-size: 12px;
+}
+
+.incoterm-matrix th,
+.incoterm-matrix td {
+  padding: 10px 12px;
+  text-align: start;
+  border-block-end: 1px solid rgba(25, 38, 106, 0.07);
+}
+
+.incoterm-matrix thead th {
+  position: sticky;
+  inset-block-start: 0;
+  background: var(--brand-navy);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.35;
+  vertical-align: bottom;
+}
+
+.incoterm-matrix tbody tr:hover {
+  background: rgba(243, 198, 35, 0.07);
+}
+
+.incoterm-matrix tbody th[scope='row'] {
+  white-space: nowrap;
+}
+
+.incoterm-matrix__code {
+  display: inline-block;
+  min-width: 44px;
+  padding: 3px 7px;
+  border-radius: 6px;
+  background: var(--brand-navy);
+  color: var(--brand-yellow);
+  font-size: 11px;
+  font-weight: 800;
+  text-align: center;
+  direction: ltr;
+}
+
+.incoterm-matrix__name {
+  display: block;
+  margin-block-start: 3px;
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(25, 38, 106, 0.6);
+}
+
+/* One glyph carries each cell, so the grid stays scannable down a column
+   rather than turning into a wall of words. */
+.duty {
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.duty--s {
+  background: var(--brand-yellow);
+  color: var(--brand-navy-deep);
+}
+
+.duty--b {
+  background: rgba(25, 38, 106, 0.1);
+  color: rgba(25, 38, 106, 0.75);
+}
+
+.duty--n {
+  background: transparent;
+  color: rgba(25, 38, 106, 0.28);
+  outline: 1px dashed rgba(25, 38, 106, 0.2);
+  outline-offset: -1px;
+}
+
+
+
+/* ==========================================================================
+   Page weave - logistics texture behind the whole site
+   --------------------------------------------------------------------------
+   Two tiled SVG layers: the vehicles we actually move cargo with, and the
+   dashed trade lanes they run along. Tiles rather than one stretched drawing,
+   because stretching a single SVG to the viewport would squash the trucks and
+   ships out of proportion; a repeating tile keeps every glyph as drawn.
+
+   Stroke-only, no gradients - the earlier version of this background used
+   gradients and glows and banded visibly on wide screens. Strokes cannot band.
+   ========================================================================== */
+.page-weave {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  user-select: none;
+}
+
+.page-weave__layer {
+  position: absolute;
+  /* Oversized so a drifting tile never exposes an edge. */
+  inset: -20%;
+  background-repeat: repeat;
+  will-change: background-position;
+}
+
+.page-weave__layer--vehicles {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22640%22%20height%3D%22480%22%20viewBox%3D%220%200%20640%20480%22%3E%20%3Cg%20fill%3D%22none%22%20stroke%3D%22%2319266A%22%20stroke-width%3D%222%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%3E%20%3Cg%20transform%3D%22translate(40%2040)%22%3E%20%3Cpath%20d%3D%22M28%202l3%2013%2023%2011v5l-23-5v11l7%206v4l-10-3-10%203v-4l7-6V26L2%2031v-5l23-11z%22%2F%3E%3C%2Fg%3E%20%3Cg%20transform%3D%22translate(330%2070)%22%3E%20%3Cpath%20d%3D%22M4%2020h72l-10%2010H14z%22%2F%3E%20%3Cpath%20d%3D%22M18%2020v-8h12v8%22%2F%3E%20%3Cpath%20d%3D%22M34%2020V9h12v11%22%2F%3E%20%3Cpath%20d%3D%22M50%2020v-8h12v8%22%2F%3E%20%3Cpath%20d%3D%22M64%2020v-6h8v6%22%2F%3E%20%3Cpath%20d%3D%22M0%2034q6-3%2012%200t12%200%2012%200%2012%200%2012%200%2012%200%2012%200%22%2F%3E%3C%2Fg%3E%20%3Cg%20transform%3D%22translate(60%20260)%22%3E%20%3Cpath%20d%3D%22M2%204h40v20H2z%22%2F%3E%20%3Cpath%20d%3D%22M44%2010h9l7%207v7H44z%22%2F%3E%20%3Ccircle%20cx%3D%2214%22%20cy%3D%2227%22%20r%3D%224%22%2F%3E%20%3Ccircle%20cx%3D%2248%22%20cy%3D%2227%22%20r%3D%224%22%2F%3E%3C%2Fg%3E%20%3Cg%20transform%3D%22translate(370%20330)%22%3E%20%3Cpath%20d%3D%22M2%2026V10h16l4-6h8v22z%22%2F%3E%20%3Cpath%20d%3D%22M36%2026V12h20v14z%22%2F%3E%20%3Cpath%20d%3D%22M60%2026V12h14v14z%22%2F%3E%20%3Ccircle%20cx%3D%2210%22%20cy%3D%2229%22%20r%3D%223%22%2F%3E%20%3Ccircle%20cx%3D%2226%22%20cy%3D%2229%22%20r%3D%223%22%2F%3E%20%3Ccircle%20cx%3D%2244%22%20cy%3D%2229%22%20r%3D%223%22%2F%3E%20%3Ccircle%20cx%3D%2266%22%20cy%3D%2229%22%20r%3D%223%22%2F%3E%20%3Cpath%20d%3D%22M0%2033h78%22%2F%3E%3C%2Fg%3E%20%3Ctext%20x%3D%22180%22%20y%3D%22300%22%20font-family%3D%22ui-monospace%2CSFMono-Regular%2CMenlo%2CConsolas%2Cmonospace%22%20font-size%3D%2215%22%20letter-spacing%3D%222%22%20fill%3D%22%2319266A%22%20stroke%3D%22none%22%3ECIF%3C%2Ftext%3E%20%3Ctext%20x%3D%22440%22%20y%3D%22210%22%20font-family%3D%22ui-monospace%2CSFMono-Regular%2CMenlo%2CConsolas%2Cmonospace%22%20font-size%3D%2215%22%20letter-spacing%3D%222%22%20fill%3D%22%2319266A%22%20stroke%3D%22none%22%3EDDP%3C%2Ftext%3E%20%3C%2Fg%3E%3C%2Fsvg%3E");
+  background-size: 640px 480px;
+  opacity: 0.06;
+  animation: weave-vehicles 150s linear infinite;
+}
+
+.page-weave__layer--routes {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22440%22%20height%3D%22350%22%20viewBox%3D%220%200%20440%20350%22%3E%20%3Cg%20fill%3D%22none%22%20stroke%3D%22%2319266A%22%20stroke-width%3D%221.6%22%20stroke-linecap%3D%22round%22%3E%20%3Cpath%20d%3D%22M-20%20250q110-105%20220-70t240-80%22%20stroke-dasharray%3D%227%2011%22%2F%3E%20%3Cpath%20d%3D%22M-20%2070q125%2046%20230%2012t230-34%22%20stroke-dasharray%3D%227%2011%22%2F%3E%20%3Ccircle%20cx%3D%22196%22%20cy%3D%22176%22%20r%3D%223.5%22%20fill%3D%22%2319266A%22%20stroke%3D%22none%22%2F%3E%20%3Ccircle%20cx%3D%2224%22%20cy%3D%22230%22%20r%3D%223.5%22%20fill%3D%22%2319266A%22%20stroke%3D%22none%22%2F%3E%20%3Ccircle%20cx%3D%22380%22%20cy%3D%2294%22%20r%3D%223.5%22%20fill%3D%22%2319266A%22%20stroke%3D%22none%22%2F%3E%20%3Cg%20transform%3D%22translate(268%20205)%20scale(0.8)%22%3E%20%3Cpath%20d%3D%22M2%204h44v20H2z%22%2F%3E%20%3Cpath%20d%3D%22M12%204v20M22%204v20M32%204v20%22%2F%3E%3C%2Fg%3E%20%3Ctext%20x%3D%2260%22%20y%3D%22130%22%20font-family%3D%22ui-monospace%2CSFMono-Regular%2CMenlo%2CConsolas%2Cmonospace%22%20font-size%3D%2214%22%20letter-spacing%3D%222%22%20fill%3D%22%2319266A%22%20stroke%3D%22none%22%3EEXW%3C%2Ftext%3E%20%3C%2Fg%3E%3C%2Fsvg%3E");
+  background-size: 440px 350px;
+  opacity: 0.06;
+  animation: weave-routes 110s linear infinite reverse;
+}
+
+/* Each layer travels exactly one tile, so the end frame is identical to the
+   first and the loop restarts invisibly. */
+@keyframes weave-vehicles {
+  from { background-position: 0 0; }
+  to { background-position: 640px 480px; }
+}
+
+@keyframes weave-routes {
+  from { background-position: 0 0; }
+  to { background-position: 440px 0; }
+}
+
+/* The page chrome rides above the weave. Without this, positioned descendants
+   inside the content would interleave with it. */
+body > header,
+body > main,
+body > footer {
+  position: relative;
+  z-index: 1;
+}
+
+/* Phones show far fewer tiles at once and fight screen glare, so the pattern
+   is scaled down and pushed darker rather than dimmed - a faint line simply
+   vanishes on a handset.
+
+   0.14 + 0.11 is the hard ceiling here, not a taste call: where a stroke from
+   BOTH layers lands under body copy the alphas compound to 0.235, which is
+   exactly the point where small grey text on the page background still clears
+   the 4.5:1 AA floor (measured 4.56:1). Do not raise these without
+   re-measuring contrast. */
+@media (max-width: 639px) {
+  .page-weave__layer--vehicles {
+    background-size: 397px 298px;
+    opacity: 0.14;
+  }
+
+  .page-weave__layer--routes {
+    background-size: 273px 217px;
+    opacity: 0.11;
+  }
+
+  @keyframes weave-vehicles {
+    from { background-position: 0 0; }
+    to { background-position: 397px 298px; }
+  }
+
+  @keyframes weave-routes {
+    from { background-position: 0 0; }
+    to { background-position: 273px 0; }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-weave__layer {
+    animation: none;
+  }
+}
+
+
+
+/* ==========================================================================
+   Iran customs map
+   --------------------------------------------------------------------------
+   Water is the panel itself and the land is drawn on top, so the Persian Gulf,
+   the Caspian and the Gulf of Oman read as sea without needing their own
+   shapes. Neighbouring countries sit underneath in a muted tone to give the
+   country an actual region to sit in rather than floating in a void.
+   ========================================================================== */
+.iran-map {
+  position: relative;
+  /* Grid children stretch by default. Once the list beside it got long the
+     panel was being pulled to the full row height and the blue carried on for
+     hundreds of pixels below the drawing. Hug the content instead. */
+  align-self: start;
+  border-radius: 26px;
+  padding: 12px;
+  background: #e3edf6;
+  outline: 1px solid rgba(25, 38, 106, 0.12);
+  outline-offset: -1px;
+  box-shadow: 0 26px 54px -38px rgba(25, 38, 106, 0.65);
+}
+
+.iran-map svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  /* A map is a picture, not prose: it must not mirror on the RTL pages. */
+  direction: ltr;
+}
+
+.iran-map__neighbour {
+  fill: #d3dfec;
+  stroke: #c0cee0;
+  stroke-width: 1.2;
+  stroke-linejoin: round;
+}
+
+.iran-map__land {
+  fill: #fff;
+  stroke: var(--brand-navy);
+  stroke-width: 2.5;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 6px 14px rgba(16, 24, 74, 0.22));
+}
+
+.iran-map__sea {
+  fill: #5b7fa8;
+  font-size: 19px;
+  font-style: italic;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* The Gulf most of this cargo leaves through gets the emphasis. */
+.iran-map__sea--major {
+  fill: #2f6394;
+  font-size: 26px;
+  letter-spacing: 0.16em;
+}
+
+/* ---- markers ---- */
+.iran-map__post {
+  cursor: pointer;
+  outline: none;
+}
+
+.iran-map__post--sea { color: #0e7490; }
+.iran-map__post--land { color: #b45309; }
+.iran-map__post--air { color: var(--brand-navy); }
+
+.iran-map__hit {
+  fill: transparent;
+}
+
+.iran-map__halo {
+  fill: currentColor;
+  opacity: 0.16;
+  transition: opacity 200ms ease, r 200ms ease;
+}
+
+.iran-map__dot {
+  fill: currentColor;
+  stroke: #fff;
+  stroke-width: 2.5;
+  transition: r 200ms ease;
+}
+
+/* A slow breath on the ring, so the map has a pulse without anything moving
+   far enough to distract from the page. */
+.iran-map__pulse {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  opacity: 0;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+
+.iran-map__post.is-active .iran-map__pulse,
+.iran-map__post:hover .iran-map__pulse {
+  animation: iran-pulse 1.6s ease-out infinite;
+}
+
+@keyframes iran-pulse {
+  0% { opacity: 0.55; transform: scale(0.7); }
+  100% { opacity: 0; transform: scale(1.7); }
+}
+
+.iran-map__post:hover .iran-map__halo,
+.iran-map__post.is-active .iran-map__halo {
+  opacity: 0.3;
+}
+
+.iran-map__post:hover .iran-map__dot,
+.iran-map__post.is-active .iran-map__dot {
+  r: 8;
+}
+
+.iran-map__post:focus-visible .iran-map__dot {
+  stroke: var(--brand-yellow);
+  stroke-width: 3.5;
+}
+
+/* ---- tooltip ---- */
+.iran-map__tip {
+  position: absolute;
+  top: 0;
+  /* Physical `left`, deliberately not `inset-inline-start`: the script
+     computes a physical left offset from the marker, so a logical property
+     would flip the origin to the right edge on the RTL pages and throw the
+     tip outside the map. */
+  left: 0;
+  z-index: 5;
+  width: max-content;
+  max-width: min(260px, 76%);
+  padding: 9px 12px;
+  border-radius: 12px;
+  background: var(--brand-navy-deep);
+  color: #fff;
+  box-shadow: 0 16px 34px -18px rgba(16, 24, 74, 0.9);
+  pointer-events: none;
+  /* Positioned by transform from the script; never animate `transform` here or
+     the tip would slide across the map between markers. */
+  transition: opacity 140ms ease;
+}
+
+.iran-map__tip[hidden] {
+  display: none;
+}
+
+.iran-map__tip-name {
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.iran-map__tip-serves {
+  margin-top: 2px;
+  font-size: 11px;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.iran-map__tip-kind {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: rgba(243, 198, 35, 0.18);
+  color: var(--brand-yellow);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* ---- neighbouring country names ---- */
+/* Drawn under Iran's outline, so a name anchored near the border is covered by
+   the landmass instead of printing across it. */
+.iran-map__country {
+  /* 0.70 on the #d3dfec neighbour fill measures 4.8:1 - the lighter tint this
+     started at came out at 2.3:1, unreadable at map sizes. */
+  fill: rgba(25, 38, 106, 0.7);
+  font-weight: 600;
+  /* Kept modest deliberately: the generator reserves room for each label from
+     the map geometry alone, so any width added here by styling has to stay
+     small enough for that reserved room to absorb it. 0.16em blew past it and
+     put "TURKIYE" on top of the Bazargan marker. */
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
+/* Two sizes, set by the generator from how much room the country's visible
+   area actually has. The big six read as the headline neighbours; Azerbaijan
+   and the UAE sit in narrow bands and take the smaller size. */
+.iran-map__country--lg { font-size: 20px; }
+.iran-map__country--sm { font-size: 14px; letter-spacing: 0.02em; }
+
+/* Arabic script is cursive: letter-spacing prises the joins apart and the word
+   comes out looking broken. Uppercase does nothing here either. */
+[dir='rtl'] .iran-map__country {
+  letter-spacing: 0;
+  text-transform: none;
+  font-weight: 700;
+}
+
+/* ---- scale bar ---- */
+.iran-map__scale path {
+  stroke: rgba(25, 38, 106, 0.45);
+  stroke-width: 2.5;
+  fill: none;
+  stroke-linecap: square;
+}
+
+.iran-map__scale text {
+  fill: rgba(25, 38, 106, 0.55);
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+/* ---- filtered-out markers ---- */
+/* Dimmed rather than removed: the shape of the network stays readable, but a
+   filtered-out post can't be hovered, tapped or tabbed to. The script also
+   drops its tabindex, so this is belt and braces. */
+.iran-map__post.is-dim {
+  opacity: 0.16;
+  pointer-events: none;
+}
+
+.iran-map__post {
+  transition: opacity 220ms ease;
+}
+
+/* ---- hint under the map ---- */
+.iran-map__hint {
+  margin: 12px 4px 2px;
+  font-size: 12px;
+  line-height: 1.7;
+  color: rgba(25, 38, 106, 0.68);
+}
+
+.iran-map__key {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex: none;
+}
+
+.iran-map__key--sea { background: #0e7490; }
+.iran-map__key--land { background: #b45309; }
+.iran-map__key--air { background: var(--brand-navy); }
+
+/* The viewBox is 1000 units wide but renders near 320px on a phone, so every
+   drawn size shrinks by about a third. These bump the type and markers back to
+   a readable size on screen. `r` as a CSS property needs Safari 16+; older
+   versions fall back to the r attributes, i.e. a slightly smaller dot. */
+@media (max-width: 639px) {
+  .iran-map__sea { font-size: 32px; }
+  .iran-map__sea--major { font-size: 46px; }
+  .iran-map__country--lg { font-size: 28px; }
+  .iran-map__country--sm { font-size: 21px; }
+  .iran-map__scale text { font-size: 28px; }
+  .iran-map__dot { r: 9; }
+  .iran-map__halo { r: 19; }
+  .iran-map__post:hover .iran-map__dot,
+  .iran-map__post.is-active .iran-map__dot { r: 11; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .iran-map__post.is-active .iran-map__pulse,
+  .iran-map__post:hover .iran-map__pulse {
+    animation: none;
+  }
+  .iran-map__halo,
+  .iran-map__dot {
+    transition: none;
+  }
+}
+
+/* Customs list rows double as map controls. */
+.customs-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 8px;
+  width: 100%;
+  padding: 5px 8px;
+  border-radius: 8px;
+  text-align: start;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 160ms ease;
+}
+
+.customs-row:hover,
+.customs-row:focus-visible {
+  background: rgba(243, 198, 35, 0.16);
+  outline: none;
+}
+
+.customs-row:focus-visible {
+  box-shadow: 0 0 0 2px var(--brand-navy);
+}
+
+/* ---- customs: figures, filters, search ---------------------------------- */
+.customs-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.customs-stats li {
+  flex: 1 1 150px;
+  padding: 14px 18px;
+  border-radius: 16px;
+  background: rgba(25, 38, 106, 0.04);
+  box-shadow: inset 0 0 0 1px rgba(25, 38, 106, 0.1);
+}
+
+.customs-stats__n {
+  display: block;
+  font-size: 26px;
+  font-weight: 800;
+  line-height: 1.1;
+  color: var(--brand-navy);
+}
+
+.customs-stats__label {
+  display: block;
+  margin-top: 3px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.5;
+  color: rgba(25, 38, 106, 0.67);
+}
+
+.customs-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.customs-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.customs-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: inset 0 0 0 1px rgba(25, 38, 106, 0.14);
+  font-size: 13px;
+  font-weight: 700;
+  color: rgba(25, 38, 106, 0.75);
+  cursor: pointer;
+  transition:
+    background 160ms ease,
+    color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.customs-chip:hover {
+  background: rgba(243, 198, 35, 0.16);
+}
+
+.customs-chip:focus-visible {
+  outline: none;
+  box-shadow:
+    inset 0 0 0 1px rgba(25, 38, 106, 0.14),
+    0 0 0 2px var(--brand-navy);
+}
+
+.customs-chip.is-on {
+  background: var(--brand-navy);
+  color: #fff;
+  box-shadow: inset 0 0 0 1px var(--brand-navy);
+}
+
+/* The legend dot carries the marker colour; on the selected navy chip it would
+   otherwise disappear, so it goes white and keeps the ring readable. */
+.customs-chip.is-on .iran-map__key {
+  background: var(--brand-yellow);
+}
+
+.customs-chip__n {
+  min-width: 20px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: rgba(25, 38, 106, 0.09);
+  font-size: 11px;
+  font-weight: 800;
+  text-align: center;
+  color: rgba(25, 38, 106, 0.7);
+}
+
+.customs-chip.is-on .customs-chip__n {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+
+.customs-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1 1 220px;
+  max-width: 300px;
+}
+
+.customs-search svg {
+  position: absolute;
+  /* Physical inset would pin the icon to the left on the RTL pages while the
+     padding below flips; both use logical properties so they stay together. */
+  inset-inline-start: 12px;
+  width: 15px;
+  height: 15px;
+  color: rgba(25, 38, 106, 0.45);
+  pointer-events: none;
+}
+
+.customs-search input {
+  width: 100%;
+  padding: 9px 14px;
+  padding-inline-start: 34px;
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: inset 0 0 0 1px rgba(25, 38, 106, 0.14);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--brand-navy);
+}
+
+.customs-search input::placeholder {
+  font-weight: 500;
+  color: rgba(25, 38, 106, 0.42);
+}
+
+.customs-search input:focus {
+  outline: none;
+  box-shadow:
+    inset 0 0 0 1px var(--brand-navy),
+    0 0 0 2px rgba(25, 38, 106, 0.15);
+}
+
+/* Safari draws its own clear button; it lands on the wrong side in RTL and
+   duplicates the Escape shortcut, so it goes. */
+.customs-search input::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.customs-empty {
+  margin-top: 14px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: rgba(25, 38, 106, 0.04);
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(25, 38, 106, 0.67);
+}
+
+/* Forty-one rows would run far past the map. Give the list its own scroll on
+   wide screens so the two panes stay side by side; on narrow ones it stacks
+   under the map and scrolling the page is the natural thing. */
+@media (min-width: 1024px) {
+  .customs-list {
+    /* The map beside it draws at ~505px on a wide screen; the heading, the
+       empty note and the DAP/DPU/DDP note account for the rest of the column.
+       This lands the two columns within about a line of each other. */
+    max-height: 400px;
+    overflow-y: auto;
+    padding-inline-end: 8px;
+    overscroll-behavior: contain;
+  }
+
+  .customs-list::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .customs-list::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: rgba(25, 38, 106, 0.2);
+  }
+}

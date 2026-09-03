@@ -1,7 +1,8 @@
 ---
 import Layout from '../../../layouts/Layout.astro';
-import { getTranslation, resolveLang, localizedLanguages } from '../../../i18n';
-import { countryLocale, normalizeCountryCode } from '../../../data/country-locale';
+import { getTranslation, resolveLang, localizedLanguages, withLanguagePrefix } from '../../../i18n';
+import { countryLocale, normalizeCountryCode, countryFlagPath } from '../../../data/country-locale';
+import { imageSize } from '../../../data/image-size';
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -51,16 +52,50 @@ const galleryByCountry: Record<string, string[]> = {
   MN: ['/images/05_textile_yarn.webp', '/images/04_agricultural_grain.webp', '/images/07_rail_logistics.webp'],
 };
 const marketGallery = galleryByCountry[code] ?? ['/images/01_global_shipping_port.webp'];
+
+// Search description: the country note alone runs short for most markets, so
+// the commodities actually moved there are appended — they are the words a
+// buyer searches with ("barley Russia", "bitumen Uzbekistan"), and they come
+// from the same data the page already lists rather than new prose.
+//
+// Items are added one at a time and stop before the line would be truncated
+// in a search result, so a market with a long note keeps its note and a
+// market with a short one gains the commodity list.
+const DESCRIPTION_LIMIT = 158;
+const listSeparator = t.dir === 'rtl' ? '، ' : ', ';
+const countryLead = `${localizedName} — ${localizedNotes}`;
+const tradedItems = [...localizedExports, ...localizedImports];
+
+let countryDescription = countryLead;
+const fitted: string[] = [];
+for (const item of tradedItems) {
+  const candidate = `${countryLead} ${[...fitted, item].join(listSeparator)}.`;
+  if ([...candidate].length > DESCRIPTION_LIMIT) break;
+  fitted.push(item);
+  countryDescription = candidate;
+}
 ---
 
-<Layout title={title} lang={resolvedLang} translation={t}>
+<Layout
+  title={title}
+  lang={resolvedLang}
+  translation={t}
+  description={countryDescription}
+  image={marketGallery[0]}
+  imageAlt={localizedName}
+  breadcrumbs={[
+    { name: t.pages.tradeMap.title, href: withLanguagePrefix(resolvedLang, '/trade-map') },
+    { name: localizedName, href: withLanguagePrefix(resolvedLang, `/trade-map/${code.toLowerCase()}`) },
+  ]}
+>
   <section class="mx-auto max-w-5xl px-4 py-10 sm:px-6 sm:py-14">
     <div class="mb-8 flex flex-wrap items-center gap-4">
       <img
-        src={`https://flagcdn.com/w320/${country.country_code.toLowerCase()}.png`}
+        src={countryFlagPath(country.country_code)}
         alt={`${localizedName} flag`}
         class="h-12 w-auto rounded-md ring-1 ring-slate-200"
         loading="lazy"
+        {...imageSize(countryFlagPath(country.country_code))}
       />
       <div>
         <p class="text-sm font-semibold uppercase tracking-[0.22em] text-brand-dark/70">{t.pages.tradeMap.statusTraded}</p>
@@ -82,7 +117,7 @@ const marketGallery = galleryByCountry[code] ?? ['/images/01_global_shipping_por
     <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
       {marketGallery.map((image) => (
         <div class="card overflow-hidden p-0">
-          <img src={image} alt={t.pages.home.heroImageAlt} class="h-32 w-full object-cover sm:h-36" loading="lazy" />
+          <img src={image} alt={t.pages.home.heroImageAlt} class="h-32 w-full object-cover sm:h-36" loading="lazy" {...imageSize(image)} />
         </div>
       ))}
     </div>
@@ -131,11 +166,11 @@ const marketGallery = galleryByCountry[code] ?? ['/images/01_global_shipping_por
     <div class="mt-8 flex flex-wrap gap-3">
       <a
         class="pill-link bg-brand-gold text-brand-dark shadow-lg shadow-brand-gold/40 transition hover:-translate-y-0.5 hover:shadow-xl"
-        href={`/${resolvedLang}/contact`}
+        href={withLanguagePrefix(resolvedLang, '/contact')}
       >
         {t.pages.home.ctaPrimary}
       </a>
-      <a class="pill-link border border-brand-gold/40 bg-white text-brand-dark hover:bg-brand-gold/10" href={`/${resolvedLang}/trade-map`}>
+      <a class="pill-link border border-brand-gold/40 bg-white text-brand-dark hover:bg-brand-gold/10" href={withLanguagePrefix(resolvedLang, '/trade-map')}>
         {t.pages.tradeMap.ctaBack}
       </a>
     </div>

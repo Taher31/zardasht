@@ -1,6 +1,8 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import { getTranslation, resolveLang, withLanguagePrefix, localizedLanguages } from '../../i18n';
+import { metaDescription } from '../../data/meta-descriptions';
+import { imageSize } from '../../data/image-size';
 
 export function getStaticPaths() {
   return localizedLanguages.map((language) => ({ params: { lang: language.code } }));
@@ -23,7 +25,13 @@ const solutionImages = [
 ];
 ---
 
-<Layout title={t.pages.solutions.title} lang={lang} translation={t}>
+<Layout
+  title={t.pages.solutions.title}
+  lang={lang}
+  translation={t}
+  description={metaDescription(lang, 'solutions') ?? t.pages.solutions.intro}
+  breadcrumbs={[{ name: t.pages.solutions.title, href: withLanguagePrefix(lang, '/logistics') }]}
+>
   <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16">
     <div class="text-center">
       <p class="text-sm font-semibold uppercase tracking-[0.28em] text-brand-dark/80">{t.pages.solutions.eyebrow}</p>
@@ -45,7 +53,7 @@ const solutionImages = [
     <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
       {logisticsGallery.map((image) => (
         <div class="card overflow-hidden p-0">
-          <img src={image} alt={t.pages.home.heroImageAlt} class="h-40 w-full object-cover" loading="lazy" />
+          <img src={image} alt={t.pages.home.heroImageAlt} class="h-40 w-full object-cover" loading="lazy" {...imageSize(image)} />
         </div>
       ))}
     </div>
@@ -59,6 +67,7 @@ const solutionImages = [
               alt={solution.title}
               class="h-full w-full object-cover"
               loading="lazy"
+              {...imageSize(solutionImages[index] ?? solutionImages[0])}
             />
             <div class="absolute inset-0 bg-gradient-to-t from-brand-dark/70 via-transparent to-transparent"></div>
             <span class="absolute left-4 top-4 rounded-full bg-white/85 px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-brand-dark">LOG</span>

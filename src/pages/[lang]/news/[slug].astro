@@ -2,6 +2,7 @@
 import Layout from '../../../layouts/Layout.astro';
 import { getTranslation, resolveLang, withLanguagePrefix, localizedLanguages } from '../../../i18n';
 import { newsPosts, getNewsPosts, formatNewsDate } from '../../../data/news';
+import { imageSize } from '../../../data/image-size';
 
 export function getStaticPaths() {
   return localizedLanguages.flatMap((language) =>
@@ -22,9 +23,43 @@ const displayDate = formatNewsDate(post.date, lang);
 
 // Everything else, newest first, for the "more news" strip.
 const others = posts.filter((item) => item.slug !== slug).slice(0, 3);
+
+const origin = (Astro.site ?? Astro.url).origin;
+const postUrl = `${origin}${withLanguagePrefix(lang, `/news/${post.slug}`)}`;
+// `date` is a plain YYYY-MM-DD; schema.org and og:article both want ISO-8601.
+const publishedIso = new Date(`${post.date}T00:00:00Z`).toISOString();
+
+const articleSchema = {
+  '@context': 'https://schema.org',
+  '@type': post.kind === 'guide' ? 'Article' : 'NewsArticle',
+  headline: post.title,
+  description: post.excerpt,
+  datePublished: publishedIso,
+  dateModified: publishedIso,
+  inLanguage: lang,
+  mainEntityOfPage: { '@type': 'WebPage', '@id': postUrl },
+  url: postUrl,
+  ...(post.image ? { image: [`${origin}${post.image}`] } : {}),
+  author: { '@id': `${origin}/#organization` },
+  publisher: { '@id': `${origin}/#organization` },
+};
 ---
 
-<Layout title={post.title} lang={lang} translation={t}>
+<Layout
+  title={post.title}
+  lang={lang}
+  translation={t}
+  description={post.excerpt}
+  image={post.image}
+  imageAlt={post.title}
+  type="article"
+  publishedTime={publishedIso}
+  breadcrumbs={[
+    { name: t.pages.news.title, href: withLanguagePrefix(lang, '/news') },
+    { name: post.title, href: withLanguagePrefix(lang, `/news/${post.slug}`) },
+  ]}
+  schema={[articleSchema]}
+>
   <article class="mx-auto max-w-3xl px-4 py-12 sm:px-6 sm:py-16">
     <a
       class="inline-flex items-center gap-2 text-sm font-bold text-[#19266A]/70 transition hover:text-[#19266A]"
@@ -43,7 +78,7 @@ const others = posts.filter((item) => item.slug !== slug).slice(0, 3);
     </time>
 
     <div class="card mt-8 overflow-hidden p-0">
-      <img src={post.image} alt="" class="h-auto w-full object-cover" loading="eager" />
+      <img src={post.image} alt="" class="h-auto w-full object-cover" loading="eager" {...imageSize(post.image)} />
     </div>
 
     <div class="mt-8 space-y-5">
@@ -52,6 +87,24 @@ const others = posts.filter((item) => item.slug !== slug).slice(0, 3);
         <p class="leading-8 text-slate-600">{paragraph}</p>
       ))}
     </div>
+
+    {post.links.length > 0 && (
+      <nav class="mt-8 rounded-2xl bg-[#19266A]/5 p-5 ring-1 ring-[#19266A]/10" aria-label={t.pages.news.homeTitle}>
+        <ul class="space-y-2">
+          {post.links.map((link) => (
+            <li>
+              <a
+                class="inline-flex items-center gap-2 text-sm font-bold text-[#19266A] underline-offset-4 hover:underline"
+                href={withLanguagePrefix(lang, link.href)}
+              >
+                <span aria-hidden="true">↩</span>
+                {link.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    )}
 
     <div class="mt-10 flex flex-wrap gap-3 border-t border-slate-200 pt-8">
       <a
@@ -81,6 +134,7 @@ const others = posts.filter((item) => item.slug !== slug).slice(0, 3);
                 alt=""
                 loading="lazy"
                 class="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105"
+                {...imageSize(item.image)}
               />
             </div>
             <div class="flex flex-1 flex-col gap-2 p-5">

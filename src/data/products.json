@@ -111,6 +111,34 @@
                     "tag": "Import"
                 }
             ]
+        },
+        {
+            "id": "chemicals-petrochemicals",
+            "badge": "CP",
+            "title": "Chemicals & Petrochemicals",
+            "description": "Chemical and petrochemical raw materials supplied to manufacturers against a confirmed technical specification.",
+            "products": [
+                {
+                    "name": "Petrochemical raw materials",
+                    "description": "Polymer grades, base chemicals, and related feedstock sourced directly from producing plants.",
+                    "tag": "Petrochemicals"
+                },
+                {
+                    "name": "Industrial chemicals",
+                    "description": "Chemical raw materials for production, matched to the buyer’s technical specification and required purity.",
+                    "tag": "Chemicals"
+                },
+                {
+                    "name": "Specification & documents",
+                    "description": "Technical data sheet, certificate of analysis, and packaging requirements are confirmed before purchase.",
+                    "tag": "Specs"
+                },
+                {
+                    "name": "Delivered supply",
+                    "description": "Purchase at origin, freight, customs clearance, and delivery at the agreed destination.",
+                    "tag": "Delivered"
+                }
+            ]
         }
     ],
     "fa": [
@@ -223,6 +251,34 @@
                     "name": "اجرای واردات",
                     "description": "مراحل تجاری و لجستیکی از تأیید تأمین‌کننده تا تحویل هماهنگ می‌شود.",
                     "tag": "واردات"
+                }
+            ]
+        },
+        {
+            "id": "chemicals-petrochemicals",
+            "badge": "CP",
+            "title": "مواد شیمیایی و پتروشیمی",
+            "description": "تأمین مواد اولیه شیمیایی و پتروشیمی برای واحدهای تولیدی، بر پایه مشخصات فنی تأییدشده.",
+            "products": [
+                {
+                    "name": "مواد اولیه پتروشیمی",
+                    "description": "گریدهای پلیمری، مواد شیمیایی پایه و خوراک پتروشیمی، تأمین‌شده از واحدهای تولیدکننده.",
+                    "tag": "پتروشیمی"
+                },
+                {
+                    "name": "مواد شیمیایی صنعتی",
+                    "description": "مواد اولیه شیمیایی برای تولید، مطابق مشخصات فنی و درجه خلوص مورد نیاز خریدار.",
+                    "tag": "شیمیایی"
+                },
+                {
+                    "name": "مشخصات و مستندات",
+                    "description": "برگه اطلاعات فنی، گواهی آنالیز و الزامات بسته‌بندی پیش از خرید تأیید می‌شود.",
+                    "tag": "مشخصات"
+                },
+                {
+                    "name": "تأمین تا مقصد",
+                    "description": "خرید از مبدأ، حمل، ترخیص گمرکی و تحویل در مقصد توافق‌شده.",
+                    "tag": "تحویل"
                 }
             ]
         }
@@ -339,6 +395,34 @@
                     "tag": "استيراد"
                 }
             ]
+        },
+        {
+            "id": "chemicals-petrochemicals",
+            "badge": "CP",
+            "title": "المواد الكيميائية والبتروكيماوية",
+            "description": "توريد المواد الخام الكيميائية والبتروكيماوية للمصانع وفق مواصفات فنية مؤكدة.",
+            "products": [
+                {
+                    "name": "المواد الخام البتروكيماوية",
+                    "description": "درجات البوليمر والمواد الكيميائية الأساسية ولقائم البتروكيماويات، من مصانع منتجة مباشرة.",
+                    "tag": "بتروكيماويات"
+                },
+                {
+                    "name": "المواد الكيميائية الصناعية",
+                    "description": "مواد خام كيميائية للتصنيع وفق المواصفات الفنية ودرجة النقاء المطلوبة لدى المشتري.",
+                    "tag": "كيميائيات"
+                },
+                {
+                    "name": "المواصفات والمستندات",
+                    "description": "تُؤكَّد صحيفة البيانات الفنية وشهادة التحليل ومتطلبات التعبئة قبل الشراء.",
+                    "tag": "المواصفات"
+                },
+                {
+                    "name": "التوريد حتى الوجهة",
+                    "description": "الشراء من المنشأ والشحن والتخليص الجمركي والتسليم في الوجهة المتفق عليها.",
+                    "tag": "التسليم"
+                }
+            ]
         }
     ],
     "ru": [
@@ -451,6 +535,34 @@
                     "name": "Импортное исполнение",
                     "description": "Коммерческие и логистические шаги координируются от подтверждения поставщика до доставки.",
                     "tag": "Импорт"
+                }
+            ]
+        },
+        {
+            "id": "chemicals-petrochemicals",
+            "badge": "CP",
+            "title": "Химия и нефтехимия",
+            "description": "Поставка химического и нефтехимического сырья производителям по подтверждённой технической спецификации.",
+            "products": [
+                {
+                    "name": "Нефтехимическое сырьё",
+                    "description": "Марки полимеров, базовые химикаты и сопутствующее сырьё напрямую от предприятий-производителей.",
+                    "tag": "Нефтехимия"
+                },
+                {
+                    "name": "Промышленные химикаты",
+                    "description": "Химическое сырьё для производства по технической спецификации и требуемой покупателем чистоте.",
+                    "tag": "Химикаты"
+                },
+                {
+                    "name": "Спецификация и документы",
+                    "description": "Технический паспорт, сертификат анализа и требования к упаковке подтверждаются до закупки.",
+                    "tag": "Спецификация"
+                },
+                {
+                    "name": "Поставка до места назначения",
+                    "description": "Закупка в стране происхождения, перевозка, таможенное оформление и доставка в согласованный пункт.",
+                    "tag": "Доставка"
                 }
             ]
         }

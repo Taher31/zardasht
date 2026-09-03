@@ -1,7 +1,12 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import { getTranslation, resolveLang, localizedLanguages, withLanguagePrefix } from '../../i18n';
-import { localizedCountryName } from '../../data/country-locale';
+import { metaDescription } from '../../data/meta-descriptions';
+import { localizedCountryName, countryFlagPath } from '../../data/country-locale';
+import { getIncoterms } from '../../data/incoterms';
+import { getCustoms } from '../../data/iran-customs';
+import { iranMap } from '../../data/iran-map';
+import { imageSize } from '../../data/image-size';
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -30,9 +35,48 @@ const namedCountries = activeCountries.map((country) => ({
   ...country,
   displayName: localizedCountryName(lang, country.country_code, country.country_name),
 }));
+
+const incoterms = getIncoterms(lang);
+
+const customs = getCustoms(lang);
+// Join the generated geometry to the translated names, and group for the list.
+const customsPoints = iranMap.points.map((p) => ({
+  ...p,
+  name: customs.names[p.id] ?? p.id,
+  serves: customs.serves[p.id] ?? '',
+}));
+// The three figures above the map. Iran's seven land neighbours and three
+// coastlines are facts about the country, not about our post list, so they are
+// written here rather than counted.
+const customsStats = [
+  { value: String(iranMap.points.length), label: customs.stats.posts },
+  { value: '7', label: customs.stats.neighbours },
+  { value: '3', label: customs.stats.coasts },
+];
+const mapH = Number(iranMap.viewBox.split(' ')[3]);
+const scaleX = 40;
+const scaleW = iranMap.scaleBar.units;
+const customsCountries = iranMap.neighbourLabels
+  .map((n) => ({ ...n, label: customs.neighbours[n.id] ?? '' }))
+  .filter((n) => n.label);
+const customsByKind = (['sea', 'land', 'air'] as const).map((kind) => ({
+  kind,
+  label: customs.kinds[kind],
+  items: customsPoints.filter((p) => p.kind === kind),
+}));
+const incotermGroups = [
+  { title: incoterms.multimodalTitle, note: incoterms.multimodalNote, terms: incoterms.multimodal },
+  { title: incoterms.seaTitle, note: incoterms.seaNote, terms: incoterms.sea },
+];
 ---
 
-<Layout title={t.pages.tradeMap.title} lang={lang} translation={t}>
+<Layout
+  title={t.pages.tradeMap.title}
+  lang={lang}
+  translation={t}
+  description={metaDescription(lang, 'tradeMap') ?? t.pages.tradeMap.intro}
+  breadcrumbs={[{ name: t.pages.tradeMap.title, href: withLanguagePrefix(lang, '/trade-map') }]}
+>
   <section class="mx-auto w-full max-w-none px-4 py-10 sm:px-8 lg:px-12">
     <div class="mb-8 text-center">
       <p class="text-sm font-semibold uppercase tracking-[0.28em] text-brand-dark/80">{t.pages.tradeMap.title}</p>
@@ -59,10 +103,11 @@ const namedCountries = activeCountries.map((country) => ({
           class="card flex items-center gap-4 p-4 transition hover:-translate-y-0.5 hover:shadow-lg"
         >
           <img
-            src={`https://flagcdn.com/w320/${country.country_code.toLowerCase()}.png`}
+            src={countryFlagPath(country.country_code)}
             alt=""
             class="h-10 w-14 shrink-0 rounded-md object-cover ring-1 ring-slate-200"
             loading="lazy"
+            {...imageSize(countryFlagPath(country.country_code))}
           />
           <div class="min-w-0 flex-1">
             <p class="truncate text-base font-semibold text-brand-dark">
@@ -76,9 +121,528 @@ const namedCountries = activeCountries.map((country) => ({
     </div>
   </section>
 
+  <!-- Iran customs map. The outline and every marker position are projected
+       at author time by scripts/build-iran-map.cjs from the same Natural Earth
+       data the world map uses, so this needs no mapping library and no client
+       JS. The <title>/<desc> and the list beneath carry the same information
+       for anyone who cannot see the drawing. -->
+  <section class="mx-auto w-full max-w-6xl px-4 pb-16 sm:px-6">
+    <div class="mb-8 max-w-3xl">
+      <p class="section-eyebrow">{customs.eyebrow}</p>
+      <h2 class="section-title mt-2">{customs.title}</h2>
+      <span class="mt-4 block h-[3px] w-16 rounded-full bg-[#F3C623]" aria-hidden="true"></span>
+      <p class="mt-5 text-base leading-8 text-slate-600">{customs.intro}</p>
+    </div>
+
+    <ul class="customs-stats">
+      {customsStats.map((stat) => (
+        <li>
+          <span class="customs-stats__n">{stat.value}</span>
+          <span class="customs-stats__label">{stat.label}</span>
+        </li>
+      ))}
+    </ul>
+
+    {/* One control bar for both panes: the chips and the search box filter the
+        list and dim the matching markers together, so the map and the list can
+        never disagree about what is being shown. */}
+    <div class="customs-controls">
+      <div class="customs-filters" role="group" aria-label={customs.listTitle}>
+        <button type="button" class="customs-chip is-on" data-filter="all" aria-pressed="true">
+          {customs.filterAll}
+          <span class="customs-chip__n">{iranMap.points.length}</span>
+        </button>
+        {customsByKind.map((group) => (
+          <button
+            type="button"
+            class={`customs-chip customs-chip--${group.kind}`}
+            data-filter={group.kind}
+            aria-pressed="false"
+          >
+            <span class={`iran-map__key iran-map__key--${group.kind}`}></span>
+            {group.label}
+            <span class="customs-chip__n">{group.items.length}</span>
+          </button>
+        ))}
+      </div>
+
+      <label class="customs-search">
+        <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+          <circle cx="9" cy="9" r="6" fill="none" stroke="currentColor" stroke-width="2" />
+          <path d="M13.5 13.5 18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+        </svg>
+        <input type="search" data-customs-search placeholder={customs.search} aria-label={customs.search} />
+      </label>
+    </div>
+
+    <div class="grid grid-cols-1 gap-8 lg:grid-cols-[1.35fr,1fr] lg:gap-10">
+      <div class="iran-map" data-iran-map>
+        <svg viewBox={iranMap.viewBox} role="img" aria-labelledby="iran-map-title iran-map-desc">
+          <title id="iran-map-title">{customs.title}</title>
+          <desc id="iran-map-desc">{customs.intro}</desc>
+
+          <defs>
+            {/* Neighbours run well past the frame; clip rather than trim the
+                geometry so the generator stays simple. */}
+            <clipPath id="iran-frame">
+              <rect x="0" y="0" width="1000" height="760" />
+            </clipPath>
+          </defs>
+
+          <g clip-path="url(#iran-frame)">
+            {iranMap.neighbours.map((n) => (
+              <path class="iran-map__neighbour" d={n.d} />
+            ))}
+          </g>
+
+          {/* Country names sit under Iran's outline, so a label anchored close
+              to the border is covered by the landmass rather than printing
+              across it. */}
+          <g clip-path="url(#iran-frame)">
+            {customsCountries.map((n) => (
+              <text
+                class={`iran-map__country iran-map__country--${n.size}`}
+                x={n.x}
+                y={n.y}
+                text-anchor="middle"
+              >{n.label}</text>
+            ))}
+          </g>
+
+          {/* Iran last of the landmasses, so it sits over its neighbours. */}
+          <path class="iran-map__land" d={iranMap.outline} />
+
+          <text
+            class="iran-map__sea iran-map__sea--major"
+            x={iranMap.labels.persianGulf.x}
+            y={iranMap.labels.persianGulf.y}
+            text-anchor="middle"
+          >{customs.water.persianGulf}</text>
+          <text
+            class="iran-map__sea"
+            x={iranMap.labels.gulfOfOman.x}
+            y={iranMap.labels.gulfOfOman.y}
+            text-anchor="middle"
+          >{customs.water.gulfOfOman}</text>
+          <text
+            class="iran-map__sea"
+            x={iranMap.labels.caspian.x}
+            y={iranMap.labels.caspian.y}
+            text-anchor="middle"
+          >{customs.water.caspian}</text>
+
+          {customsPoints.map((p) => (
+            <g
+              class={`iran-map__post iran-map__post--${p.kind}`}
+              tabindex="0"
+              role="button"
+              aria-label={`${p.name} — ${p.serves}`}
+              data-post
+              data-id={p.id}
+              data-name={p.name}
+              data-serves={p.serves}
+              data-kind={customs.kinds[p.kind]}
+              data-kind-id={p.kind}
+              data-x={p.x}
+              data-y={p.y}
+            >
+              {/* Generous invisible hit area: the visible dot is far smaller
+                  than a fingertip or a hurried cursor. */}
+              <circle class="iran-map__hit" cx={p.x} cy={p.y} r="22" />
+              <circle class="iran-map__pulse" cx={p.x} cy={p.y} r="13" />
+              <circle class="iran-map__halo" cx={p.x} cy={p.y} r="13" />
+              <circle class="iran-map__dot" cx={p.x} cy={p.y} r="6" />
+            </g>
+          ))}
+
+          {/* Scale bar and north mark. The bar's length is computed by the
+              generator from the same projection the outline uses, so it stays
+              truthful if the frame is ever re-cut. */}
+          <g class="iran-map__scale" aria-hidden="true">
+            <path d={`M${scaleX} ${mapH - 34}h${scaleW}`} />
+            <path d={`M${scaleX} ${mapH - 40}v12`} />
+            <path d={`M${scaleX + scaleW} ${mapH - 40}v12`} />
+            <text x={scaleX + scaleW / 2} y={mapH - 44} text-anchor="middle">
+              {`${iranMap.scaleBar.km} km`}
+            </text>
+          </g>
+        </svg>
+
+        {/* Positioned from the marker's own SVG coords, so it tracks the map
+            at any size without measuring on every pointer move. */}
+        <div class="iran-map__tip" data-tip hidden>
+          <p class="iran-map__tip-name" data-tip-name></p>
+          <p class="iran-map__tip-serves" data-tip-serves></p>
+          <span class="iran-map__tip-kind" data-tip-kind></span>
+        </div>
+
+        <p class="iran-map__hint">{customs.hint}</p>
+      </div>
+
+      <div>
+        <h3 class="text-lg font-bold text-[#19266A]">{customs.listTitle}</h3>
+        <div class="customs-list mt-4 space-y-5">
+          {customsByKind.map((group) => (
+            <div data-customs-group>
+              <p class="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.14em] text-[#19266A]/55">
+                <span class={`iran-map__key iran-map__key--${group.kind}`}></span>
+                {group.label}
+                <span class="text-[#19266A]/35">{group.items.length}</span>
+              </p>
+              <ul class="mt-2 space-y-1.5">
+                {group.items.map((p) => (
+                  <li>
+                    {/* Pointing at a row lights up its marker. On a phone the
+                        two Khuzestan posts sit ~11px apart on the drawing, so
+                        this list — not the map — is the realistic way to pick
+                        one out there. */}
+                    <button
+                      type="button"
+                      class="customs-row"
+                      data-post-link
+                      data-id={p.id}
+                      data-kind-id={p.kind}
+                      data-search={`${p.name} ${p.serves}`}
+                    >
+                      <span class="font-semibold text-[#19266A]">{p.name}</span>
+                      <span class="text-xs text-slate-500">{p.serves}</span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+
+        <p class="customs-empty" data-customs-empty hidden>{customs.empty}</p>
+
+        <p class="mt-6 rounded-2xl bg-[#19266A]/[0.04] p-4 text-xs leading-6 text-slate-500 ring-1 ring-[#19266A]/10">
+          {customs.note}
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Incoterms 2020. The classic grid is ~11 rows by 10 columns, which is
+       unusable on a phone, so each rule is a <details> card instead: the
+       summary line is always visible, and opening it splits the duties into
+       two plain columns. No JavaScript, and it degrades to an open list if
+       CSS fails. -->
+  <section class="mx-auto w-full max-w-6xl px-4 pb-16 sm:px-6">
+    <div class="mb-8 max-w-3xl">
+      <p class="section-eyebrow">{incoterms.eyebrow}</p>
+      <h2 class="section-title mt-2">{incoterms.title}</h2>
+      <span class="mt-4 block h-[3px] w-16 rounded-full bg-[#F3C623]" aria-hidden="true"></span>
+      <p class="mt-5 text-base leading-8 text-slate-600">{incoterms.intro}</p>
+    </div>
+
+    {incotermGroups.map((group) => (
+      <div class="mb-10">
+        <div class="mb-4 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+          <h3 class="text-lg font-bold text-[#19266A]">{group.title}</h3>
+          <p class="text-sm text-slate-500">{group.note}</p>
+        </div>
+
+        <div class="grid grid-cols-1 gap-3 lg:grid-cols-2">
+          {group.terms.map((term) => (
+            <details class="incoterm">
+              <summary class="incoterm__summary">
+                <span class="incoterm__code">{term.code}</span>
+                <span class="min-w-0 flex-1">
+                  <span class="block text-sm font-bold text-[#19266A]">{term.name}</span>
+                  <span class="mt-0.5 block text-xs leading-5 text-slate-500">{term.summary}</span>
+                </span>
+                <span class="incoterm__chevron" aria-hidden="true">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </span>
+              </summary>
+
+              <div class="incoterm__body">
+                {/* Where risk changes hands, as one bar. This is the part
+                    buyers actually scan for, so it leads the panel. */}
+                <p class="text-[11px] font-bold uppercase tracking-[0.14em] text-[#19266A]/60">
+                  {incoterms.riskLabel}: <span class="text-[#19266A]">{term.point}</span>
+                </p>
+                <div class="incoterm__bar" style={`--risk:${term.risk}%`}>
+                  <span class="incoterm__bar-seller"></span>
+                  <span class="incoterm__bar-marker"></span>
+                </div>
+                <div class="flex justify-between text-[10px] font-semibold text-slate-400">
+                  <span>{incoterms.originLabel}</span>
+                  <span>{incoterms.destinationLabel}</span>
+                </div>
+
+                <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <div>
+                    <p class="incoterm__col-head incoterm__col-head--seller">{incoterms.sellerLabel}</p>
+                    <ul class="mt-2 space-y-1.5">
+                      {term.seller.map((item) => (
+                        <li class="flex gap-2 text-xs leading-5 text-slate-600">
+                          <span class="mt-[7px] h-1 w-1 shrink-0 rounded-full bg-[#F3C623]"></span>
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div>
+                    <p class="incoterm__col-head incoterm__col-head--buyer">{incoterms.buyerLabel}</p>
+                    <ul class="mt-2 space-y-1.5">
+                      {term.buyer.map((item) => (
+                        <li class="flex gap-2 text-xs leading-5 text-slate-600">
+                          <span class="mt-[7px] h-1 w-1 shrink-0 rounded-full bg-[#19266A]/30"></span>
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </details>
+          ))}
+        </div>
+      </div>
+    ))}
+
+    {/* The full matrix. It only appears from lg up, where there is genuinely
+        room for six duty columns — below that the cards above already carry
+        the same information in a shape that fits a phone, so showing a
+        horizontally-scrolling table as well would just be a worse duplicate. */}
+    <div class="mt-12 hidden lg:block">
+      <div class="mb-4 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
+        <div>
+          <h3 class="text-lg font-bold text-[#19266A]">{incoterms.matrixTitle}</h3>
+          <p class="mt-1 text-sm text-slate-500">{incoterms.matrixNote}</p>
+        </div>
+        <div class="flex flex-wrap items-center gap-4 text-xs font-semibold text-slate-500">
+          <span class="flex items-center gap-2"><span class="duty duty--s">S</span>{incoterms.legendSeller}</span>
+          <span class="flex items-center gap-2"><span class="duty duty--b">B</span>{incoterms.legendBuyer}</span>
+          <span class="flex items-center gap-2"><span class="duty duty--n">–</span>{incoterms.legendNone}</span>
+        </div>
+      </div>
+
+      <div class="overflow-x-auto rounded-2xl ring-1 ring-[#19266A]/10">
+        <table class="incoterm-matrix">
+          <thead>
+            <tr>
+              <th scope="col">{incoterms.termColumn}</th>
+              {incoterms.dutyColumns.map((label) => <th scope="col">{label}</th>)}
+            </tr>
+          </thead>
+          <tbody>
+            {[...incoterms.multimodal, ...incoterms.sea].map((term) => (
+              <tr>
+                <th scope="row">
+                  <span class="incoterm-matrix__code">{term.code}</span>
+                  <span class="incoterm-matrix__name">{term.name}</span>
+                </th>
+                {term.duties.map((d, i) => (
+                  <td>
+                    <span
+                      class:list={['duty', d === 'S' && 'duty--s', d === 'B' && 'duty--b', d === '-' && 'duty--n']}
+                      title={`${incoterms.dutyColumns[i]}: ${d === 'S' ? incoterms.legendSeller : d === 'B' ? incoterms.legendBuyer : incoterms.legendNone}`}
+                    >
+                      {d === '-' ? '–' : d}
+                    </span>
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <p class="mt-8 rounded-2xl bg-[#19266A]/[0.04] p-4 text-xs leading-6 text-slate-500 ring-1 ring-[#19266A]/10">
+      {incoterms.disclaimer}
+    </p>
+  </section>
+
   <script type="application/json" id="trade-data" set:html={JSON.stringify(activeCountries)}></script>
   <script type="application/json" id="map-locale" set:html={JSON.stringify(mapStrings)}></script>
 
   <script src="/vendor/d3.min.js" defer></script>
   <script src="/scripts/trade-map.js" defer></script>
+
+  <script>
+    // Customs-map tooltip. The marker's position is read from its own SVG
+    // user-space coords and converted with the live viewBox scale, so the tip
+    // stays glued to the marker at any container width without re-measuring
+    // the DOM on every pointer move.
+    const mapRoot = document.querySelector('[data-iran-map]');
+    const mapSection = mapRoot ? mapRoot.closest('section') : null;
+
+    if (mapRoot) {
+      const svg = mapRoot.querySelector('svg');
+      const tip = mapRoot.querySelector('[data-tip]');
+      const tipName = mapRoot.querySelector('[data-tip-name]');
+      const tipServes = mapRoot.querySelector('[data-tip-serves]');
+      const tipKind = mapRoot.querySelector('[data-tip-kind]');
+      const posts = Array.from(mapRoot.querySelectorAll('[data-post]'));
+      let active = null;
+
+      const place = (post) => {
+        const box = svg.getBoundingClientRect();
+        const root = mapRoot.getBoundingClientRect();
+        const vb = svg.viewBox.baseVal;
+        const scale = box.width / vb.width;
+        // marker centre, in coordinates relative to the map container
+        const x = (box.left - root.left) + Number(post.dataset.x) * scale;
+        const y = (box.top - root.top) + Number(post.dataset.y) * scale;
+
+        tipName.textContent = post.dataset.name || '';
+        tipServes.textContent = post.dataset.serves || '';
+        tipKind.textContent = post.dataset.kind || '';
+        tip.hidden = false;
+
+        // Flip below the marker when there is not room above it, and keep the
+        // whole tip inside the container rather than letting it clip.
+        const t = tip.getBoundingClientRect();
+        const above = y - t.height - 16;
+        const top = above > 4 ? above : y + 18;
+        let left = x - t.width / 2;
+        left = Math.max(6, Math.min(left, root.width - t.width - 6));
+
+        tip.style.transform = `translate(${Math.round(left)}px, ${Math.round(top)}px)`;
+        tip.dataset.flipped = above > 4 ? 'false' : 'true';
+      };
+
+      const show = (post) => {
+        if (active === post) return;
+        if (active) active.classList.remove('is-active');
+        active = post;
+        post.classList.add('is-active');
+        place(post);
+      };
+
+      const hide = () => {
+        if (active) active.classList.remove('is-active');
+        active = null;
+        tip.hidden = true;
+      };
+
+      posts.forEach((post) => {
+        post.addEventListener('pointerenter', () => show(post));
+        post.addEventListener('focus', () => show(post));
+        post.addEventListener('pointerleave', (event) => {
+          // On touch, pointerleave fires immediately after the tap; keep the
+          // tip up so it can actually be read.
+          if (event.pointerType !== 'mouse') return;
+          hide();
+        });
+        post.addEventListener('blur', hide);
+        post.addEventListener('keydown', (event) => {
+          if (event.key === 'Escape') { hide(); post.blur(); }
+        });
+      });
+
+      // The list beneath the map drives the same highlight. Tooltip only on a
+      // real pointer — on touch the row already shows the name, and anchoring a
+      // tip to a marker the finger isn't near would just be confusing.
+      const byId = new Map(posts.map((p) => [p.dataset.id, p]));
+      mapSection.querySelectorAll('[data-post-link]').forEach((row) => {
+        const post = byId.get(row.dataset.id);
+        if (!post) return;
+        const light = (withTip) => {
+          if (active) active.classList.remove('is-active');
+          active = post;
+          post.classList.add('is-active');
+          if (withTip) place(post); else tip.hidden = true;
+        };
+        row.addEventListener('pointerenter', (e) => light(e.pointerType === 'mouse'));
+        row.addEventListener('focus', () => light(true));
+        row.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse') hide(); });
+        row.addEventListener('blur', hide);
+        row.addEventListener('click', () => {
+          light(false);
+          post.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        });
+      });
+
+      // A tap anywhere else dismisses the tip on touch devices.
+      document.addEventListener('pointerdown', (event) => {
+        if (active && !(event.target instanceof Element && event.target.closest('[data-post]'))) hide();
+      });
+
+      // Keep it anchored if the map is resized while a tip is open.
+      if ('ResizeObserver' in window) {
+        new ResizeObserver(() => { if (active) place(active); }).observe(svg);
+      }
+
+      // ---- Filter chips + search -----------------------------------------
+      // One state, applied to both panes at once: the list hides what does not
+      // match, the map dims it. Dimmed markers also stop taking pointer and
+      // keyboard focus, so a filtered-out post can't be tabbed to or hovered.
+      const chips = Array.from(mapSection.querySelectorAll('[data-filter]'));
+      const searchBox = mapSection.querySelector('[data-customs-search]');
+      const groups = Array.from(mapSection.querySelectorAll('[data-customs-group]'));
+      const rows = Array.from(mapSection.querySelectorAll('[data-post-link]'));
+      const emptyNote = mapSection.querySelector('[data-customs-empty]');
+      let kind = 'all';
+
+      // Persian and Arabic keyboards disagree about yeh and kaf, and people
+      // paste text with diacritics and zero-width joiners in it. Fold all of
+      // that away so searching "کویته" finds a name stored with an Arabic yeh.
+      const fold = (value) =>
+        (value || '')
+          .toLowerCase()
+          .replace(/[\u064A\u0649]/g, '\u06CC')
+          .replace(/\u0643/g, '\u06A9')
+          .replace(/[\u0622\u0623\u0625]/g, '\u0627')
+          .replace(/[\u064B-\u0652\u0640\u200B-\u200D]/g, '')
+          .trim();
+
+      const applyFilter = () => {
+        const query = fold(searchBox ? searchBox.value : '');
+        let shown = 0;
+
+        rows.forEach((row) => {
+          const match =
+            (kind === 'all' || row.dataset.kindId === kind) &&
+            (!query || fold(row.dataset.search).includes(query));
+          const item = row.closest('li');
+          if (item) item.hidden = !match;
+          if (match) shown += 1;
+        });
+
+        // A heading with nothing under it is noise.
+        groups.forEach((group) => {
+          group.hidden = !group.querySelector('li:not([hidden])');
+        });
+
+        posts.forEach((post) => {
+          const match =
+            (kind === 'all' || post.dataset.kindId === kind) &&
+            (!query || fold(post.dataset.name + ' ' + post.dataset.serves).includes(query));
+          post.classList.toggle('is-dim', !match);
+          post.setAttribute('tabindex', match ? '0' : '-1');
+          if (!match && active === post) hide();
+        });
+
+        if (emptyNote) emptyNote.hidden = shown > 0;
+      };
+
+      chips.forEach((chip) => {
+        chip.addEventListener('click', () => {
+          kind = chip.dataset.filter;
+          chips.forEach((other) => {
+            const on = other === chip;
+            other.classList.toggle('is-on', on);
+            other.setAttribute('aria-pressed', String(on));
+          });
+          applyFilter();
+        });
+      });
+
+      if (searchBox) {
+        searchBox.addEventListener('input', applyFilter);
+        // Escape clears the box rather than only clearing the browser's own
+        // search affordance, which not every browser draws.
+        searchBox.addEventListener('keydown', (event) => {
+          if (event.key === 'Escape') { searchBox.value = ''; applyFilter(); }
+        });
+      }
+    }
+  </script>
 </Layout>

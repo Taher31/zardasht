@@ -1,6 +1,8 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import { getTranslation, resolveLang, withLanguagePrefix, localizedLanguages } from '../../i18n';
+import { metaDescription } from '../../data/meta-descriptions';
+import { imageSize } from '../../data/image-size';
 
 export function getStaticPaths() {
   return localizedLanguages.map((language) => ({ params: { lang: language.code } }));
@@ -8,12 +10,6 @@ export function getStaticPaths() {
 
 const lang = resolveLang(Astro.props.lang ?? Astro.params.lang);
 const t = getTranslation(lang);
-
-const aboutGallery = [
-  '/images/06_road_logistics_truck.webp',
-  '/images/03_metals_steel.webp',
-  '/images/02_bitumen.webp',
-];
 
 const ceoByLanguage = {
   en: {
@@ -57,42 +53,125 @@ const ceoByLanguage = {
 const ceo = ceoByLanguage[lang] ?? ceoByLanguage.en;
 const ceoImage = '/images/CEO.webp';
 
+// The desks that carry a shipment from purchase to delivery. The only
+// portrait we hold today is the CEO's, so each desk is introduced by what it
+// is responsible for; give a member a `photo` to swap its icon for a headshot.
+const teamPhoto = '/images/CEO.webp';
+
+// Three named people, each currently shown with the CEO's photo as a
+// placeholder until individual headshots are supplied.
+const peopleByLanguage = {
+  en: {
+    kicker: 'The people leading Zardasht Mahd Binaloud Trading, from sourcing to delivery.',
+    title: 'Our people',
+    roster: [
+      { photo: teamPhoto, name: ceoByLanguage.en.name, role: ceoByLanguage.en.role },
+      { photo: teamPhoto, name: 'Commercial Manager', role: 'Sourcing, supplier relationships and trade terms' },
+      { photo: teamPhoto, name: 'Logistics & Operations Manager', role: 'Freight, customs clearance and delivery' },
+    ],
+  },
+  fa: {
+    kicker: 'افرادی که بازرگانی زردشت مهد بینالود را از تأمین تا تحویل هدایت می‌کنند.',
+    title: 'تیم ما',
+    roster: [
+      { photo: teamPhoto, name: ceoByLanguage.fa.name, role: ceoByLanguage.fa.role },
+      { photo: teamPhoto, name: 'مدیر بازرگانی', role: 'تأمین، ارتباط با تأمین‌کنندگان و شرایط معامله' },
+      { photo: teamPhoto, name: 'مدیر لجستیک و عملیات', role: 'حمل، ترخیص گمرکی و تحویل' },
+    ],
+  },
+  ar: {
+    kicker: 'الأشخاص الذين يقودون شركة زردشت مهد بينالود التجارية من التوريد حتى التسليم.',
+    title: 'فريقنا',
+    roster: [
+      { photo: teamPhoto, name: ceoByLanguage.ar.name, role: ceoByLanguage.ar.role },
+      { photo: teamPhoto, name: 'مدير تجاري', role: 'التوريد وعلاقات الموردين وشروط الصفقة' },
+      { photo: teamPhoto, name: 'مدير اللوجستيات والعمليات', role: 'الشحن والتخليص الجمركي والتسليم' },
+    ],
+  },
+  ru: {
+    kicker: 'Люди, которые ведут Zardasht Mahd Binaloud Trading от закупки до доставки.',
+    title: 'Наша команда',
+    roster: [
+      { photo: teamPhoto, name: ceoByLanguage.ru.name, role: ceoByLanguage.ru.role },
+      { photo: teamPhoto, name: 'Коммерческий директор', role: 'Закупки, отношения с поставщиками и условия сделок' },
+      { photo: teamPhoto, name: 'Директор по логистике и операциям', role: 'Перевозка, таможенное оформление и доставка' },
+    ],
+  },
+} as const;
+
+const people = peopleByLanguage[lang] ?? peopleByLanguage.en;
+
+// One on-the-ground contact per market. Every entry currently shows the same
+// placeholder name and photo until real headshots and names are supplied —
+// swap `name`/`photo` per person once they're on hand, the markup below
+// already keys off both.
+const representativesByLanguage = {
+  en: {
+    eyebrow: 'Our network',
+    title: 'Our representatives in the region',
+    kicker: 'A local contact in each of our key markets, not a handoff to a stranger.',
+    roster: [
+      { photo: '/images/rep-korosh.webp', name: 'Kourosh Rokhsat', role: 'Representative', flag: '/images/flag-uz.webp', country: 'Uzbekistan' },
+      { photo: '/images/rep-saqi.webp', landmark: '/images/landmark-uzbekistan.webp' , name: 'Kourosh Rokhsat', role: 'Representative', flag: '/images/flag-kz.webp', country: 'Kazakhstan' },
+      { photo: '/images/rep-korosh.webp', landmark: '/images/landmark-russia.webp', name: 'Kourosh Rokhsat', role: 'Representative', flag: '/images/flag-ru.webp', country: 'Russia' },
+    ],
+  },
+  fa: {
+    eyebrow: 'شبکه ما',
+    title: 'نمایندگان ما در منطقه',
+    kicker: 'در هر بازار کلیدی، یک تماس محلی و مستقیم داریم؛ نه واگذاری به یک غریبه.',
+    roster: [
+      { photo: '/images/rep-korosh.webp', name: 'کوروش رخصت', role: 'نماینده', flag: '/images/flag-uz.webp', country: 'ازبکستان' },
+      { photo: '/images/rep-korosh.webp', name: 'کوروش رخصت', role: 'نماینده', flag: '/images/flag-kz.webp', country: 'قزاقستان' },
+      { photo: '/images/rep-korosh.webp', landmark: '/images/landmark-russia.webp', name: 'کوروش رخصت', role: 'نماینده', flag: '/images/flag-ru.webp', country: 'روسیه' },
+    ],
+  },
+  ar: {
+    eyebrow: 'شبكتنا',
+    title: 'ممثلونا في المنطقة',
+    kicker: 'جهة اتصال محلية في كل سوق رئيسي، لا تسليم إلى شخص غريب.',
+    roster: [
+      { photo: '/images/rep-korosh.webp', name: 'كوروش رخصت', role: 'ممثل', flag: '/images/flag-uz.webp', country: 'أوزبكستان' },
+      { photo: '/images/rep-korosh.webp', name: 'كوروش رخصت', role: 'ممثل', flag: '/images/flag-kz.webp', country: 'كازاخستان' },
+      { photo: '/images/rep-korosh.webp', landmark: '/images/landmark-russia.webp', name: 'كوروش رخصت', role: 'ممثل', flag: '/images/flag-ru.webp', country: 'روسيا' },
+    ],
+  },
+  ru: {
+    eyebrow: 'Наша сеть',
+    title: 'Наши представители в регионе',
+    kicker: 'Локальный контакт на каждом ключевом рынке — а не передача незнакомцу.',
+    roster: [
+      { photo: '/images/rep-korosh.webp', name: 'Куруш Рохсат', role: 'Представитель', flag: '/images/flag-uz.webp', country: 'Узбекистан' },
+      { photo: '/images/rep-korosh.webp', name: 'Куруш Рохсат', role: 'Представитель', flag: '/images/flag-kz.webp', country: 'Казахстан' },
+      { photo: '/images/rep-korosh.webp', landmark: '/images/landmark-russia.webp', name: 'Куруш Рохсат', role: 'Представитель', flag: '/images/flag-ru.webp', country: 'Россия' },
+    ],
+  },
+} as const;
+
+const representatives = representativesByLanguage[lang] ?? representativesByLanguage.en;
+
+// The company line, shown on every representative card. `tel:` needs the
+// number without spaces; the visible label keeps them for readability.
+const repPhone = t.pages.contact.phone;
+const repPhoneHref = `tel:${repPhone.replace(/[^\d+]/g, '')}`;
+
 const mapQuery = encodeURIComponent(t.pages.about.mapAddress || t.pages.contact.address);
 const mapUrl = `https://www.google.com/maps/search/?api=1&query=${mapQuery}`;
 const mapEmbedUrl = `https://www.google.com/maps?q=${mapQuery}&output=embed&z=14`;
 ---
 
-<Layout title={t.pages.about.title} lang={lang} translation={t}>
+<Layout
+  title={t.pages.about.title}
+  lang={lang}
+  translation={t}
+  description={metaDescription(lang, 'about') ?? t.pages.about.intro}
+  breadcrumbs={[{ name: t.pages.about.title, href: withLanguagePrefix(lang, '/about') }]}
+>
   <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16">
-    <div class="mb-10 grid grid-cols-1 gap-4 lg:grid-cols-[1.2fr,0.8fr]">
-      <div class="overflow-hidden rounded-3xl border border-[#19266A]/10 bg-white/90 shadow-xl">
-        <img
-          src={aboutGallery[0]}
-          alt={t.pages.home.heroImageAlt}
-          class="h-56 w-full object-cover sm:h-72 lg:h-80"
-          loading="lazy"
-        />
-      </div>
-
-      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-1">
-        {aboutGallery.slice(1).map((image) => (
-          <div class="overflow-hidden rounded-3xl border border-[#19266A]/10 bg-white/90 shadow-xl">
-            <img
-              src={image}
-              alt={t.pages.home.heroImageAlt}
-              class="h-40 w-full object-cover sm:h-48 lg:h-44"
-              loading="lazy"
-              onerror="this.onerror=null; this.src='/images/logestic1.webp';"
-            />
-          </div>
-        ))}
-      </div>
-    </div>
-
     <div class="text-center">
       <div class="mb-4 flex justify-center">
         <span class="inline-flex h-10 w-16 items-center justify-center overflow-hidden rounded-xl bg-white/90 ring-1 ring-[#19266A]/10">
-          <img src="/images/iran-flag.webp" alt="Iran flag" class="h-full w-full object-cover" loading="lazy" />
+          <img src="/images/iran-flag.webp" alt="Iran flag" class="h-full w-full object-cover" width="297" height="170" loading="lazy" />
         </span>
       </div>
 
@@ -113,6 +192,7 @@ const mapEmbedUrl = `https://www.google.com/maps?q=${mapQuery}&output=embed&z=14
             alt={`${ceo.name} — ${ceo.role}`}
             class="absolute inset-0 h-full w-full object-cover object-top"
             loading="lazy"
+            {...imageSize(ceoImage)}
             onerror="this.onerror=null; this.src='/images/logestic1.webp';"
           />
           <div class="absolute inset-0 bg-gradient-to-t from-[#10184A]/70 via-transparent to-transparent lg:bg-gradient-to-r lg:from-transparent lg:to-[#10184A]/25"></div>
@@ -131,9 +211,8 @@ const mapEmbedUrl = `https://www.google.com/maps?q=${mapQuery}&output=embed&z=14
             <p class="mt-2 text-sm font-semibold uppercase tracking-[0.14em] text-white/55">{ceo.role}</p>
           </div>
 
-          <p class="mt-6 text-base leading-8 text-white/75 sm:text-lg">
-            {ceo.intro}
-          </p>
+          <!-- The lead-in paragraph that used to sit here said the same thing
+               as the pull quote below it, so the quote now carries it alone. -->
 
           <blockquote class="relative mt-8 border-s-2 border-[#F3C623] ps-5 sm:ps-7">
             <svg
@@ -209,6 +288,113 @@ const mapEmbedUrl = `https://www.google.com/maps?q=${mapQuery}&output=embed&z=14
         </a>
       </div>
     </div>
+
+    <!-- Our people -->
+    <section class="mt-12">
+      <div class="mb-8 text-center">
+        <p class="section-eyebrow">{t.pages.about.eyebrow}</p>
+        <h2 class="section-title">{people.title}</h2>
+        <span class="section-accent" aria-hidden="true"></span>
+        <p class="mx-auto mt-5 max-w-2xl text-base text-slate-600 sm:text-lg">{people.kicker}</p>
+      </div>
+
+      <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
+        {people.roster.map((person) => (
+          <div class="person-card">
+            <div class="person-card__stage">
+              <span class="person-card__ghost" aria-hidden="true">Team</span>
+              <img
+                src={person.photo}
+                alt={`${person.name} — ${person.role}`}
+                class="person-card__photo"
+                width="1315"
+                height="1197"
+                loading="lazy"
+                onerror="this.onerror=null; this.src='/images/logestic1.webp';"
+              />
+            </div>
+
+            <div class="person-card__panel">
+              <p class="text-start text-base font-bold leading-6 text-[#10184A]">{person.name}</p>
+              <p class="mt-1 text-start text-sm font-semibold leading-6 text-[#10184A]/70">{person.role}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div class="mt-10 text-center">
+        <a
+          href={withLanguagePrefix(lang, '/contact')}
+          class="pill-link border border-[#F3C623]/40 bg-[#F3C623] text-[#19266A] shadow-lg shadow-[#F3C623]/40 transition hover:-translate-y-0.5 hover:shadow-xl"
+        >
+          {t.pages.about.cta}
+        </a>
+      </div>
+    </section>
+
+    <!-- Regional representatives: the country photo carries the card, with
+         the representative's own photo, name and role inset at the bottom
+         over a gradient scrim so the text stays legible on any background. -->
+    <section class="mt-12">
+      <div class="mb-8 text-center">
+        <p class="section-eyebrow">{representatives.eyebrow}</p>
+        <h2 class="section-title">{representatives.title}</h2>
+        <span class="section-accent" aria-hidden="true"></span>
+        <p class="mx-auto mt-5 max-w-2xl text-base text-slate-600 sm:text-lg">{representatives.kicker}</p>
+      </div>
+
+      <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
+        {representatives.roster.map((rep) => (
+          <div class="person-card rep-card">
+            <div class="person-card__stage">
+              {/* The country's landmark IS the backdrop — large, faded back so
+                  the portrait in front of it still reads. Falls back to the
+                  country name as a watermark where no cut-out exists yet. */}
+              {rep.landmark ? (
+                <img src={rep.landmark} alt="" loading="lazy" class="rep-card__landmark" {...imageSize(rep.landmark)} />
+              ) : (
+                <span class="person-card__ghost" aria-hidden="true">{rep.country}</span>
+              )}
+              <img
+                src={rep.photo}
+                alt={`${rep.name} — ${rep.role}, ${rep.country}`}
+                class="person-card__photo"
+                loading="lazy"
+                {...imageSize(rep.photo)}
+                onerror="this.onerror=null; this.src='/images/CEO.webp';"
+              />
+            </div>
+
+            <div class="person-card__panel">
+              <div class="flex items-center gap-3">
+                <img
+                  src={rep.flag}
+                  alt=""
+                  loading="lazy"
+                  {...imageSize(rep.flag)}
+                  class="h-6 w-9 shrink-0 rounded object-cover ring-1 ring-[#10184A]/20"
+                />
+                <div class="min-w-0">
+                  <p class="truncate text-start text-base font-bold leading-6 text-[#10184A]">{rep.name}</p>
+                  <p class="truncate text-start text-sm font-semibold leading-5 text-[#10184A]/70">{rep.role}</p>
+                </div>
+              </div>
+
+              <a
+                href={repPhoneHref}
+                dir="ltr"
+                class="rep-card__call mt-3 flex items-center justify-center gap-2 rounded-xl bg-[#10184A] py-2.5 text-sm font-bold text-white transition hover:bg-[#19266A]"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 5a2 2 0 012-2h2.2a1 1 0 01.97.757l.9 3.6a1 1 0 01-.29.96l-1.5 1.5a15 15 0 006.9 6.9l1.5-1.5a1 1 0 01.96-.29l3.6.9A1 1 0 0121 16.8V19a2 2 0 01-2 2h-1C9.7 21 3 14.3 3 6V5z" />
+                </svg>
+                {repPhone}
+              </a>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
 
     <section class="mt-10 grid grid-cols-1 gap-6 overflow-hidden rounded-3xl bg-white/90 p-4 shadow-xl ring-1 ring-[#19266A]/10 sm:p-6 lg:grid-cols-[0.85fr,1.15fr]">
       <div class="flex flex-col justify-center gap-4 p-2 sm:p-4">

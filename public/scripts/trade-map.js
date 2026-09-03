@@ -92,13 +92,15 @@
     defs.appendChild(pattern);
   };
 
-  // Iran is the home base and uses the local brand asset; markets use flagcdn,
-  // which the country detail pages and mobile cards already rely on.
+  // Iran is the home base and uses the local brand asset; markets use the
+  // flags served from this origin, the same ones the country detail pages and
+  // mobile cards use. Nothing here reaches for a CDN, so the map still paints
+  // its flags on a network that cannot leave the building.
   const flagSources = new Map([['IR', '/images/iran-flag.webp']]);
   tradeData.forEach((entry) => {
     const code = normalizeCode(entry.country_code);
     if (code && !flagSources.has(code)) {
-      flagSources.set(code, `https://flagcdn.com/w640/${code.toLowerCase()}.png`);
+      flagSources.set(code, `/images/flags/${code.toLowerCase()}.png`);
     }
   });
   flagSources.forEach((href, code) => addFlagPattern(code, href));

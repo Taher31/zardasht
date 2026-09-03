@@ -35,10 +35,10 @@ const directLinks = [
 
 <footer dir={translation.dir} class:list={["bg-[#10184A] text-white", { 'rtl-footer': translation.dir === 'rtl' }]}>
   <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-14">
-    <div class="grid grid-cols-1 gap-10 text-start md:grid-cols-2 lg:grid-cols-[1.25fr,0.75fr,0.75fr,1fr]">
-      <div class="space-y-5">
+    <div class="grid grid-cols-2 gap-x-6 gap-y-9 text-start sm:gap-10 md:grid-cols-2 lg:grid-cols-[1.25fr,0.75fr,0.75fr,1fr]">
+      <div class="col-span-2 space-y-5 md:col-span-1">
         <div class="flex items-center justify-start gap-3">
-          <img src="/logo.webp" alt={translation.labels.brand} class="h-12 w-12 shrink-0 object-contain" />
+          <img src="/logo.webp" alt={translation.labels.brand} class="h-12 w-12 shrink-0 object-contain" width="256" height="256" />
           <div>
             <p class="text-[10px] font-bold uppercase tracking-[0.24em] text-[#F3C623]">{translation.labels.subbrand}</p>
             <p class="mt-1 text-lg font-semibold leading-tight text-white">{translation.labels.brand}</p>
@@ -54,7 +54,7 @@ const directLinks = [
 
       <div>
         <h4 class="text-xs font-bold uppercase tracking-[0.22em] text-[#F3C623]">{translation.labels.footer.company}</h4>
-        <ul class="mt-5 space-y-3 text-sm text-white/65">
+        <ul class="footer-links mt-5 text-sm text-white/65">
           {companyLinks.map((item) => (
             <li><a class="transition hover:text-white" href={item.href}>{item.label}</a></li>
           ))}
@@ -63,7 +63,7 @@ const directLinks = [
 
       <div>
         <h4 class="text-xs font-bold uppercase tracking-[0.22em] text-[#F3C623]">{translation.labels.footer.support}</h4>
-        <ul class="mt-5 space-y-3 text-sm text-white/65">
+        <ul class="footer-links mt-5 text-sm text-white/65">
           {supportLinks.map((item) => (
             <li><a class="transition hover:text-white" href={item.href} download={'download' in item ? item.download : undefined}>{item.label}</a></li>
           ))}
@@ -83,7 +83,7 @@ const directLinks = [
         </div>
       </div>
 
-      <div class="space-y-5">
+      <div class="col-span-2 space-y-5 md:col-span-1">
         <h4 class="text-xs font-bold uppercase tracking-[0.22em] text-[#F3C623]">{translation.labels.footer.contact}</h4>
         <ul class="space-y-4 text-sm text-white/65">
           <li>

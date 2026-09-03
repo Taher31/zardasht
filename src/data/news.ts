@@ -13,6 +13,18 @@ export interface NewsPost {
   date: string;
   image: string;
   featured?: boolean;
+  /**
+   * 'news' is a dated company item (a visit, a delegation); 'guide' is an
+   * evergreen explainer. The distinction drives the schema.org type — Google
+   * reserves NewsArticle for news, and an explainer that stays true for years
+   * should declare Article instead.
+   */
+  kind?: 'news' | 'guide';
+  /**
+   * Internal links shown under the article. `href` is a path without the
+   * language prefix — the page adds it — so one entry serves all four locales.
+   */
+  links?: { href: string; label: Record<LanguageCode, string> }[];
   title: Record<LanguageCode, string>;
   excerpt: Record<LanguageCode, string>;
   body: Record<LanguageCode, string[]>;
@@ -29,6 +41,11 @@ export const getNewsPosts = (lang: LanguageCode) =>
       date: post.date,
       image: post.image,
       featured: Boolean(post.featured),
+      kind: post.kind ?? 'news',
+      links: (post.links ?? []).map((link) => ({
+        href: link.href,
+        label: link.label[lang] ?? link.label.en,
+      })),
       title: post.title[lang] ?? post.title.en,
       excerpt: post.excerpt[lang] ?? post.excerpt.en,
       body: post.body[lang] ?? post.body.en,

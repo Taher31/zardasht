@@ -1,7 +1,8 @@
----
+﻿---
 import type { Translation, LanguageCode } from '../i18n';
 import { languages, withLanguagePrefix, stripLangFromPath } from '../i18n';
 import { createIsActiveChecker } from '../utils/navigation';
+import { imageSize } from '../data/image-size';
 
 interface Props {
   lang: LanguageCode;
@@ -31,6 +32,7 @@ const chrome = {
     energyDescription: 'Bitumen and energy-related trade',
     metalsDescription: 'Iron and steel for regional markets',
     agricultureDescription: 'Barley, grains and pulses',
+    chemicalsDescription: 'Chemical and petrochemical raw materials',
     textileDescription: 'Silk yarn and textile inputs',
   },
   fa: {
@@ -38,6 +40,7 @@ const chrome = {
     energyDescription: 'قیر و کالاهای مرتبط با انرژی',
     metalsDescription: 'آهن و فولاد برای بازارهای منطقه',
     agricultureDescription: 'جو، غلات و حبوبات',
+    chemicalsDescription: 'مواد اولیه شیمیایی و پتروشیمی',
     textileDescription: 'نخ ابریشم و مواد اولیه نساجی',
   },
   ar: {
@@ -45,6 +48,7 @@ const chrome = {
     energyDescription: 'البيتومين والسلع المرتبطة بالطاقة',
     metalsDescription: 'الحديد والصلب للأسواق الإقليمية',
     agricultureDescription: 'الشعير والحبوب والبقوليات',
+    chemicalsDescription: 'المواد الخام الكيميائية والبتروكيماوية',
     textileDescription: 'خيوط الحرير ومدخلات النسيج',
   },
   ru: {
@@ -52,6 +56,7 @@ const chrome = {
     energyDescription: 'Битум и энергетические товары',
     metalsDescription: 'Железо и сталь для региональных рынков',
     agricultureDescription: 'Ячмень, зерновые и бобовые',
+    chemicalsDescription: 'Химическое и нефтехимическое сырьё',
     textileDescription: 'Шелковая пряжа и текстильное сырье',
   },
 } as const;
@@ -71,34 +76,52 @@ const labels = {
   energy: translation.labels.trade.energyBitumen,
   metals: translation.labels.trade.metalsSteel,
   agriculture: translation.labels.trade.agriculturalCommodities,
+  chemicals: translation.labels.trade.chemicalsPetrochemicals,
   textile: translation.labels.trade.textileRawMaterials,
   ...(chrome[lang] ?? chrome.en),
 };
 
+// Same commodity photos used on the homepage/products cards, reused here as
+// small thumbnails so the nav badges show the actual cargo instead of a code.
+const groupImages = {
+  bitumen: '/images/02_bitumen.webp',
+  steel: '/images/03_metals_steel.webp',
+  grain: '/images/04_agricultural_grain.webp',
+  // Bagged goods on pallets — how polymer grades and dry chemicals actually ship.
+  chemicals: '/images/08_warehouse_logistics.webp',
+  yarn: '/images/05_textile_yarn.webp',
+} as const;
+
 const productGroups = [
   {
-    href: `${productsHref}#energy-bitumen`,
+    href: `${productsHref}/energy-bitumen`,
     label: labels.energy,
     description: labels.energyDescription,
-    code: 'EB',
+    image: groupImages.bitumen,
   },
   {
-    href: `${productsHref}#metals-steel`,
+    href: `${productsHref}/metals-steel`,
     label: labels.metals,
     description: labels.metalsDescription,
-    code: 'MS',
+    image: groupImages.steel,
   },
   {
-    href: `${productsHref}#agricultural-commodities`,
+    href: `${productsHref}/agricultural-commodities`,
     label: labels.agriculture,
     description: labels.agricultureDescription,
-    code: 'AG',
+    image: groupImages.grain,
   },
   {
-    href: `${productsHref}#textile-raw-materials`,
+    href: `${productsHref}/chemicals-petrochemicals`,
+    label: labels.chemicals,
+    description: labels.chemicalsDescription,
+    image: groupImages.chemicals,
+  },
+  {
+    href: `${productsHref}/textile-raw-materials`,
     label: labels.textile,
     description: labels.textileDescription,
-    code: 'TX',
+    image: groupImages.yarn,
   },
 ];
 
@@ -151,6 +174,7 @@ const dialogId = `site-mobile-menu-${lang}`;
         src="/logo.webp"
         alt={translation.labels.brand}
         class="h-12 w-12 shrink-0 object-contain"
+        {...imageSize("/logo.webp")}
       />
       <p class="max-w-[180px] text-[11px] font-extrabold leading-tight text-[#19266A] sm:hidden">
         {translation.labels.brand}
@@ -206,8 +230,14 @@ const dialogId = `site-mobile-menu-${lang}`;
                   href={group.href}
                   class="group/item flex items-start gap-3 rounded-2xl px-3 py-3 transition hover:bg-[#19266A]/5"
                 >
-                  <span class="mt-0.5 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#19266A] text-[9px] font-black tracking-[0.1em] text-white shadow-sm transition group-hover/item:bg-[#F3C623] group-hover/item:text-[#10184A]">
-                    {group.code}
+                  <span class="mt-0.5 inline-block h-9 w-9 shrink-0 overflow-hidden rounded-xl shadow-sm ring-1 ring-[#19266A]/10">
+                    <img
+                      src={group.image}
+                      alt=""
+                      loading="lazy"
+                      class="h-full w-full object-cover"
+                      {...imageSize(group.image)}
+                    />
                   </span>
                   <span class="min-w-0 flex-1">
                     <span class="block text-sm font-extrabold text-[#19266A]">{group.label}</span>
@@ -295,7 +325,7 @@ const dialogId = `site-mobile-menu-${lang}`;
   <div class="site-menu-panel">
     <div class="site-menu-mobile-header">
       <a href={base} class="flex min-w-0 items-center gap-3" data-site-menu-link>
-        <img src="/logo.webp" alt="" class="h-11 w-11 shrink-0 object-contain" />
+        <img src="/logo.webp" alt="" class="h-11 w-11 shrink-0 object-contain" width="256" height="256" />
         <div class="min-w-0">
           <p class="truncate text-[9px] font-black uppercase tracking-[0.18em] text-[#19266A]/40">{labels.tagline}</p>
           <p class="truncate text-sm font-extrabold text-[#19266A] sm:text-base">{translation.labels.brand}</p>
@@ -392,7 +422,9 @@ const dialogId = `site-mobile-menu-${lang}`;
         <div class="mt-2 grid gap-1">
           {productGroups.map((group) => (
             <a href={group.href} data-site-menu-link class="mobile-product-link">
-              <span class="mobile-product-code">{group.code}</span>
+              <span class="mobile-product-code">
+                <img src={group.image} alt="" loading="lazy" {...imageSize(group.image)} />
+              </span>
               <span class="min-w-0 flex-1">
                 <span class="block text-sm font-extrabold text-[#19266A]">{group.label}</span>
                 <span class="mt-0.5 block text-xs leading-5 text-slate-500">{group.description}</span>
@@ -666,18 +698,18 @@ const dialogId = `site-mobile-menu-${lang}`;
   }
 
   .mobile-product-code {
-    display: inline-flex;
+    display: inline-block;
     width: 36px;
     height: 36px;
     flex: none;
-    align-items: center;
-    justify-content: center;
     border-radius: 11px;
-    background: #19266A;
-    color: #fff;
-    font-size: 9px;
-    font-weight: 900;
-    letter-spacing: .08em;
+    overflow: hidden;
+  }
+
+  .mobile-product-code img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 
   .site-menu-dialog--rtl {

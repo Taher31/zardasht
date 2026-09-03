@@ -2,11 +2,14 @@
 // Looping ZMB vehicle that crosses the bottom of the main content area, just
 // above the footer. Above the waterline the band is the page background; below
 // it a navy strip carries the footer's colour up to meet the vehicle, so the
-// sea/road reads as continuous with the footer. `variant` picks the vehicle:
-// sea-freight pages get a cargo ship, the rest get a road truck (mapped in
-// Layout.astro).
+// sea/road/track/runway reads as continuous with the footer.
+//
+// All four vehicles ship in the markup and one is picked at random on every page
+// load, so the same page shows a different mode of freight each visit. `variant`
+// is only the starting pick — what renders before the picker runs, and what
+// stays if scripting is off.
 interface Props {
-  variant?: 'truck' | 'ship';
+  variant?: 'truck' | 'ship' | 'train' | 'plane';
   dir?: 'ltr' | 'rtl';
 }
 
@@ -16,75 +19,159 @@ const { variant = 'truck', dir = 'ltr' } = Astro.props;
 <div class="cargo-loop" data-variant={variant} data-dir={dir} aria-hidden="true">
   <span class="cargo-loop__lane"></span>
   <span class="cargo-loop__vehicle">
-    {variant === 'ship' ? (
-      <svg viewBox="0 0 176 62" role="presentation" focusable="false">
-        <!-- container stacks -->
-        <g>
-          <rect x="54" y="28" width="17" height="11" rx="1" fill="#F3C623" />
-          <rect x="73" y="28" width="17" height="11" rx="1" fill="#19266A" />
-          <rect x="92" y="28" width="17" height="11" rx="1" fill="#3D53B0" />
-          <rect x="111" y="28" width="17" height="11" rx="1" fill="#19266A" />
-          <rect x="130" y="28" width="17" height="11" rx="1" fill="#F3C623" />
-          <rect x="149" y="28" width="17" height="11" rx="1" fill="#3D53B0" />
+    <svg data-vehicle="ship" viewBox="0 0 176 62" role="presentation" focusable="false">
+      <!-- container stacks -->
+      <g>
+        <rect x="54" y="28" width="17" height="11" rx="1" fill="#F3C623" />
+        <rect x="73" y="28" width="17" height="11" rx="1" fill="#19266A" />
+        <rect x="92" y="28" width="17" height="11" rx="1" fill="#3D53B0" />
+        <rect x="111" y="28" width="17" height="11" rx="1" fill="#19266A" />
+        <rect x="130" y="28" width="17" height="11" rx="1" fill="#F3C623" />
+        <rect x="149" y="28" width="17" height="11" rx="1" fill="#3D53B0" />
 
-          <rect x="54" y="16" width="17" height="11" rx="1" fill="#19266A" />
-          <rect x="73" y="16" width="17" height="11" rx="1" fill="#3D53B0" />
-          <rect x="92" y="16" width="17" height="11" rx="1" fill="#F3C623" />
-          <rect x="111" y="16" width="17" height="11" rx="1" fill="#19266A" />
-          <rect x="130" y="16" width="17" height="11" rx="1" fill="#3D53B0" />
+        <rect x="54" y="16" width="17" height="11" rx="1" fill="#19266A" />
+        <rect x="73" y="16" width="17" height="11" rx="1" fill="#3D53B0" />
+        <rect x="92" y="16" width="17" height="11" rx="1" fill="#F3C623" />
+        <rect x="111" y="16" width="17" height="11" rx="1" fill="#19266A" />
+        <rect x="130" y="16" width="17" height="11" rx="1" fill="#3D53B0" />
 
-          <rect x="58" y="4" width="17" height="11" rx="1" fill="#3D53B0" />
-          <rect x="77" y="4" width="17" height="11" rx="1" fill="#F3C623" />
-          <rect x="96" y="4" width="17" height="11" rx="1" fill="#19266A" />
-        </g>
+        <rect x="58" y="4" width="17" height="11" rx="1" fill="#3D53B0" />
+        <rect x="77" y="4" width="17" height="11" rx="1" fill="#F3C623" />
+        <rect x="96" y="4" width="17" height="11" rx="1" fill="#19266A" />
+      </g>
 
-        <!-- bridge + funnel -->
-        <rect x="26" y="6" width="11" height="11" rx="1.5" fill="#19266A" />
-        <rect x="26" y="8.5" width="11" height="3.4" fill="#F3C623" />
-        <rect x="18" y="16" width="30" height="24" rx="2" fill="#FFFFFF" stroke="#19266A" stroke-width="1.4" />
-        <g fill="#19266A" fill-opacity=".8">
-          <rect x="22" y="20" width="5" height="4" rx="1" /><rect x="29" y="20" width="5" height="4" rx="1" />
-          <rect x="36" y="20" width="5" height="4" rx="1" /><rect x="43" y="20" width="4" height="4" rx="1" />
-          <rect x="22" y="28" width="5" height="4" rx="1" /><rect x="29" y="28" width="5" height="4" rx="1" />
-          <rect x="36" y="28" width="5" height="4" rx="1" /><rect x="43" y="28" width="4" height="4" rx="1" />
-        </g>
+      <!-- bridge + funnel -->
+      <rect x="26" y="6" width="11" height="11" rx="1.5" fill="#19266A" />
+      <rect x="26" y="8.5" width="11" height="3.4" fill="#F3C623" />
+      <rect x="18" y="16" width="30" height="24" rx="2" fill="#FFFFFF" stroke="#19266A" stroke-width="1.4" />
+      <g fill="#19266A" fill-opacity=".8">
+        <rect x="22" y="20" width="5" height="4" rx="1" /><rect x="29" y="20" width="5" height="4" rx="1" />
+        <rect x="36" y="20" width="5" height="4" rx="1" /><rect x="43" y="20" width="4" height="4" rx="1" />
+        <rect x="22" y="28" width="5" height="4" rx="1" /><rect x="29" y="28" width="5" height="4" rx="1" />
+        <rect x="36" y="28" width="5" height="4" rx="1" /><rect x="43" y="28" width="4" height="4" rx="1" />
+      </g>
 
-        <!-- hull: gold, so it reads against both the light sky and the navy sea -->
-        <path d="M10 40h158l-12 14H24q-10 0-14-8z" fill="#F3C623" />
-        <path d="M12 41.6h154" stroke="#10184A" stroke-opacity=".4" stroke-width="1.6" stroke-linecap="round" />
-        <text x="96" y="51" text-anchor="middle" font-family="Manrope, system-ui, sans-serif" font-size="8.5" font-weight="800" letter-spacing="1.1" fill="#10184A">ZMB CO</text>
-      </svg>
-    ) : (
-      <svg viewBox="0 0 148 56" role="presentation" focusable="false">
-        <!-- trailer -->
-        <rect x="2" y="6" width="90" height="32" rx="3" fill="#19266A" />
-        <path d="M7 13h80M7 31h80" stroke="#F3C623" stroke-opacity=".32" stroke-width="1.3" stroke-linecap="round" />
-        <text x="47" y="27" text-anchor="middle" font-family="Manrope, system-ui, sans-serif" font-size="13" font-weight="800" letter-spacing="1" fill="#F3C623">ZMB CO</text>
+      <!-- hull: gold, so it reads against both the light sky and the navy sea -->
+      <path d="M10 40h158l-12 14H24q-10 0-14-8z" fill="#F3C623" />
+      <path d="M12 41.6h154" stroke="#10184A" stroke-opacity=".4" stroke-width="1.6" stroke-linecap="round" />
+      <text x="96" y="51" text-anchor="middle" font-family="Manrope, system-ui, sans-serif" font-size="8.5" font-weight="800" letter-spacing="1.1" fill="#10184A">ZMB CO</text>
+    </svg>
 
-        <!-- cab -->
-        <path d="M96 10h21q3 0 5 4l5 10h10q3 0 3 3v11H96z" fill="#F3C623" />
-        <path d="M101 14h11v10h-11zM116 15h2l4 9h-6z" fill="#19266A" fill-opacity=".8" />
+    <!-- Container train. Wheels bottom out exactly on the viewBox edge, so the
+         vehicle's `bottom` offset in CSS is literally where the treads meet the
+         rail head, at any width. -->
+    <svg data-vehicle="train" viewBox="0 0 196 62" role="presentation" focusable="false">
+      <!-- couplings between the units -->
+      <path d="M58 43h4M116 43h4" stroke="#0B1338" stroke-width="3" stroke-linecap="round" />
 
-        <!-- chassis, lamps -->
-        <rect x="4" y="37" width="132" height="3" rx="1.5" fill="#0B1338" />
-        <circle cx="138" cy="32" r="2.4" fill="#DDAE13" />
-        <rect x="2" y="30" width="3" height="5" rx="1.5" fill="#E4572E" />
+      <!-- two container flats, boxed in the same palette as the ship so the rail
+           and the sea read as one fleet -->
+      <g>
+        <rect x="6" y="22" width="24" height="18" rx="1.5" fill="#F3C623" />
+        <rect x="32" y="22" width="24" height="18" rx="1.5" fill="#19266A" />
+        <rect x="4" y="40" width="54" height="6" rx="1" fill="#0B1338" />
 
-        <!-- wheels -->
-        <g transform="translate(20 43)"><circle r="7.5" fill="#0B1338" /><g class="cargo-loop__hub"><circle r="2.6" fill="#F3C623" /><path d="M0-5.6V5.6M-5.6 0H5.6" stroke="#F3C623" stroke-opacity=".55" stroke-width="1.2" /></g></g>
-        <g transform="translate(38 43)"><circle r="7.5" fill="#0B1338" /><g class="cargo-loop__hub"><circle r="2.6" fill="#F3C623" /><path d="M0-5.6V5.6M-5.6 0H5.6" stroke="#F3C623" stroke-opacity=".55" stroke-width="1.2" /></g></g>
-        <g transform="translate(102 43)"><circle r="7.5" fill="#0B1338" /><g class="cargo-loop__hub"><circle r="2.6" fill="#F3C623" /><path d="M0-5.6V5.6M-5.6 0H5.6" stroke="#F3C623" stroke-opacity=".55" stroke-width="1.2" /></g></g>
-        <g transform="translate(128 43)"><circle r="7.5" fill="#0B1338" /><g class="cargo-loop__hub"><circle r="2.6" fill="#F3C623" /><path d="M0-5.6V5.6M-5.6 0H5.6" stroke="#F3C623" stroke-opacity=".55" stroke-width="1.2" /></g></g>
-      </svg>
-    )}
+        <rect x="64" y="22" width="24" height="18" rx="1.5" fill="#3D53B0" />
+        <rect x="90" y="22" width="24" height="18" rx="1.5" fill="#F3C623" />
+        <rect x="62" y="40" width="54" height="6" rx="1" fill="#0B1338" />
+      </g>
+
+      <!-- locomotive: full-width cab, raked nose, gold band along the flank -->
+      <path d="M120 13h60q7 0 9 5l3 8v20H120z" fill="#19266A" />
+      <rect x="120" y="13" width="62" height="3.5" fill="#0B1338" />
+      <rect x="128" y="8" width="8" height="6" rx="1.5" fill="#0B1338" />
+      <rect x="120" y="33" width="72" height="5" fill="#F3C623" />
+      <text x="141" y="30" text-anchor="middle" font-family="Manrope, system-ui, sans-serif" font-size="11" font-weight="800" letter-spacing="1" fill="#F3C623">ZMB</text>
+      <g fill="#FFFFFF" fill-opacity=".92">
+        <rect x="160" y="18" width="13" height="9" rx="1.5" />
+        <path d="M178 18h6l5 9h-11z" />
+      </g>
+      <circle cx="187" cy="42" r="2.5" fill="#DDAE13" />
+      <rect x="120" y="46" width="74" height="3" rx="1" fill="#0B1338" />
+
+      <!-- bogies: a frame under each end of every unit, two wheels apiece -->
+      <g fill="#0B1338">
+        <rect x="9" y="49" width="17" height="6" rx="2" /><rect x="36" y="49" width="17" height="6" rx="2" />
+        <rect x="67" y="49" width="17" height="6" rx="2" /><rect x="94" y="49" width="17" height="6" rx="2" />
+        <rect x="126" y="49" width="24" height="6" rx="2" /><rect x="160" y="49" width="24" height="6" rx="2" />
+      </g>
+
+      <g transform="translate(13 56.5)"><circle r="5.5" fill="#0B1338" /><g class="cargo-loop__hub"><circle r="1.9" fill="#F3C623" /><path d="M0-4V4M-4 0H4" stroke="#F3C623" stroke-opacity=".55" stroke-width="1" /></g></g>
+      <g transform="translate(22 56.5)"><circle r="5.5" fill="#0B1338" /><g class="cargo-loop__hub"><circle r="1.9" fill="#F3C623" /><path d="M0-4V4M-4 0H4" stroke="#F3C623" stroke-opacity=".55" stroke-width="1" /></g></g>
+      <g transform="translate(40 56.5)"><circle r="5.5" fill="#0B1338" /><g class="cargo-loop__hub"><circle r="1.9" fill="#F3C623" /><path d="M0-4V4M-4 0H4" stroke="#F3C623" stroke-opacity=".55" stroke-width="1" /></g></g>
+      <g transform="translate(49 56.5)"><circle r="5.5" fill="#0B1338" /><g class="cargo-loop__hub"><circle r="1.9" fill="#F3C623" /><path d="M0-4V4M-4 0H4" stroke="#F3C623" stroke-opacity=".55" stroke-width="1" /></g></g>
+      <g transform="translate(71 56.5)"><circle r="5.5" fill="#0B1338" /><g class="cargo-loop__hub"><circle r="1.9" fill="#F3C623" /><path d="M0-4V4M-4 0H4" stroke="#F3C623" stroke-opacity=".55" stroke-width="1" /></g></g>
+      <g transform="translate(80 56.5)"><circle r="5.5" fill="#0B1338" /><g class="cargo-loop__hub"><circle r="1.9" fill="#F3C623" /><path d="M0-4V4M-4 0H4" stroke="#F3C623" stroke-opacity=".55" stroke-width="1" /></g></g>
+      <g transform="translate(98 56.5)"><circle r="5.5" fill="#0B1338" /><g class="cargo-loop__hub"><circle r="1.9" fill="#F3C623" /><path d="M0-4V4M-4 0H4" stroke="#F3C623" stroke-opacity=".55" stroke-width="1" /></g></g>
+      <g transform="translate(107 56.5)"><circle r="5.5" fill="#0B1338" /><g class="cargo-loop__hub"><circle r="1.9" fill="#F3C623" /><path d="M0-4V4M-4 0H4" stroke="#F3C623" stroke-opacity=".55" stroke-width="1" /></g></g>
+      <g transform="translate(132 56.5)"><circle r="5.5" fill="#0B1338" /><g class="cargo-loop__hub"><circle r="1.9" fill="#F3C623" /><path d="M0-4V4M-4 0H4" stroke="#F3C623" stroke-opacity=".55" stroke-width="1" /></g></g>
+      <g transform="translate(144 56.5)"><circle r="5.5" fill="#0B1338" /><g class="cargo-loop__hub"><circle r="1.9" fill="#F3C623" /><path d="M0-4V4M-4 0H4" stroke="#F3C623" stroke-opacity=".55" stroke-width="1" /></g></g>
+      <g transform="translate(166 56.5)"><circle r="5.5" fill="#0B1338" /><g class="cargo-loop__hub"><circle r="1.9" fill="#F3C623" /><path d="M0-4V4M-4 0H4" stroke="#F3C623" stroke-opacity=".55" stroke-width="1" /></g></g>
+      <g transform="translate(178 56.5)"><circle r="5.5" fill="#0B1338" /><g class="cargo-loop__hub"><circle r="1.9" fill="#F3C623" /><path d="M0-4V4M-4 0H4" stroke="#F3C623" stroke-opacity=".55" stroke-width="1" /></g></g>
+    </svg>
+
+    <!-- Freighter already airborne, climbing away over the runway. It carries no
+         landing gear, so the viewBox is trimmed to the airframe and `bottom`
+         sets its altitude rather than resting it on anything. -->
+    <svg data-vehicle="plane" viewBox="0 0 184 54" role="presentation" focusable="false">
+      <!-- Painted strictly back to front, which is what keeps the joints clean:
+           tail surfaces, then the fuselage over their roots, then its livery,
+           then the wing and engine in front of all of it. -->
+      <path d="M34 16 10 13 6 16l20 4z" fill="#F3C623" />
+      <path d="M56 16 40 3h-10l-8 14z" fill="#F3C623" />
+
+      <path d="M26 17 60 15h86q22 .5 32 11-10 10.5-32 11H60L26 21z" fill="#19266A" />
+      <path d="M36 35.5h116" stroke="#F3C623" stroke-width="2.6" stroke-linecap="round" />
+      <path d="M66 20h78" stroke="#FFFFFF" stroke-opacity=".8" stroke-width="4" stroke-dasharray="4 7" stroke-linecap="round" />
+      <path d="M154 18h10l3 5h-13z" fill="#FFFFFF" fill-opacity=".9" />
+      <text x="100" y="33" text-anchor="middle" font-family="Manrope, system-ui, sans-serif" font-size="9" font-weight="800" letter-spacing="1.1" fill="#F3C623">ZMB CO</text>
+
+      <!-- wing in front of the fuselage, so it can never be swallowed by it -->
+      <path d="M144 34 78 50h26z" fill="#3D53B0" />
+      <rect x="96" y="41" width="30" height="10" rx="5" fill="#0B1338" />
+      <path d="M125 42v8" stroke="#F3C623" stroke-width="2.4" stroke-linecap="round" />
+    </svg>
+
+    <svg data-vehicle="truck" viewBox="0 0 148 56" role="presentation" focusable="false">
+      <!-- trailer -->
+      <rect x="2" y="6" width="90" height="32" rx="3" fill="#19266A" />
+      <path d="M7 13h80M7 31h80" stroke="#F3C623" stroke-opacity=".32" stroke-width="1.3" stroke-linecap="round" />
+      <text x="47" y="27" text-anchor="middle" font-family="Manrope, system-ui, sans-serif" font-size="13" font-weight="800" letter-spacing="1" fill="#F3C623">ZMB CO</text>
+
+      <!-- cab -->
+      <path d="M96 10h21q3 0 5 4l5 10h10q3 0 3 3v11H96z" fill="#F3C623" />
+      <path d="M101 14h11v10h-11zM116 15h2l4 9h-6z" fill="#19266A" fill-opacity=".8" />
+
+      <!-- chassis, lamps -->
+      <rect x="4" y="37" width="132" height="3" rx="1.5" fill="#0B1338" />
+      <circle cx="138" cy="32" r="2.4" fill="#DDAE13" />
+      <rect x="2" y="30" width="3" height="5" rx="1.5" fill="#E4572E" />
+
+      <!-- wheels -->
+      <g transform="translate(20 43)"><circle r="7.5" fill="#0B1338" /><g class="cargo-loop__hub"><circle r="2.6" fill="#F3C623" /><path d="M0-5.6V5.6M-5.6 0H5.6" stroke="#F3C623" stroke-opacity=".55" stroke-width="1.2" /></g></g>
+      <g transform="translate(38 43)"><circle r="7.5" fill="#0B1338" /><g class="cargo-loop__hub"><circle r="2.6" fill="#F3C623" /><path d="M0-5.6V5.6M-5.6 0H5.6" stroke="#F3C623" stroke-opacity=".55" stroke-width="1.2" /></g></g>
+      <g transform="translate(102 43)"><circle r="7.5" fill="#0B1338" /><g class="cargo-loop__hub"><circle r="2.6" fill="#F3C623" /><path d="M0-5.6V5.6M-5.6 0H5.6" stroke="#F3C623" stroke-opacity=".55" stroke-width="1.2" /></g></g>
+      <g transform="translate(128 43)"><circle r="7.5" fill="#0B1338" /><g class="cargo-loop__hub"><circle r="2.6" fill="#F3C623" /><path d="M0-5.6V5.6M-5.6 0H5.6" stroke="#F3C623" stroke-opacity=".55" stroke-width="1.2" /></g></g>
+    </svg>
   </span>
 </div>
+
+<script is:inline>
+  // Pick the vehicle before the page paints, so a short page never shows one
+  // mode of freight and then swaps to another. Kept inline and tiny on purpose:
+  // the bundled module below is deferred, which is too late for this.
+  (function () {
+    var band = document.currentScript.previousElementSibling;
+    var fleet = ['truck', 'ship', 'train', 'plane'];
+    band.dataset.variant = fleet[Math.floor(Math.random() * fleet.length)];
+  })();
+</script>
 
 <style>
   .cargo-loop {
     position: relative;
     margin-top: clamp(40px, 6vw, 64px);
-    height: clamp(58px, 7vw, 78px);
+    height: clamp(64px, 7.6vw, 88px);
     overflow: hidden;
     pointer-events: none;
     /* No background of its own — above the waterline this is simply the page. */
@@ -92,7 +179,7 @@ const { variant = 'truck', dir = 'ltr' } = Astro.props;
        of the time. This lets the browser skip its rendering work entirely until
        it scrolls into view; the explicit height above keeps layout stable. */
     content-visibility: auto;
-    contain-intrinsic-size: auto clamp(58px, 7vw, 78px);
+    contain-intrinsic-size: auto clamp(64px, 7.6vw, 88px);
   }
 
   /* Road variant: a navy strip of ground running into the footer, with lane
@@ -127,6 +214,29 @@ const { variant = 'truck', dir = 'ltr' } = Astro.props;
     animation: cargo-loop-water 3s linear infinite;
   }
 
+  /* Rail variant: the same navy ground, marked out as track — sleepers laid
+     across it with the rail head running over them for the wheels to sit on. */
+  .cargo-loop[data-variant='train'] .cargo-loop__lane {
+    height: 18px;
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.5) 0 2px, transparent 2px),
+      repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.14) 0 6px, transparent 6px 20px);
+    background-size: 100% 18px, 20px 9px;
+    background-position: 0 3px, 0 8px;
+  }
+
+  /* Air variant: the ground reads as a runway — one long dashed centreline
+     rather than the road's short lane markings. */
+  .cargo-loop[data-variant='plane'] .cargo-loop__lane {
+    background-image: repeating-linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.4) 0 34px,
+      transparent 34px 58px
+    );
+    background-size: 58px 3px;
+    background-position: 0 6px;
+  }
+
   /* The band itself stays click-through; only the vehicle takes the horn click. */
   .cargo-loop__vehicle {
     position: absolute;
@@ -147,11 +257,26 @@ const { variant = 'truck', dir = 'ltr' } = Astro.props;
     animation-duration: 26s;
   }
 
-  /* SVG hit-testing is per-shape, so clicks would fall through the gaps between
-     containers. Handing the whole box to the wrapper makes the vehicle an easy
-     target while it is moving. */
+  .cargo-loop[data-variant='train'] .cargo-loop__vehicle {
+    bottom: 14px; /* treads on the rail head, not the sleepers below it */
+    width: clamp(130px, 15vw, 200px);
+    animation-duration: 20s;
+  }
+
+  .cargo-loop[data-variant='plane'] .cargo-loop__vehicle {
+    /* Altitude and climb both scale with the band, which is itself fluid — on a
+       narrow screen there is far less headroom, and a fixed climb would fly the
+       aircraft out through the top of the strip. */
+    --climb: clamp(8px, 1.1vw, 13px);
+    bottom: clamp(20px, 2.2vw, 26px);
+    width: clamp(92px, 11vw, 144px);
+    animation-duration: 7s;
+  }
+
+  /* All four ship in the markup so the picker can choose without a round trip;
+     only the chosen one is ever laid out. */
   .cargo-loop__vehicle svg {
-    display: block;
+    display: none;
     width: 100%;
     height: auto;
     pointer-events: none;
@@ -159,8 +284,24 @@ const { variant = 'truck', dir = 'ltr' } = Astro.props;
     animation: cargo-loop-bob 0.42s ease-in-out infinite alternate;
   }
 
+  .cargo-loop[data-variant='truck'] svg[data-vehicle='truck'],
+  .cargo-loop[data-variant='ship'] svg[data-vehicle='ship'],
+  .cargo-loop[data-variant='train'] svg[data-vehicle='train'],
+  .cargo-loop[data-variant='plane'] svg[data-vehicle='plane'] {
+    display: block;
+  }
+
   .cargo-loop[data-variant='ship'] .cargo-loop__vehicle svg {
     animation: cargo-loop-roll 2.4s ease-in-out infinite alternate;
+  }
+
+  /* The climb runs on the same clock as the flight across, so the aircraft is
+     steadily gaining height for the whole pass, nose held a little up the way a
+     climbing aircraft sits. */
+  .cargo-loop[data-variant='plane'] .cargo-loop__vehicle svg {
+    transform-box: border-box;
+    transform-origin: 50% 60%;
+    animation: cargo-loop-climb 13s linear infinite;
   }
 
   .cargo-loop__hub {
@@ -169,7 +310,8 @@ const { variant = 'truck', dir = 'ltr' } = Astro.props;
     animation: cargo-loop-spin 0.55s linear infinite;
   }
 
-  /* RTL pages read right-to-left, so the vehicle travels — and faces — that way. */
+  /* RTL pages read right-to-left, so the vehicle travels — and faces — that way.
+     Mirroring flips the take-off rotation with it, so the nose still rises. */
   .cargo-loop[data-dir='rtl'] .cargo-loop__vehicle {
     animation-name: cargo-loop-drive-rtl;
   }
@@ -181,14 +323,16 @@ const { variant = 'truck', dir = 'ltr' } = Astro.props;
     transform-origin: center;
   }
 
+  /* The start offset is the vehicle's own width, so every variant clears the
+     edge before it appears no matter how long it is. */
   @keyframes cargo-loop-drive {
-    from { transform: translateX(-190px); }
+    from { transform: translateX(-100%); }
     to { transform: translateX(calc(100vw + 30px)); }
   }
 
   @keyframes cargo-loop-drive-rtl {
     from { transform: translateX(calc(100vw + 30px)) scaleX(-1); }
-    to { transform: translateX(-190px) scaleX(-1); }
+    to { transform: translateX(-100%) scaleX(-1); }
   }
 
   @keyframes cargo-loop-bob {
@@ -199,6 +343,11 @@ const { variant = 'truck', dir = 'ltr' } = Astro.props;
   @keyframes cargo-loop-roll {
     from { transform: translateY(1px) rotate(-0.7deg); }
     to { transform: translateY(-1.5px) rotate(0.7deg); }
+  }
+
+  @keyframes cargo-loop-climb {
+    from { transform: translateY(0) rotate(-3deg); }
+    to { transform: translateY(calc(-1 * var(--climb, 13px))) rotate(-5deg); }
   }
 
   @keyframes cargo-loop-spin {
@@ -228,15 +377,18 @@ const { variant = 'truck', dir = 'ltr' } = Astro.props;
 </style>
 
 <script>
-  // Clicking the vehicle sounds its horn. Everything is synthesised with Web
-  // Audio rather than loaded from a file: no asset, no extra request, and
-  // nothing at all is built until the first click — browsers block audio before
-  // a user gesture anyway, so preparing it up front would be wasted work.
-  type Horn = 'ship' | 'truck';
+  // Clicking the vehicle sounds its horn — or, for the plane, runs its engines
+  // past you. Everything is synthesised with Web Audio rather than loaded from a
+  // file: no asset, no extra request, and nothing at all is built until the
+  // first click — browsers block audio before a user gesture anyway, so
+  // preparing it up front would be wasted work.
+  type Vehicle = 'ship' | 'truck' | 'train' | 'plane';
 
   interface Voice {
-    /** Horn bells, as [frequency, level]. Two bells a fifth/fourth apart is
-     *  what gives a real horn its chord rather than a single flat pitch. */
+    /** Horn bells, as [frequency, level]. Several bells sounding together is
+     *  what gives a real horn its chord rather than a single flat pitch, and
+     *  keeping the fundamentals low is what keeps it from sounding like a
+     *  buzzer — the character lives in the harmonics, not the pitch. */
     bells: [number, number][];
     /** Relative amplitude of each harmonic — the timbre. Index 0 is DC. */
     harmonics: number[];
@@ -245,10 +397,20 @@ const { variant = 'truck', dir = 'ltr' } = Astro.props;
     /** Pitch at the very start, as a ratio. Air pressure builds before the
      *  reed settles, so a real horn slides up onto its note. */
     bend: number;
+    /** Pitch at the very end, as a ratio. A horn sags a little as the air runs
+     *  out; a jet drops much further as it passes and Doppler pulls it down. */
+    sag?: number;
     cutoff: number;
     /** Breath/air rush around the onset. */
     air: number;
     airHz: number;
+    /** Bandpass by default, which suits a hiss escaping around a reed. A jet is
+     *  broadband, so it rolls the noise off from the top instead. */
+    airType?: BiquadFilterType;
+    airQ?: number;
+    /** What is left of that rush once the onset passes, as a fraction of `air`.
+     *  A horn's hiss dies away with the attack; a jet's roar does not. */
+    airHold?: number;
     /** Slow waver, as real horns are never perfectly steady. */
     wobble: number;
     wobbleHz: number;
@@ -260,7 +422,7 @@ const { variant = 'truck', dir = 'ltr' } = Astro.props;
     level: number;
   }
 
-  const VOICES: Record<Horn, Voice> = {
+  const VOICES: Record<Vehicle, Voice> = {
     // Deep single-note ship's typhon with a fifth above it, heard across open
     // water — long attack, long tail.
     ship: {
@@ -278,21 +440,64 @@ const { variant = 'truck', dir = 'ltr' } = Astro.props;
       wet: 1.1,
       level: 0.32,
     },
-    // Classic two-tone road air horn: brighter, buzzier, snaps on, short room.
+    // Two-tone road air horn a fourth apart. Pitched down where real truck
+    // horns actually sit, with the upper harmonics rolled off hard, so it reads
+    // as a horn across a yard rather than a buzzer next to your ear.
     truck: {
-      bells: [[300, 1], [400, 0.85]],
-      harmonics: [0, 1, 0.9, 0.75, 0.62, 0.5, 0.42, 0.33, 0.26, 0.2, 0.15, 0.11, 0.08, 0.06, 0.04],
-      duration: 0.85,
-      attack: 0.03,
-      bend: 0.965,
-      cutoff: 3400,
-      air: 0.1,
-      airHz: 1400,
+      bells: [[196, 1], [262, 0.85]],
+      harmonics: [0, 1, 0.72, 0.5, 0.34, 0.22, 0.14, 0.09, 0.06, 0.04, 0.02],
+      duration: 1.15,
+      attack: 0.055,
+      bend: 0.955,
+      cutoff: 2100,
+      air: 0.12,
+      airHz: 900,
+      wobble: 0.035,
+      wobbleHz: 5.2,
+      tail: 1.6,
+      wet: 0.75,
+      level: 0.28,
+    },
+    // Five-chime locomotive horn. The bells spell a minor seventh, which is the
+    // chord that gives a train horn its particular mournfulness, and the long
+    // reverb puts it out across open country.
+    train: {
+      bells: [[110, 0.6], [131, 0.9], [165, 1], [196, 0.6], [247, 0.35]],
+      harmonics: [0, 1, 0.8, 0.62, 0.46, 0.34, 0.25, 0.18, 0.12, 0.08, 0.05, 0.03],
+      duration: 2.1,
+      attack: 0.14,
+      bend: 0.94,
+      cutoff: 1700,
+      air: 0.14,
+      airHz: 520,
+      wobble: 0.04,
+      wobbleHz: 4.8,
+      tail: 2.6,
+      wet: 1,
+      level: 0.3,
+    },
+    // Not a horn at all: engines spooling up for the take-off run. Almost all of
+    // it is the broad roar of the air layer, rolled off from the top and held up
+    // instead of decayed away. The oscillators are only a faint turbine whine
+    // underneath — any more of them and it buzzes instead of roars.
+    plane: {
+      bells: [[190, 0.3], [285, 0.14]],
+      harmonics: [0, 1, 0.18, 0.07, 0.03],
+      duration: 2.8,
+      attack: 0.8,
+      bend: 0.9,
+      sag: 0.9,
+      cutoff: 1500,
+      air: 0.95,
+      airHz: 850,
+      airType: 'lowpass',
+      airQ: 0.6,
+      airHold: 0.95,
       wobble: 0.03,
-      wobbleHz: 6.5,
-      tail: 1.1,
-      wet: 0.5,
-      level: 0.26,
+      wobbleHz: 1.8,
+      tail: 2.2,
+      wet: 0.55,
+      level: 0.34,
     },
   };
 
@@ -302,11 +507,11 @@ const { variant = 'truck', dir = 'ltr' } = Astro.props;
   let ctx: AudioContext | null = null;
   let noise: AudioBuffer | null = null;
   let quietUntil = 0;
-  const waves = new Map<Horn, PeriodicWave>();
-  const impulses = new Map<Horn, AudioBuffer>();
+  const waves = new Map<Vehicle, PeriodicWave>();
+  const impulses = new Map<Vehicle, AudioBuffer>();
 
   /** Exponentially decaying noise — a serviceable stand-in for a real space. */
-  const impulseFor = (audio: AudioContext, kind: Horn) => {
+  const impulseFor = (audio: AudioContext, kind: Vehicle) => {
     let ir = impulses.get(kind);
     if (ir) return ir;
 
@@ -326,7 +531,7 @@ const { variant = 'truck', dir = 'ltr' } = Astro.props;
     return ir;
   };
 
-  const waveFor = (audio: AudioContext, kind: Horn) => {
+  const waveFor = (audio: AudioContext, kind: Vehicle) => {
     let wave = waves.get(kind);
     if (wave) return wave;
 
@@ -336,7 +541,7 @@ const { variant = 'truck', dir = 'ltr' } = Astro.props;
     return wave;
   };
 
-  const honk = (kind: Horn) => {
+  const honk = (kind: Vehicle) => {
     if (!AudioCtor) return;
 
     ctx ??= new AudioCtor();
@@ -400,6 +605,7 @@ const { variant = 'truck', dir = 'ltr' } = Astro.props;
     wobble.stop(end);
 
     const wave = waveFor(audio, kind);
+    const sag = voice.sag ?? 0.975;
 
     for (const [frequency, level] of voice.bells) {
       // Two oscillators per bell, a fraction apart, so they beat against each
@@ -412,7 +618,7 @@ const { variant = 'truck', dir = 'ltr' } = Astro.props;
         osc.frequency.setValueAtTime(target * voice.bend, start);
         osc.frequency.exponentialRampToValueAtTime(target, start + voice.attack * 0.9);
         osc.frequency.setValueAtTime(target, start + voice.duration * 0.62);
-        osc.frequency.linearRampToValueAtTime(target * 0.975, end); // sags as the air runs out
+        osc.frequency.linearRampToValueAtTime(target * sag, end); // sags as the air runs out
 
         const bell = audio.createGain();
         bell.gain.value = level * 0.5;
@@ -434,13 +640,13 @@ const { variant = 'truck', dir = 'ltr' } = Astro.props;
     air.buffer = noise;
     air.loop = true;
     const airBand = audio.createBiquadFilter();
-    airBand.type = 'bandpass';
+    airBand.type = voice.airType ?? 'bandpass';
     airBand.frequency.value = voice.airHz;
-    airBand.Q.value = 0.8;
+    airBand.Q.value = voice.airQ ?? 0.8;
     const airLevel = audio.createGain();
     airLevel.gain.setValueAtTime(0.0001, start);
     airLevel.gain.exponentialRampToValueAtTime(voice.air, start + voice.attack * 0.6);
-    airLevel.gain.exponentialRampToValueAtTime(voice.air * 0.09, start + voice.attack * 3);
+    airLevel.gain.exponentialRampToValueAtTime(voice.air * (voice.airHold ?? 0.09), start + voice.attack * 3);
     airLevel.gain.exponentialRampToValueAtTime(0.0001, end);
     air.connect(airBand).connect(airLevel);
     airLevel.connect(dry);
@@ -456,6 +662,7 @@ const { variant = 'truck', dir = 'ltr' } = Astro.props;
   const vehicle = band?.querySelector<HTMLElement>('.cargo-loop__vehicle');
 
   vehicle?.addEventListener('click', () => {
-    honk(band?.dataset.variant === 'ship' ? 'ship' : 'truck');
+    const variant = band?.dataset.variant;
+    honk(variant && variant in VOICES ? (variant as Vehicle) : 'truck');
   });
 </script>

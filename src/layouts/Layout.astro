@@ -11,21 +11,58 @@ interface Props {
   title: string;
   lang: LanguageCode;
   translation: Translation;
+  /** Page-specific meta description. Falls back to the site-wide one. */
+  description?: string;
+  /** Page-specific share image, root-relative (e.g. /images/foo.webp). */
+  image?: string;
+  imageAlt?: string;
+  /** 'article' adds the published/modified meta news posts need. */
+  type?: 'website' | 'article';
+  publishedTime?: string;
+  modifiedTime?: string;
+  /** Trail excluding the site root, which is prepended automatically. */
+  breadcrumbs?: { name: string; href: string }[];
+  /** Extra JSON-LD blocks (FAQPage, NewsArticle, ItemList, …). */
+  schema?: Record<string, unknown>[];
 }
 
-const { title, lang, translation } = Astro.props;
+const {
+  title,
+  lang,
+  translation,
+  description: pageDescription,
+  image: pageImage,
+  imageAlt: pageImageAlt,
+  type = 'website',
+  publishedTime,
+  modifiedTime,
+  breadcrumbs = [],
+  schema: extraSchema = [],
+} = Astro.props;
 const dir = translation.dir;
 const brand = translation.labels.brand;
-const metaTitle = `${title} - ${brand}`;
+
+/**
+ * Titles are composed to survive Google's ~60-character render: the short
+ * brand is appended only while it still fits, and a page whose own title
+ * already fills the line keeps the title rather than a truncated suffix.
+ * Counted with the spread operator so multi-byte Persian, Arabic and Russian
+ * characters count as one each.
+ */
+const TITLE_BUDGET = 60;
+const withBrand = `${title} - ${translation.labels.brandShort}`;
+const metaTitle = [...withBrand].length <= TITLE_BUDGET ? withBrand : title;
 
 const metaDescriptions: Record<LanguageCode, string> = {
   en: 'International commodity trading across Central Asia and Russia, including bitumen, steel and metals, agricultural commodities, and textile raw materials.',
-  fa: 'بازرگانی بین‌المللی کالا در آسیای مرکزی و روسیه؛ شامل قیر، آهن و فولاد، محصولات کشاورزی و مواد اولیه نساجی.',
+  fa: 'بازرگانی بین‌المللی کالا ؛ شامل قیر، آهن و فولاد، محصولات کشاورزی و مواد اولیه نساجی.',
   ar: 'شركة تجارة سلع دولية تعمل في آسيا الوسطى وروسيا، بما في ذلك البيتومين والحديد والصلب والسلع الزراعية والمواد الخام النسيجية.',
   ru: 'Международная торговля товарами в Центральной Азии и России: битум, металлы и сталь, сельскохозяйственная продукция и текстильное сырьё.',
 };
 
-const description = metaDescriptions[lang] ?? metaDescriptions.en;
+// A page-specific description is what stops all ~40 URLs sharing one string;
+// the site-wide line is only the fallback.
+const description = pageDescription ?? metaDescriptions[lang] ?? metaDescriptions.en;
 const localeMap: Record<LanguageCode, string> = { en: 'en_US', fa: 'fa_IR', ar: 'ar', ru: 'ru_RU' };
 const ogLocale = localeMap[lang] ?? lang;
 const alternateOgLocales = languages
@@ -48,31 +85,54 @@ const keywords = [
 ];
 
 const pathWithoutLang = stripLangFromPath(pathname);
-const canonicalPath = lang === defaultLang ? pathWithoutLang : pathname;
-const canonical = `${origin}${canonicalPath}`;
+// Google treats /about and /about/ as two URLs, so canonical, hreflang and
+// the sitemap have to agree on one. @astrojs/sitemap emits the trailing
+// slash, so everything here is normalised to match it — otherwise the
+// canonical points at a URL the sitemap never lists.
+const absolute = (path: string) => `${origin}${path.endsWith('/') ? path : `${path}/`}`;
+
+const canonical = absolute(withLanguagePrefix(lang, pathWithoutLang));
 const alternateLinks = languages.map((language) => ({
-  href: `${origin}${withLanguagePrefix(language.code, pathWithoutLang)}`,
+  href: absolute(withLanguagePrefix(language.code, pathWithoutLang)),
   hreflang: language.code,
 }));
-const xDefault = `${origin}${withLanguagePrefix(defaultLang, pathWithoutLang)}`;
-const ogImage = `${origin}/logo.png`;
+const xDefault = absolute(withLanguagePrefix(defaultLang, pathWithoutLang));
+// The logo is a 512x512 square; a page that supplies its own (wider) image
+// gets the large Twitter card, the square logo keeps the small one so it is
+// not letterboxed into a wide frame.
+const ogImage = pageImage ? `${origin}${pageImage}` : `${origin}/logo.png`;
+const ogImageAlt = pageImageAlt ?? brand;
+const twitterCard = pageImage ? 'summary_large_image' : 'summary';
 
-// Sea-freight pages close with a cargo ship; every other page gets the truck.
-// Add or remove a route here to change which vehicle a page loops.
-const shipRoutes = ['/logistics', '/trade-map'];
-const cargoVariant = shipRoutes.some(
-  (route) => pathWithoutLang === route || pathWithoutLang.startsWith(`${route}/`),
-)
-  ? 'ship'
-  : 'truck';
-
+// Organization carries the real contact block so search engines can build a
+// knowledge panel from it; the site-wide description is used deliberately
+// here rather than the page one, since this describes the company.
+const contact = translation.pages.contact;
 const organizationSchema = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
+  '@id': `${origin}/#organization`,
   name: brand,
   url: origin,
   logo: `${origin}/logo.png`,
-  description,
+  image: `${origin}/logo.png`,
+  description: metaDescriptions[lang] ?? metaDescriptions.en,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: contact.address,
+    addressCountry: 'IR',
+  },
+  telephone: contact.phone,
+  email: contact.email,
+  contactPoint: [
+    {
+      '@type': 'ContactPoint',
+      contactType: 'sales',
+      telephone: contact.phone,
+      email: contact.email,
+      availableLanguage: languages.map((language) => language.code),
+    },
+  ],
   areaServed: ['Central Asia', 'Russia', 'Uzbekistan'],
   knowsAbout: [
     'Bitumen trading',
@@ -88,10 +148,37 @@ const organizationSchema = {
 const websiteSchema = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
+  '@id': `${origin}/#website`,
   name: brand,
   url: origin,
   inLanguage: lang,
+  publisher: { '@id': `${origin}/#organization` },
 };
+
+// Breadcrumbs always start at the language root, so a page only declares the
+// trail below it.
+const breadcrumbSchema = breadcrumbs.length
+  ? {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { name: brand, href: withLanguagePrefix(lang, '/') },
+        ...breadcrumbs,
+      ].map((crumb, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        name: crumb.name,
+        item: `${origin}${crumb.href}`,
+      })),
+    }
+  : null;
+
+const jsonLdBlocks = [
+  organizationSchema,
+  websiteSchema,
+  ...(breadcrumbSchema ? [breadcrumbSchema] : []),
+  ...extraSchema,
+];
 ---
 
 <!DOCTYPE html>
@@ -101,9 +188,9 @@ const websiteSchema = {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" href="/logo.png" type="image/png" />
     <link rel="manifest" href="/site.webmanifest" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <!-- Every font is served from this origin: the site renders identically
+         on a network that cannot reach Google's font hosts. -->
+    <link rel="stylesheet" href="/fonts/manrope.css" />
     <link rel="stylesheet" href="/fonts/vazirmatn.css" />
 
     <title>{metaTitle}</title>
@@ -119,7 +206,7 @@ const websiteSchema = {
     ))}
     <link rel="alternate" href={xDefault} hreflang="x-default" />
 
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={type} />
     <meta property="og:title" content={metaTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
@@ -129,21 +216,43 @@ const websiteSchema = {
       <meta property="og:locale:alternate" content={locale} />
     ))}
     <meta property="og:image" content={ogImage} />
+    <meta property="og:image:alt" content={ogImageAlt} />
+    {!pageImage && <meta property="og:image:width" content="512" />}
+    {!pageImage && <meta property="og:image:height" content="512" />}
 
-    <meta name="twitter:card" content="summary" />
+    {type === 'article' && publishedTime && (
+      <meta property="article:published_time" content={publishedTime} />
+    )}
+    {type === 'article' && modifiedTime && (
+      <meta property="article:modified_time" content={modifiedTime} />
+    )}
+
+    <meta name="twitter:card" content={twitterCard} />
     <meta name="twitter:title" content={metaTitle} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:image:alt" content={ogImageAlt} />
 
-    <script type="application/ld+json" set:html={JSON.stringify(organizationSchema)}></script>
-    <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)}></script>
+    {jsonLdBlocks.map((block) => (
+      <script type="application/ld+json" set:html={JSON.stringify(block)}></script>
+    ))}
   </head>
   <body class:list={[dir === 'rtl' ? 'rtl' : 'ltr', 'min-h-screen bg-slate-50 text-slate-900 flex flex-col']}>
+    {/* Page weave: the trade itself, drawn behind everything - trucks, ships,
+        planes and trains running along dashed shipping lanes. Two tiled SVG
+        layers set as CSS backgrounds (see global.css) rather than one inline
+        drawing, so the glyphs keep their proportions at every viewport instead
+        of being stretched. Inert to pointers and to screen readers. */}
+    <div class="page-weave" aria-hidden="true">
+      <div class="page-weave__layer page-weave__layer--routes"></div>
+      <div class="page-weave__layer page-weave__layer--vehicles"></div>
+    </div>
+
     <Header lang={lang} translation={translation} />
 
     <main class="flex-1">
       <slot />
-      <CargoLoop variant={cargoVariant} dir={dir} />
+      <CargoLoop dir={dir} />
     </main>
 
     <Footer lang={lang} translation={translation} />
@@ -195,6 +304,98 @@ const websiteSchema = {
           }, 1600);
         }).catch(openMailClient);
       });
+    </script>
+
+    <script>
+      // Background videos are decoration, and they are heavy: the three clips
+      // on this site are ~16MB together, which every phone was downloading on
+      // top of the page itself. Each <video> therefore ships with only its
+      // poster frame, and the actual file is attached here — but only when
+      // playing it is both wanted and affordable:
+      //
+      //   * a wide viewport (a phone shows the poster and downloads nothing),
+      //   * no "reduce motion" preference,
+      //   * no Data Saver,
+      //   * and the element is actually approaching the screen.
+      //
+      // The poster attribute means the still frame is visible either way, so
+      // nothing looks broken when the video never loads.
+      const LARGE_SCREEN = 1024;
+
+      const attachVideo = (video) => {
+        if (video.dataset.videoLoaded) return;
+        video.dataset.videoLoaded = 'true';
+        const source = document.createElement('source');
+        source.src = video.dataset.videoSrc;
+        source.type = 'video/mp4';
+        video.appendChild(source);
+        video.load();
+        // autoplay is set here rather than in the markup so the browser has
+        // nothing to fetch until this point.
+        video.autoplay = true;
+        const play = video.play();
+        if (play?.catch) play.catch(() => {});
+      };
+
+      const canPlayVideo = () =>
+        !window.matchMedia('(prefers-reduced-motion: reduce)').matches &&
+        navigator.connection?.saveData !== true &&
+        window.innerWidth >= LARGE_SCREEN;
+
+      let observer = null;
+
+      const upgradeVideos = () => {
+        if (observer) return;
+        const candidates = Array.from(document.querySelectorAll('video[data-video-src]'));
+        if (!candidates.length || !canPlayVideo()) return;
+
+        // Anything already on screen is attached from its own geometry rather
+        // than waiting for the observer's first callback. Some browsers defer
+        // that callback while the page is still settling, which would leave a
+        // visible panel showing a frozen poster for no reason.
+        const nearViewport = (video) => {
+          const box = video.getBoundingClientRect();
+          return box.bottom > -200 && box.top < window.innerHeight + 200;
+        };
+        candidates.filter(nearViewport).forEach(attachVideo);
+
+        if (!('IntersectionObserver' in window)) {
+          candidates.forEach(attachVideo);
+          observer = true;
+          return;
+        }
+
+        observer = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (!entry.isIntersecting) continue;
+              attachVideo(entry.target);
+              observer.unobserve(entry.target);
+            }
+          },
+          { rootMargin: '200px' },
+        );
+        candidates.forEach((video) => observer.observe(video));
+      };
+
+      upgradeVideos();
+
+      // The test above is a snapshot, and the answer can change after load: a
+      // window gets widened, a phone turns landscape. Without this the poster
+      // would stay frozen for the rest of the visit on a screen that is now
+      // perfectly able to play the clip. Nothing is ever torn back down —
+      // going narrow again keeps whatever already loaded, since the bytes are
+      // spent either way.
+      let resizeTimer = 0;
+      window.addEventListener(
+        'resize',
+        () => {
+          if (observer) return;
+          window.clearTimeout(resizeTimer);
+          resizeTimer = window.setTimeout(upgradeVideos, 200);
+        },
+        { passive: true },
+      );
     </script>
   </body>
 </html>

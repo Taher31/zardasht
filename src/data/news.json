@@ -1,14 +1,346 @@
 [
     {
+        "slug": "incoterms-rail-fob-cif",
+        "date": "2026-08-30",
+        "image": "/images/07_rail_logistics.webp",
+        "kind": "guide",
+        "title": {
+            "en": "FOB and CIF do not apply to rail shipments",
+            "fa": "FOB و CIF برای محموله ریلی کاربرد ندارند",
+            "ar": "FOB و CIF لا تنطبق على الشحن بالسكك الحديدية",
+            "ru": "FOB и CIF не применяются к железнодорожным перевозкам"
+        },
+        "excerpt": {
+            "en": "Under Incoterms 2020, FOB and CIF cover sea transport only. For a rail consignment to Central Asia the correct rules are FCA, CPT, CIP, DAP, DPU or DDP.",
+            "fa": "در اینکوترمز ۲۰۲۰، FOB و CIF فقط حمل دریایی و آبراه داخلی را پوشش می‌دهند. برای محموله ریلی به آسیای مرکزی، قواعد درست FCA، CPT، CIP، DAP، DPU یا DDP هستند.",
+            "ar": "في إنكوترمز 2020 تغطي FOB و CIF النقل البحري فقط. أما الشحنة السككية إلى آسيا الوسطى فقواعدها الصحيحة هي FCA أو CPT أو CIP أو DAP أو DPU أو DDP.",
+            "ru": "По Инкотермс 2020 FOB и CIF охватывают только морские перевозки. Для железнодорожной партии в Центральную Азию верны FCA, CPT, CIP, DAP, DPU или DDP."
+        },
+        "body": {
+            "en": [
+                "Buyers regularly ask us to quote FOB or CIF for cargo that will travel by rail to Uzbekistan or Kazakhstan. It is one of the most common requests we receive, and it rests on a misunderstanding that can cost money at the border.",
+                "Incoterms 2020 contains eleven rules. Seven of them apply to any mode of transport: EXW, FCA, CPT, CIP, DAP, DPU and DDP. The remaining four — FAS, FOB, CFR and CIF — apply only to sea and inland waterway transport. A rail movement has no vessel, so those four rules have nothing to attach to.",
+                "The problem is not academic. Under FOB, risk passes from seller to buyer when the goods are placed on board the vessel. Name FOB on a rail contract and the moment of risk transfer is undefined: if cargo is damaged at a transshipment yard, neither side can point to the contract to settle it. A bank examining documents under a letter of credit raises the same objection, and the shipment waits while it is argued out.",
+                "For rail into Central Asia the practical choices are these. FCA: we hand the goods to the carrier you nominate, and risk passes at that point — this is the term to use when you want to control the main carriage yourself. CPT and CIP: we pay carriage to a named destination, and under CIP we must also insure the cargo at all-risks level, a higher standard than CIF ever required. DAP, DPU and DDP: we carry the goods through to your named place, with DPU the only rule that includes unloading, and DDP the only one that puts import clearance and duty on us.",
+                "So if what you want is a delivered price with no surprises at destination, the term you are reaching for is DAP or DDP, not CIF. If you want to control the main carriage yourself, it is FCA, not FOB. Naming the right rule at the quotation stage is what keeps the cargo moving at the border instead of sitting while two parties reconstruct what they meant.",
+                "The full Incoterms 2020 table, split by transport mode with the duties of each side, is on our trade map page."
+            ],
+            "fa": [
+                "خریداران مرتب از ما می‌خواهند برای باری که قرار است با ریل به ازبکستان یا قزاقستان برود، قیمت FOB یا CIF بدهیم. این یکی از رایج‌ترین درخواست‌هایی است که دریافت می‌کنیم و بر پایه یک سوءتفاهم است که می‌تواند سر مرز هزینه بتراشد.",
+                "اینکوترمز ۲۰۲۰ یازده قاعده دارد. هفت قاعده برای هر روش حملی به کار می‌روند: EXW، FCA، CPT، CIP، DAP، DPU و DDP. چهار قاعده باقی‌مانده — FAS، FOB، CFR و CIF — فقط برای حمل دریایی و آبراه داخلی‌اند. در حمل ریلی کشتی‌ای وجود ندارد، پس این چهار قاعده به چیزی بند نمی‌شوند.",
+                "این ایراد صرفاً نظری نیست. در FOB، ریسک وقتی از فروشنده به خریدار منتقل می‌شود که کالا روی عرشه کشتی قرار بگیرد. اگر FOB را در قرارداد ریلی بنویسید، لحظه انتقال ریسک نامشخص می‌ماند: اگر بار در محوطه تخلیه و بارگیری آسیب ببیند، هیچ‌کدام از دو طرف نمی‌تواند به قرارداد استناد کند. بانکی هم که اسناد را ذیل اعتبار اسنادی بررسی می‌کند همین ایراد را می‌گیرد و محموله تا رفع اختلاف معطل می‌ماند.",
+                "برای حمل ریلی به آسیای مرکزی، گزینه‌های عملی این‌هاست. FCA: کالا را به حمل‌کننده‌ای که شما معرفی می‌کنید تحویل می‌دهیم و ریسک همان‌جا منتقل می‌شود؛ این قاعده وقتی به کار می‌آید که بخواهید حمل اصلی را خودتان مدیریت کنید. CPT و CIP: کرایه را تا مقصد مشخص‌شده ما می‌پردازیم، و در CIP موظفیم بار را در سطح تمام‌خطر بیمه کنیم — استانداردی بالاتر از آنچه CIF هرگز الزام کرده است. DAP، DPU و DDP: کالا را تا محل مورد نظر شما می‌بریم؛ DPU تنها قاعده‌ای است که تخلیه را هم شامل می‌شود و DDP تنها قاعده‌ای است که ترخیص و حقوق ورودی را بر عهده ما می‌گذارد.",
+                "پس اگر آنچه می‌خواهید قیمت تحویل در مقصد بدون غافلگیری است، قاعده‌ای که دنبالش هستید DAP یا DDP است، نه CIF. و اگر می‌خواهید حمل اصلی را خودتان کنترل کنید، FCA است نه FOB. انتخاب قاعده درست در همان مرحله استعلام قیمت، همان چیزی است که بار را سر مرز در حرکت نگه می‌دارد به‌جای اینکه دو طرف بنشینند و منظور یکدیگر را بازسازی کنند.",
+                "جدول کامل اینکوترمز ۲۰۲۰، تفکیک‌شده بر اساس روش حمل و همراه با وظایف هر طرف، در صفحه نقشه تجاری ما آمده است."
+            ],
+            "ar": [
+                "يطلب منا المشترون بانتظام تسعيرة FOB أو CIF لبضاعة ستنتقل بالسكك الحديدية إلى أوزبكستان أو كازاخستان. وهو من أكثر الطلبات تكرارًا لدينا، ويقوم على سوء فهم قد يكلّف مالًا عند الحدود.",
+                "تتضمن إنكوترمز 2020 إحدى عشرة قاعدة. سبع منها تنطبق على أي وسيلة نقل: EXW و FCA و CPT و CIP و DAP و DPU و DDP. أما الأربع الباقية — FAS و FOB و CFR و CIF — فتنطبق على النقل البحري والممرات المائية الداخلية فقط. ولا توجد سفينة في النقل بالسكك، فلا شيء تتعلق به هذه القواعد الأربع.",
+                "والمشكلة ليست نظرية. ففي FOB تنتقل المخاطر من البائع إلى المشتري عند وضع البضاعة على متن السفينة. وإذا ذُكرت FOB في عقد سككي بقيت لحظة انتقال المخاطر غير محددة: فإذا تضررت البضاعة في ساحة إعادة الشحن، لا يستطيع أي من الطرفين الاستناد إلى العقد لتسوية الأمر. والبنك الذي يفحص المستندات بموجب اعتماد مستندي يثير الاعتراض نفسه، فتنتظر الشحنة حتى يُحسم النقاش.",
+                "أما الخيارات العملية للنقل السككي إلى آسيا الوسطى فهي: FCA، حيث نسلّم البضاعة إلى الناقل الذي تعيّنونه وتنتقل المخاطر عند تلك النقطة — وهي القاعدة المناسبة إذا أردتم إدارة النقل الرئيسي بأنفسكم. و CPT و CIP، حيث ندفع أجرة النقل حتى وجهة محددة، ويلزمنا CIP إضافةً إلى ذلك بتأمين البضاعة بمستوى جميع الأخطار، وهو معيار أعلى مما اشترطته CIF يومًا. و DAP و DPU و DDP، حيث ننقل البضاعة حتى المكان الذي تسمّونه، علمًا بأن DPU هي القاعدة الوحيدة التي تشمل التفريغ، و DDP هي الوحيدة التي تُحمّلنا التخليص والرسوم عند الاستيراد.",
+                "لذا إن كان ما تريدونه سعرًا للتسليم في الوجهة دون مفاجآت، فالقاعدة المقصودة هي DAP أو DDP لا CIF. وإن أردتم التحكم بالنقل الرئيسي بأنفسكم فهي FCA لا FOB. إن تسمية القاعدة الصحيحة في مرحلة عرض السعر هي ما يُبقي البضاعة متحركة عند الحدود بدلًا من أن تقف بينما يعيد الطرفان بناء ما كانا يقصدانه.",
+                "جدول إنكوترمز 2020 كاملًا، مقسّمًا بحسب وسيلة النقل ومع واجبات كل طرف، متاح في صفحة خريطة التجارة لدينا."
+            ],
+            "ru": [
+                "Покупатели регулярно просят у нас котировку FOB или CIF на груз, который поедет по железной дороге в Узбекистан или Казахстан. Это один из самых частых запросов, и он основан на недоразумении, которое может обойтись дорого на границе.",
+                "Инкотермс 2020 содержит одиннадцать правил. Семь из них применимы к любому виду транспорта: EXW, FCA, CPT, CIP, DAP, DPU и DDP. Оставшиеся четыре — FAS, FOB, CFR и CIF — применяются только к морским и внутренним водным перевозкам. В железнодорожной перевозке судна нет, поэтому этим четырём правилам просто не к чему привязаться.",
+                "Проблема не теоретическая. По FOB риск переходит от продавца к покупателю в момент размещения груза на борту судна. Укажите FOB в железнодорожном договоре — и момент перехода риска окажется неопределённым: если груз повреждён на перегрузочной площадке, ни одна из сторон не сможет сослаться на договор. Банк, проверяющий документы по аккредитиву, выдвинет то же возражение, и отгрузка будет ждать, пока спор не разрешится.",
+                "Для железной дороги в Центральную Азию практические варианты таковы. FCA: мы передаём груз перевозчику, которого вы назначаете, и риск переходит в этот момент — это правило подходит, если вы хотите сами управлять основной перевозкой. CPT и CIP: мы оплачиваем перевозку до согласованного пункта назначения, причём по CIP мы обязаны застраховать груз на уровне «от всех рисков» — стандарт выше того, что когда-либо требовал CIF. DAP, DPU и DDP: мы доставляем груз до указанного вами места, при этом DPU — единственное правило, включающее разгрузку, а DDP — единственное, возлагающее на нас импортную очистку и пошлины.",
+                "Итак, если вам нужна цена с доставкой без сюрпризов в пункте назначения, искомое правило — DAP или DDP, а не CIF. Если вы хотите сами контролировать основную перевозку — это FCA, а не FOB. Правильно названное правило уже на стадии котировки и есть то, что держит груз в движении на границе, вместо того чтобы он стоял, пока две стороны восстанавливают, что они имели в виду.",
+                "Полная таблица Инкотермс 2020, разбитая по видам транспорта и с обязанностями каждой стороны, есть на странице нашей торговой карты."
+            ]
+        },
+        "links": [
+            {
+                "href": "/trade-map",
+                "label": {
+                    "en": "Incoterms 2020 table, split by transport mode",
+                    "fa": "جدول اینکوترمز ۲۰۲۰، تفکیک‌شده بر اساس روش حمل",
+                    "ar": "جدول إنكوترمز 2020 مقسّمًا بحسب وسيلة النقل",
+                    "ru": "Таблица Инкотермс 2020 по видам транспорта"
+                }
+            },
+            {
+                "href": "/logistics",
+                "label": {
+                    "en": "How we move a shipment, from purchase to delivery",
+                    "fa": "چطور یک محموله را از خرید تا تحویل جابه‌جا می‌کنیم",
+                    "ar": "كيف ننقل الشحنة من الشراء حتى التسليم",
+                    "ru": "Как мы ведём поставку от закупки до доставки"
+                }
+            },
+            {
+                "href": "/contact",
+                "label": {
+                    "en": "Ask us to quote your shipment on the right term",
+                    "fa": "درخواست قیمت محموله شما با قاعده درست",
+                    "ar": "اطلب تسعيرة شحنتك بالقاعدة الصحيحة",
+                    "ru": "Запросить котировку на верных условиях"
+                }
+            }
+        ]
+    },
+    {
+        "slug": "specifying-barley-for-import",
+        "date": "2026-08-29",
+        "image": "/images/04_agricultural_grain.webp",
+        "kind": "guide",
+        "title": {
+            "en": "How to specify barley for import",
+            "fa": "چگونه جو را برای واردات مشخص کنیم",
+            "ar": "كيف تحدد مواصفات الشعير للاستيراد",
+            "ru": "Как задать спецификацию ячменя при импорте"
+        },
+        "excerpt": {
+            "en": "Moisture, test weight, admixture and broken grains decide whether a barley cargo is accepted or discounted. Agreeing them before loading avoids the argument.",
+            "fa": "رطوبت، وزن هکتولیتری، ناخالصی و دانه شکسته تعیین می‌کنند محموله جو پذیرفته شود یا کسر قیمت بخورد. توافق مکتوب پیش از بارگیری، جلوی اختلاف را می‌گیرد.",
+            "ar": "الرطوبة والوزن النوعي والشوائب والحبوب المكسورة تحدد قبول شحنة الشعير أو خصمها. والاتفاق عليها كتابةً قبل التحميل هو ما يجنّب الخلاف.",
+            "ru": "Влажность, натура, сорная примесь и битое зерно решают, примут партию ячменя или уценят. Согласование до погрузки снимает спор при приёмке."
+        },
+        "body": {
+            "en": [
+                "Barley is not bought by name. Two cargoes both honestly described as feed barley can differ enough that one is accepted at contract price and the other is discounted or rejected. What separates them is the specification, and the time to fix it is before loading, not on arrival.",
+                "Moisture is the parameter with the most consequences. Grain above the agreed moisture level generates heat in transit, and heat in a bulk cargo leads to caking, mould and in the worst case a load that cannot be sold at all. Contracts therefore cap moisture as a maximum percentage, and on a long rail or sea leg that cap is doing real work rather than acting as a formality.",
+                "Test weight, quoted in kilograms per hectolitre, measures how densely the grain packs. It is a practical proxy for how well the grain filled during the season: plump, well-filled grain packs heavier than thin or shrivelled grain. Feed buyers use it as a quick indicator of feeding value, and it is usually specified as a minimum.",
+                "Foreign matter, or admixture, covers everything in the cargo that is not sound barley: other grains, seeds, chaff, dust, stones. It is capped as a maximum percentage because the buyer is paying barley prices and does not want to pay them for dust, and because some contaminants create their own handling problems at the mill or the feed plant.",
+                "Broken and damaged grains are capped for a related reason. Breakage rises with rough handling and long transit, damaged kernels store poorly, and both reduce the value of the lot to a feed compounder. Protein is specified where the end use depends on it, and this is where the feed and malting distinction becomes sharp: malting barley is bought against additional criteria including germination capacity, screenings and varietal purity, and a cargo that is perfectly acceptable as feed can be unusable for malting.",
+                "The parameters are only half the contract. The other half is who tests, when, and whose result is final. In practice an independent surveyor draws samples at loading and issues a certificate of analysis, and the contract states whether that certificate is binding on both parties or whether the buyer may test again at discharge. Sensible contracts also set tolerances and the price adjustment that applies when a parameter falls slightly outside the range, so that a marginal result becomes an agreed deduction rather than a dispute.",
+                "When you send us a barley enquiry, the useful version states origin, quantity, delivery term and destination, along with the moisture, test weight, admixture and protein you need — and whether the cargo is intended for feed or for malting."
+            ],
+            "fa": [
+                "جو را با اسم نمی‌خرند. دو محموله که هر دو صادقانه «جو دامی» توصیف شده‌اند می‌توانند آن‌قدر متفاوت باشند که یکی به قیمت قرارداد پذیرفته شود و دیگری مشمول کسر قیمت یا رد شود. آنچه این دو را جدا می‌کند مشخصات است، و زمان تثبیت آن پیش از بارگیری است، نه هنگام تحویل.",
+                "رطوبت پیامدبارترین پارامتر است. غله‌ای که از سطح رطوبت توافق‌شده بالاتر باشد در مسیر گرما تولید می‌کند، و گرما در بار فله به کلوخه شدن، کپک و در بدترین حالت باری می‌انجامد که اصلاً قابل فروش نیست. به همین دلیل قراردادها رطوبت را به‌صورت درصد حداکثری محدود می‌کنند، و در یک مسیر طولانی ریلی یا دریایی این سقف واقعاً کار می‌کند، نه اینکه صرفاً تشریفاتی باشد.",
+                "وزن هکتولیتری، که بر حسب کیلوگرم در هکتولیتر بیان می‌شود، اندازه می‌گیرد که دانه چقدر متراکم جا می‌گیرد. این شاخصی عملی است از اینکه دانه در طول فصل چقدر خوب پر شده است: دانه درشت و پر، سنگین‌تر از دانه لاغر یا چروکیده جا می‌گیرد. خریداران خوراک دام از آن به‌عنوان نشانه‌ای سریع از ارزش تغذیه‌ای استفاده می‌کنند و معمولاً به‌صورت حداقل تعیین می‌شود.",
+                "مواد خارجی یا ناخالصی، هر چیزی در بار را شامل می‌شود که جو سالم نیست: غلات دیگر، بذر، کاه، گرد و خاک، سنگ. این مورد به‌صورت درصد حداکثری محدود می‌شود، چون خریدار دارد قیمت جو می‌پردازد و نمی‌خواهد آن را بابت خاک بدهد، و چون برخی آلودگی‌ها در کارخانه آرد یا خوراک دام دردسر جابه‌جایی خودشان را می‌سازند.",
+                "دانه‌های شکسته و آسیب‌دیده به دلیلی مرتبط محدود می‌شوند. شکستگی با جابه‌جایی خشن و مسیر طولانی بالا می‌رود، دانه آسیب‌دیده بد انبار می‌شود، و هر دو ارزش محموله را برای تولیدکننده خوراک کم می‌کنند. پروتئین جایی مشخص می‌شود که مصرف نهایی به آن وابسته باشد، و همین‌جاست که تفاوت خوراک دام و مالت‌سازی برجسته می‌شود: جو مالت‌سازی با معیارهای اضافی خریداری می‌شود، از جمله قوه نامیه، غربالی و خلوص رقم، و محموله‌ای که برای خوراک دام کاملاً قابل قبول است می‌تواند برای مالت‌سازی غیرقابل استفاده باشد.",
+                "پارامترها تنها نیمی از قرارداد است. نیم دیگر این است که چه کسی آزمون می‌کند، چه زمانی، و نتیجه چه کسی نهایی است. در عمل یک بازرس مستقل هنگام بارگیری نمونه می‌گیرد و گواهی آنالیز صادر می‌کند، و قرارداد تصریح می‌کند که آیا آن گواهی برای هر دو طرف الزام‌آور است یا خریدار می‌تواند هنگام تخلیه دوباره آزمون کند. قراردادهای سنجیده رواداری‌ها و میزان تعدیل قیمت را هم تعیین می‌کنند تا وقتی پارامتری اندکی بیرون از بازه افتاد، نتیجه‌ای مرزی به کسر توافق‌شده تبدیل شود نه به اختلاف.",
+                "وقتی استعلام جو برای ما می‌فرستید، نسخه کارآمد آن مبدأ، مقدار، شرط تحویل و مقصد را می‌گوید، در کنار رطوبت، وزن هکتولیتری، ناخالصی و پروتئینی که لازم دارید — و اینکه بار برای خوراک دام است یا مالت‌سازی."
+            ],
+            "ar": [
+                "لا يُشترى الشعير بالاسم. فشحنتان توصفان بصدق بأنهما شعير علفي قد تختلفان بما يكفي لأن تُقبل إحداهما بسعر العقد وتُخصم الأخرى أو تُرفض. والفارق بينهما هو المواصفة، ووقت تثبيتها قبل التحميل لا عند الوصول.",
+                "الرطوبة هي البند الأكثر تبعات. فالحبوب التي تتجاوز مستوى الرطوبة المتفق عليه تولّد حرارة أثناء النقل، والحرارة في بضاعة سائبة تؤدي إلى التكتل والعفن، وفي أسوأ الحالات إلى حمولة لا تُباع أصلًا. لذلك تضع العقود سقفًا للرطوبة كنسبة قصوى، وفي رحلة سككية أو بحرية طويلة يؤدي هذا السقف دورًا فعليًا لا شكليًا.",
+                "أما الوزن النوعي، المقدَّر بالكيلوغرام لكل هكتولتر، فيقيس مدى كثافة انتظام الحبوب. وهو مؤشر عملي على جودة امتلاء الحبة خلال الموسم: فالحبة الممتلئة تنتظم أثقل من الحبة الرفيعة أو الضامرة. ويستخدمه مشترو الأعلاف كدليل سريع على القيمة الغذائية، ويُحدَّد عادةً كحد أدنى.",
+                "وتشمل المواد الغريبة أو الشوائب كل ما في الحمولة مما ليس شعيرًا سليمًا: حبوب أخرى، بذور، قش، غبار، حجارة. وتُقيَّد بنسبة قصوى لأن المشتري يدفع أسعار الشعير ولا يريد دفعها مقابل غبار، ولأن بعض الملوثات تخلق مشكلات مناولة خاصة بها في المطحنة أو مصنع الأعلاف.",
+                "وتُقيَّد الحبوب المكسورة والتالفة لسبب متصل. فالكسر يزداد مع المناولة الخشنة والنقل الطويل، والحبة التالفة تُخزَّن بصعوبة، وكلاهما يقلل قيمة الدفعة لمصنّع الأعلاف. ويُحدَّد البروتين حيث يعتمد الاستخدام النهائي عليه، وهنا يحتد الفارق بين العلف والتمليت: فشعير التمليت يُشترى وفق معايير إضافية منها القدرة الإنباتية والنخالة ونقاء الصنف، وقد تكون شحنة مقبولة تمامًا كعلف غير صالحة للتمليت.",
+                "والبنود نصف العقد فقط. أما النصف الآخر فهو من يفحص ومتى ونتيجة من هي النهائية. عمليًا يسحب معاين مستقل العينات عند التحميل ويصدر شهادة تحليل، وينص العقد على ما إذا كانت تلك الشهادة ملزمة للطرفين أم يحق للمشتري إعادة الفحص عند التفريغ. كما تحدد العقود الرشيدة هوامش التسامح وتعديل السعر المطبق حين يخرج بند قليلًا عن المدى، فيتحول النتيجة الحدية إلى خصم متفق عليه بدل أن تصبح نزاعًا.",
+                "وحين ترسلون إلينا استفسارًا عن الشعير، فالصيغة المفيدة تذكر المنشأ والكمية وشرط التسليم والوجهة، إلى جانب الرطوبة والوزن النوعي والشوائب والبروتين المطلوبة — وما إذا كانت الحمولة للعلف أم للتمليت."
+            ],
+            "ru": [
+                "Ячмень не покупают по названию. Две партии, честно описанные как фуражный ячмень, могут различаться настолько, что одну примут по цене договора, а другую уценят или отклонят. Разделяет их спецификация, и фиксировать её нужно до погрузки, а не по прибытии.",
+                "Влажность — параметр с наибольшими последствиями. Зерно выше согласованного уровня влажности выделяет тепло в пути, а тепло в насыпном грузе ведёт к слёживанию, плесени и в худшем случае к партии, которую вообще нельзя продать. Поэтому договоры задают влажность как максимальный процент, и на длинном железнодорожном или морском плече этот предел работает всерьёз, а не формально.",
+                "Натура, выражаемая в килограммах на гектолитр, измеряет, насколько плотно укладывается зерно. Это практический показатель того, насколько хорошо зерно налилось за сезон: выполненное зерно укладывается тяжелее, чем щуплое. Покупатели фуража используют её как быстрый индикатор кормовой ценности, и задаётся она обычно как минимум.",
+                "Сорная примесь охватывает всё в грузе, что не является здоровым ячменём: другие зерновые, семена, полову, пыль, камни. Её ограничивают максимальным процентом, потому что покупатель платит цену ячменя и не хочет платить её за пыль, и потому что часть примесей создаёт собственные проблемы при обработке на мельнице или комбикормовом заводе.",
+                "Битое и повреждённое зерно ограничивают по смежной причине. Бой растёт при грубой перевалке и долгом транзите, повреждённое зерно плохо хранится, и то и другое снижает ценность партии для комбикормщика. Белок задают там, где от него зависит конечное применение, и здесь различие фуража и солода становится жёстким: солодовенный ячмень покупают по дополнительным критериям, включая всхожесть, отсев и сортовую чистоту, и партия, безупречная как фураж, может оказаться непригодной для солода.",
+                "Параметры — лишь половина договора. Вторая половина — кто испытывает, когда и чей результат окончателен. На практике независимый сюрвейер отбирает пробы при погрузке и выдаёт сертификат анализа, а договор указывает, обязателен ли этот сертификат для обеих сторон или покупатель вправе перепроверить при выгрузке. Разумные договоры задают и допуски, и ценовую корректировку на случай небольшого выхода параметра за диапазон, чтобы пограничный результат стал согласованной скидкой, а не спором.",
+                "Когда вы направляете нам запрос по ячменю, полезная его версия называет происхождение, объём, условие поставки и пункт назначения, а также требуемые влажность, натуру, сорную примесь и белок — и предназначен ли груз для фуража или для солода."
+            ]
+        },
+        "links": [
+            {
+                "href": "/products/agricultural-commodities",
+                "label": {
+                    "en": "Agricultural commodities: barley, pulses and grains",
+                    "fa": "کالاهای کشاورزی: جو، حبوبات و غلات",
+                    "ar": "السلع الزراعية: الشعير والبقول والحبوب",
+                    "ru": "Сельхозтовары: ячмень, бобовые и зерно"
+                }
+            },
+            {
+                "href": "/news/shipment-documents-explained",
+                "label": {
+                    "en": "The documents that travel with a shipment",
+                    "fa": "اسنادی که همراه محموله سفر می‌کنند",
+                    "ar": "المستندات التي ترافق الشحنة",
+                    "ru": "Документы, которые едут вместе с грузом"
+                }
+            },
+            {
+                "href": "/contact",
+                "label": {
+                    "en": "Send your barley specification for a quote",
+                    "fa": "مشخصات جو خود را برای قیمت بفرستید",
+                    "ar": "أرسل مواصفات الشعير للحصول على سعر",
+                    "ru": "Отправьте спецификацию ячменя для расчёта"
+                }
+            }
+        ]
+    },
+    {
+        "slug": "shipment-documents-explained",
+        "date": "2026-08-27",
+        "image": "/images/08_warehouse_logistics.webp",
+        "kind": "guide",
+        "title": {
+            "en": "The documents that travel with a shipment",
+            "fa": "اسنادی که همراه محموله سفر می‌کنند",
+            "ar": "المستندات التي ترافق الشحنة",
+            "ru": "Документы, которые едут вместе с грузом"
+        },
+        "excerpt": {
+            "en": "Cargo is held at borders by paperwork far more often than by transport. What each shipping document does, and why the exact list depends on the destination.",
+            "fa": "بار در مرز بیشتر به‌خاطر اسناد متوقف می‌شود تا به‌خاطر حمل. اینجا می‌گوییم هر سند در یک محموله کالایی چه کاری می‌کند و چرا فهرست دقیق آن به مقصد بستگی دارد.",
+            "ar": "تتوقف البضاعة عند الحدود بسبب المستندات أكثر بكثير من توقفها بسبب النقل. هنا نوضّح وظيفة كل مستند في شحنة سلعية، ولماذا تتوقف القائمة الدقيقة على الوجهة.",
+            "ru": "Груз задерживают на границе из-за документов чаще, чем из-за перевозки. Что делает каждый документ поставки и почему точный список зависит от назначения."
+        },
+        "body": {
+            "en": [
+                "In our experience a consignment is far more likely to sit at a border because of a document than because of a truck or a wagon. The transport is usually the straightforward part; the file that travels with it is where shipments stall.",
+                "The commercial invoice states what the parties agreed: goods, quantity, unit price, total, currency, delivery term and the parties themselves. Customs uses it to establish the value on which duty is calculated, so an invoice that disagrees with the contract or the packing list creates a question that has to be answered before the cargo moves.",
+                "The packing list sets out how the consignment is physically made up — number of packages, weight of each, marks and numbers. It lets customs and the receiving warehouse verify a shipment without opening every unit, and it is what a claim is checked against if something is short on arrival.",
+                "The certificate of origin states where the goods were produced. It matters because duty rates and preferential treatment depend on origin, and it is normally issued or attested by a chamber of commerce at origin rather than written by the seller.",
+                "The transport document differs by mode, and the difference is not cosmetic. A bill of lading covers sea carriage and is a document of title: whoever holds it can claim the goods. A CMR consignment note covers international road carriage and a rail waybill under SMGS or CIM covers rail, and neither is a document of title — they evidence the contract of carriage and receipt of the goods, but they do not transfer ownership. Buyers who expect a rail waybill to behave like a bill of lading are usually surprised at the wrong moment.",
+                "The certificate of analysis reports the tested properties of the actual lot shipped, which is what turns a contractual specification into something verifiable. For plant products such as grain and pulses, a phytosanitary certificate issued by the plant protection authority at origin travels alongside it. Where the delivery term obliges the seller to insure — CIP or CIF — an insurance certificate joins the file.",
+                "The one thing we would not do is hand you a fixed list. The documents a shipment actually needs depend on the destination country, the commodity and the way you are paying: a letter of credit imposes its own documentary requirements, and banks reject on discrepancies that have nothing to do with the goods. The list should be agreed in writing before the cargo is loaded, not assembled after it has arrived."
+            ],
+            "fa": [
+                "به تجربه ما، احتمال اینکه محموله‌ای به‌خاطر یک سند در مرز بماند بسیار بیشتر است تا به‌خاطر کامیون یا واگن. حمل معمولاً بخش سرراست ماجراست؛ پرونده‌ای که همراه بار سفر می‌کند جایی است که محموله‌ها زمین می‌مانند.",
+                "سیاهه تجاری بیان می‌کند طرفین بر چه توافق کرده‌اند: کالا، مقدار، قیمت واحد، جمع، ارز، شرط تحویل و خود طرفین. گمرک از آن برای تعیین ارزشی که حقوق ورودی بر مبنایش محاسبه می‌شود استفاده می‌کند؛ پس سیاهه‌ای که با قرارداد یا لیست بسته‌بندی نخواند، پرسشی ایجاد می‌کند که باید پیش از حرکت بار پاسخ بگیرد.",
+                "لیست بسته‌بندی نشان می‌دهد محموله از نظر فیزیکی چگونه تشکیل شده است — تعداد بسته‌ها، وزن هرکدام، علائم و شماره‌ها. این سند به گمرک و انبار گیرنده اجازه می‌دهد بدون باز کردن تک‌تک واحدها محموله را راستی‌آزمایی کنند، و اگر هنگام تحویل کسری باشد، ادعا با همین سند سنجیده می‌شود.",
+                "گواهی مبدأ اعلام می‌کند کالا کجا تولید شده است. اهمیتش از آنجاست که نرخ حقوق ورودی و برخورداری از تعرفه ترجیحی به مبدأ بستگی دارد، و معمولاً به‌جای آنکه فروشنده بنویسد، اتاق بازرگانی در مبدأ آن را صادر یا تأیید می‌کند.",
+                "سند حمل بسته به روش حمل فرق می‌کند، و این تفاوت ظاهری نیست. بارنامه دریایی حمل دریایی را پوشش می‌دهد و سند مالکیت است: هرکس آن را در اختیار دارد می‌تواند کالا را مطالبه کند. بارنامه CMR حمل جاده‌ای بین‌المللی را پوشش می‌دهد و بارنامه ریلی تحت SMGS یا CIM حمل ریلی را، و هیچ‌کدام سند مالکیت نیستند — قرارداد حمل و دریافت کالا را اثبات می‌کنند اما مالکیت را منتقل نمی‌کنند. خریدارانی که انتظار دارند بارنامه ریلی مثل بارنامه دریایی عمل کند، معمولاً در بدترین لحظه غافلگیر می‌شوند.",
+                "گواهی آنالیز ویژگی‌های آزمون‌شده همان محموله ارسالی را گزارش می‌کند، و همین است که مشخصات قراردادی را به چیزی قابل راستی‌آزمایی تبدیل می‌کند. برای محصولات گیاهی مانند غلات و حبوبات، گواهی بهداشت گیاهی که سازمان حفظ نباتات در مبدأ صادر می‌کند همراه آن سفر می‌کند. و هرجا شرط تحویل فروشنده را به بیمه کردن ملزم کند — CIP یا CIF — گواهی بیمه هم به پرونده اضافه می‌شود.",
+                "تنها کاری که نمی‌کنیم، دادن یک فهرست ثابت به شماست. اسنادی که یک محموله واقعاً لازم دارد به کشور مقصد، نوع کالا و شیوه پرداخت شما بستگی دارد: اعتبار اسنادی الزامات سندی خود را تحمیل می‌کند و بانک‌ها بر سر مغایرت‌هایی که هیچ ربطی به خود کالا ندارند اسناد را رد می‌کنند. این فهرست باید پیش از بارگیری به‌صورت مکتوب توافق شود، نه بعد از رسیدن بار جمع‌آوری."
+            ],
+            "ar": [
+                "من واقع خبرتنا، احتمال توقف الإرسالية عند الحدود بسبب مستند أكبر بكثير من توقفها بسبب شاحنة أو عربة. فالنقل عادةً هو الجزء المباشر؛ أما الملف الذي يرافقه فهو حيث تتعثر الشحنات.",
+                "تبيّن الفاتورة التجارية ما اتفق عليه الطرفان: البضاعة والكمية وسعر الوحدة والإجمالي والعملة وشرط التسليم والطرفين أنفسهم. وتستخدمها الجمارك لتحديد القيمة التي تُحتسب عليها الرسوم، ولذا فإن فاتورة تخالف العقد أو قائمة التعبئة تثير سؤالًا لا بد من الإجابة عنه قبل تحرك البضاعة.",
+                "توضّح قائمة التعبئة كيفية تكوين الإرسالية ماديًا: عدد الطرود ووزن كل منها والعلامات والأرقام. وهي تتيح للجمارك وللمستودع المستلم التحقق من الشحنة دون فتح كل وحدة، وإليها يُرجع عند فحص أي مطالبة إذا ظهر نقص عند الوصول.",
+                "تذكر شهادة المنشأ أين أُنتجت البضاعة. وأهميتها أن معدلات الرسوم والمعاملة التفضيلية تتوقف على المنشأ، وتصدرها أو تصدّق عليها عادةً غرفة تجارة في بلد المنشأ لا البائع نفسه.",
+                "ويختلف مستند النقل باختلاف الوسيلة، والفرق ليس شكليًا. فبوليصة الشحن البحري تغطي النقل البحري وهي سند ملكية: من يحوزها يستطيع المطالبة بالبضاعة. أما بوليصة CMR فتغطي النقل البري الدولي، وبوليصة السكك بموجب SMGS أو CIM تغطي النقل السككي، وليست أي منهما سند ملكية — فهي تثبت عقد النقل واستلام البضاعة لكنها لا تنقل الملكية. والمشترون الذين يتوقعون أن تتصرف بوليصة السكك كبوليصة الشحن البحري يُفاجأون عادةً في أسوأ لحظة.",
+                "وتُبلغ شهادة التحليل عن الخصائص المختبَرة للدفعة المشحونة فعليًا، وهو ما يحوّل المواصفة التعاقدية إلى أمر قابل للتحقق. وبالنسبة للمنتجات النباتية كالحبوب والبقول، ترافقها شهادة صحة نباتية تصدرها هيئة وقاية النبات في المنشأ. وحيثما ألزم شرط التسليم البائع بالتأمين — CIP أو CIF — انضمت شهادة التأمين إلى الملف.",
+                "والأمر الوحيد الذي لن نفعله هو تسليمكم قائمة ثابتة. فالمستندات التي تحتاجها الشحنة فعليًا تتوقف على بلد الوجهة والسلعة وطريقة الدفع: فالاعتماد المستندي يفرض متطلباته الخاصة، والبنوك ترفض بسبب تباينات لا علاقة لها بالبضاعة. ويجب الاتفاق على القائمة كتابةً قبل التحميل، لا جمعها بعد الوصول."
+            ],
+            "ru": [
+                "По нашему опыту, партия гораздо чаще стоит на границе из-за документа, чем из-за машины или вагона. Перевозка обычно оказывается простой частью; буксует именно тот файл, который едет вместе с грузом.",
+                "Коммерческий инвойс фиксирует, о чём договорились стороны: товар, количество, цену за единицу, сумму, валюту, условие поставки и сами стороны. Таможня использует его для определения стоимости, с которой считается пошлина, поэтому инвойс, расходящийся с договором или упаковочным листом, порождает вопрос, на который придётся ответить до отправки.",
+                "Упаковочный лист описывает, как партия устроена физически: число мест, вес каждого, маркировку и номера. Он позволяет таможне и складу получателя проверить поставку, не вскрывая каждую единицу, и именно с ним сверяют претензию, если при приёмке обнаружена недостача.",
+                "Сертификат происхождения указывает, где произведён товар. Это важно потому, что ставки пошлин и преференциальный режим зависят от происхождения, и обычно его выдаёт или заверяет торговая палата в стране отправления, а не пишет продавец.",
+                "Транспортный документ различается по виду перевозки, и различие не косметическое. Коносамент покрывает морскую перевозку и является товарораспорядительным документом: кто им владеет, тот вправе требовать груз. Накладная CMR покрывает международную автоперевозку, накладная СМГС или ЦИМ — железнодорожную, и ни одна из них товарораспорядительной не является: они подтверждают договор перевозки и приём груза, но не передают право собственности. Покупатели, ожидающие от железнодорожной накладной поведения коносамента, обычно узнают правду в худший момент.",
+                "Сертификат анализа сообщает испытанные характеристики фактически отгруженной партии — именно это превращает договорную спецификацию в проверяемую величину. Для растительной продукции, зерна и бобовых, рядом едет фитосанитарный сертификат, выданный службой защиты растений в стране отправления. Там, где условие поставки обязывает продавца страховать груз — CIP или CIF, — к файлу добавляется страховой сертификат.",
+                "Единственное, чего мы делать не станем, — выдать вам фиксированный список. Документы, реально необходимые поставке, зависят от страны назначения, товара и способа оплаты: аккредитив предъявляет собственные требования, а банки отказывают из-за расхождений, не имеющих отношения к самому товару. Список нужно согласовать письменно до погрузки, а не собирать после прибытия."
+            ]
+        },
+        "links": [
+            {
+                "href": "/logistics",
+                "label": {
+                    "en": "Customs clearance and delivery, step by step",
+                    "fa": "ترخیص گمرکی و تحویل، گام به گام",
+                    "ar": "التخليص الجمركي والتسليم خطوة بخطوة",
+                    "ru": "Таможенное оформление и доставка по шагам"
+                }
+            },
+            {
+                "href": "/news/incoterms-rail-fob-cif",
+                "label": {
+                    "en": "Why FOB and CIF do not apply to rail",
+                    "fa": "چرا FOB و CIF برای ریل کاربرد ندارند",
+                    "ar": "لماذا لا تنطبق FOB و CIF على السكك",
+                    "ru": "Почему FOB и CIF не подходят для ж/д"
+                }
+            },
+            {
+                "href": "/contact",
+                "label": {
+                    "en": "Ask us which documents your route needs",
+                    "fa": "بپرسید مسیر شما چه اسنادی لازم دارد",
+                    "ar": "اسألنا عن المستندات التي يحتاجها مساركم",
+                    "ru": "Спросите, какие документы нужны вашему маршруту"
+                }
+            }
+        ]
+    },
+    {
+        "slug": "bitumen-penetration-grades",
+        "date": "2026-08-25",
+        "image": "/images/02_bitumen.webp",
+        "kind": "guide",
+        "title": {
+            "en": "Bitumen penetration grades: 60/70 or 85/100?",
+            "fa": "گریدهای نفوذ قیر: ۶۰/۷۰ یا ۸۵/۱۰۰؟",
+            "ar": "درجات اختراق البيتومين: 60/70 أم 85/100؟",
+            "ru": "Марки битума по пенетрации: 60/70 или 85/100"
+        },
+        "excerpt": {
+            "en": "Penetration grade measures how far a needle sinks into bitumen at 25°C. The lower the number the harder the grade, and the choice follows climate and traffic.",
+            "fa": "گرید نفوذ نشان می‌دهد سوزن استاندارد در ۲۵ درجه چقدر در قیر فرو می‌رود. هرچه عدد کمتر، قیر سفت‌تر — و انتخاب به اقلیم و بار ترافیکی بستگی دارد، نه قیمت.",
+            "ar": "تقيس درجة الاختراق مدى غوص إبرة قياسية في البيتومين عند 25 درجة مئوية. كلما قلّ الرقم كانت الدرجة أقسى، والاختيار الصحيح يتبع المناخ وحمل المرور لا السعر.",
+            "ru": "Пенетрация показывает, насколько игла погружается в битум при 25 °C. Чем меньше число, тем твёрже марка, а выбор определяют климат и нагрузка, а не цена."
+        },
+        "body": {
+            "en": [
+                "Buyers often ask us for \"the better grade\" of bitumen, assuming a higher number means higher quality. It does not. The two numbers in 60/70 or 85/100 are a measurement, not a rating, and reading them the wrong way leads to bitumen that fails in service.",
+                "Penetration grade comes from a standardised laboratory test. A needle under a 100-gram load is allowed to sink into a bitumen sample held at 25°C for five seconds, and the depth it reaches is measured in tenths of a millimetre. A sample graded 60/70 admits the needle 60 to 70 tenths of a millimetre. A sample graded 85/100 admits it further — which means 85/100 is the softer of the two, not the better one.",
+                "That softness is the whole point of the choice. A harder grade resists deformation when the road surface is hot and axle loads are heavy, which is why hot climates and heavily trafficked routes lean towards 40/50 and 60/70. A softer grade stays flexible when the surface is cold and resists the cracking that brittle binder suffers in winter, which is why cooler regions lean towards 85/100 and 100/150. Neither grade is superior; each fails in the other's conditions.",
+                "This is also why the destination decides, not the supplier. Road authorities publish the binder specification for their own climate, and that specification governs. If you are paving in a country whose standard calls for 60/70, a shipment of 85/100 is not an upgrade — it is the wrong material, and it will be rejected or will rut in its first hot season.",
+                "The penetration system is one of several. EN 12591 is the European penetration-graded standard and ASTM D946 the American one; elsewhere you will meet viscosity grading and the performance-graded (PG) system, which classifies binder by the temperature range it is designed to survive. A buyer who quotes \"60/70\" is working in the penetration system, and the enquiry should say so, because the same bitumen carries different designations under each.",
+                "When you send an enquiry, the grade alone is not enough to price a shipment. Include the quantity, the packaging — new steel drums, jumbo bags, bulk in a bitutainer or a heated tanker each change the cost and the handling — the destination, and the certificate you need on arrival. A certificate of analysis will normally report penetration alongside softening point, ductility, flash point and solubility, and if you want an independent surveyor to draw the sample at loading, say so in the enquiry rather than after the cargo has moved."
+            ],
+            "fa": [
+                "خریداران اغلب از ما «گرید بهتر» قیر را می‌خواهند، با این تصور که عدد بالاتر یعنی کیفیت بالاتر. این‌طور نیست. دو عدد در ۶۰/۷۰ یا ۸۵/۱۰۰ یک اندازه‌گیری‌اند، نه یک رتبه‌بندی، و برداشت اشتباه از آن‌ها به قیری ختم می‌شود که در عمل جواب نمی‌دهد.",
+                "گرید نفوذ از یک آزمون آزمایشگاهی استاندارد به دست می‌آید. سوزنی با بار ۱۰۰ گرم به مدت پنج ثانیه در نمونه قیری که در دمای ۲۵ درجه سانتی‌گراد نگه داشته شده فرو می‌رود، و عمقی که طی می‌کند بر حسب دهم میلی‌متر اندازه گرفته می‌شود. نمونه‌ای با گرید ۶۰/۷۰ اجازه می‌دهد سوزن ۶۰ تا ۷۰ دهم میلی‌متر نفوذ کند. نمونه ۸۵/۱۰۰ بیشتر اجازه می‌دهد — یعنی ۸۵/۱۰۰ نرم‌تر است، نه بهتر.",
+                "و همین نرمی، اصل ماجرای انتخاب است. گرید سفت‌تر وقتی سطح جاده داغ است و بارهای محوری سنگین‌اند در برابر تغییر شکل مقاومت می‌کند؛ به همین دلیل اقلیم‌های گرم و مسیرهای پرتردد به سمت ۴۰/۵۰ و ۶۰/۷۰ می‌روند. گرید نرم‌تر وقتی سطح سرد است انعطاف خود را حفظ می‌کند و در برابر ترک‌خوردگی که قیر شکننده در زمستان دچارش می‌شود مقاومت می‌کند؛ به همین دلیل مناطق سردتر به ۸۵/۱۰۰ و ۱۰۰/۱۵۰ متمایل‌اند. هیچ‌کدام برتر نیست؛ هرکدام در شرایط دیگری شکست می‌خورد.",
+                "به همین دلیل مقصد تصمیم می‌گیرد، نه تأمین‌کننده. سازمان‌های راه مشخصات قیر متناسب با اقلیم خود را منتشر می‌کنند و همان مشخصات حاکم است. اگر در کشوری آسفالت می‌ریزید که استانداردش ۶۰/۷۰ می‌خواهد، محموله ۸۵/۱۰۰ ارتقا نیست — ماده اشتباه است و یا رد می‌شود یا در نخستین فصل گرم شیار می‌افتد.",
+                "سامانه نفوذ یکی از چند سامانه است. EN 12591 استاندارد اروپایی گریدبندی بر مبنای نفوذ است و ASTM D946 استاندارد آمریکایی؛ در جاهای دیگر با گریدبندی بر مبنای ویسکوزیته و سامانه گرید عملکردی (PG) روبه‌رو می‌شوید که قیر را بر اساس بازه دمایی که برای تحمل آن طراحی شده دسته‌بندی می‌کند. خریداری که «۶۰/۷۰» می‌گوید در سامانه نفوذ کار می‌کند، و بهتر است در استعلام همین را تصریح کند، چون یک قیر واحد زیر هر سامانه نام‌گذاری متفاوتی دارد.",
+                "هنگام ارسال استعلام، گرید به‌تنهایی برای قیمت‌گذاری کافی نیست. مقدار، نوع بسته‌بندی — بشکه فلزی نو، کیسه جامبو، فله در بیتوتینر یا تانکر گرم‌شونده، هرکدام هزینه و نحوه جابه‌جایی را عوض می‌کنند — مقصد، و گواهی موردنیاز هنگام تحویل را هم بنویسید. گواهی آنالیز معمولاً در کنار نفوذ، نقطه نرمی، شکل‌پذیری، نقطه اشتعال و حلالیت را هم گزارش می‌کند، و اگر می‌خواهید بازرس مستقل هنگام بارگیری نمونه‌برداری کند، این را در استعلام بگویید نه بعد از حرکت بار."
+            ],
+            "ar": [
+                "كثيرًا ما يطلب منا المشترون «الدرجة الأفضل» من البيتومين، ظنًا أن الرقم الأعلى يعني جودة أعلى. وليس الأمر كذلك. الرقمان في 60/70 أو 85/100 قياس لا تقييم، وقراءتهما بالمقلوب تؤدي إلى بيتومين يفشل في الخدمة.",
+                "تأتي درجة الاختراق من اختبار مخبري قياسي. تُترك إبرة تحت حمل مقداره 100 غرام لتغوص في عينة بيتومين محفوظة عند 25 درجة مئوية لمدة خمس ثوانٍ، ويُقاس العمق الذي تبلغه بأعشار المليمتر. العينة المصنّفة 60/70 تسمح للإبرة بالنفاذ من 60 إلى 70 من أعشار المليمتر، والمصنّفة 85/100 تسمح بأكثر — أي أن 85/100 هي الأطرى بين الاثنتين، لا الأفضل.",
+                "وهذه الطراوة هي جوهر الاختيار. تقاوم الدرجة الأقسى التشوّه حين يكون سطح الطريق ساخنًا والأحمال المحورية ثقيلة، ولذلك تميل المناخات الحارة والطرق كثيفة الحركة إلى 40/50 و60/70. أما الدرجة الأطرى فتبقى مرنة حين يبرد السطح وتقاوم التشقق الذي يصيب الرابط الهش شتاءً، ولذلك تميل المناطق الأبرد إلى 85/100 و100/150. لا واحدة منهما أفضل؛ كل منهما تفشل في ظروف الأخرى.",
+                "ولهذا فإن الوجهة هي التي تقرر، لا المورد. تنشر هيئات الطرق مواصفة الرابط الملائمة لمناخها، وتلك المواصفة هي الحاكمة. فإذا كنتم ترصفون في بلد تنص مواصفته على 60/70، فشحنة 85/100 ليست ترقية — بل هي المادة الخطأ، وسوف تُرفض أو تتخدّد في أول موسم حار.",
+                "ونظام الاختراق واحد من أنظمة عدة. فـ EN 12591 هو المعيار الأوروبي للتصنيف بالاختراق و ASTM D946 المعيار الأمريكي؛ وفي أماكن أخرى ستجدون التصنيف باللزوجة ونظام درجة الأداء (PG) الذي يصنّف الرابط بحسب المدى الحراري الذي صُمم لتحمّله. والمشتري الذي يذكر «60/70» يعمل ضمن نظام الاختراق، ومن الأفضل تصريح ذلك في الاستفسار، لأن البيتومين نفسه يحمل تسميات مختلفة تحت كل نظام.",
+                "وعند إرسال الاستفسار، لا تكفي الدرجة وحدها لتسعير الشحنة. أضيفوا الكمية، ونوع التعبئة — براميل فولاذية جديدة أو أكياس جامبو أو سائب في حاوية بيتومين أو صهريج مسخّن، وكل منها يغيّر الكلفة والمناولة — والوجهة، والشهادة المطلوبة عند الوصول. وعادةً تُبيّن شهادة التحليل الاختراق إلى جانب نقطة الليونة والمطيلية ونقطة الوميض والذوبانية، وإذا أردتم معاينًا مستقلًا يسحب العينة عند التحميل فاذكروا ذلك في الاستفسار لا بعد تحرك البضاعة."
+            ],
+            "ru": [
+                "Покупатели часто просят у нас «марку получше», полагая, что большее число означает более высокое качество. Это не так. Два числа в 60/70 или 85/100 — это измерение, а не оценка, и неверное их прочтение приводит к битуму, который не выдерживает эксплуатации.",
+                "Марка по пенетрации определяется стандартным лабораторным испытанием. Игла под нагрузкой 100 граммов погружается в образец битума, выдержанный при 25 °C, в течение пяти секунд, и достигнутая глубина измеряется в десятых долях миллиметра. Образец марки 60/70 пропускает иглу на 60–70 десятых миллиметра. Образец 85/100 пропускает дальше — то есть 85/100 мягче, а не лучше.",
+                "Именно эта мягкость и составляет суть выбора. Более твёрдая марка сопротивляется деформации, когда покрытие раскалено, а осевые нагрузки велики, поэтому жаркий климат и напряжённые маршруты тяготеют к 40/50 и 60/70. Более мягкая марка сохраняет гибкость на холоде и сопротивляется растрескиванию, которому подвержено хрупкое вяжущее зимой, поэтому холодные регионы тяготеют к 85/100 и 100/150. Ни одна не превосходит другую: каждая отказывает в чужих условиях.",
+                "Поэтому решает пункт назначения, а не поставщик. Дорожные ведомства публикуют спецификацию вяжущего под свой климат, и она имеет приоритет. Если вы укладываете покрытие в стране, стандарт которой требует 60/70, партия 85/100 — не улучшение, а неверный материал: её либо отклонят, либо она пойдёт колеёй в первый же жаркий сезон.",
+                "Система пенетрации — одна из нескольких. EN 12591 — европейский стандарт градации по пенетрации, ASTM D946 — американский; в других местах встречаются градация по вязкости и система эксплуатационных марок (PG), классифицирующая вяжущее по диапазону температур, на который оно рассчитано. Покупатель, называющий «60/70», работает в системе пенетрации, и это стоит указать в запросе, поскольку один и тот же битум получает разные обозначения в каждой системе.",
+                "При отправке запроса одной марки для расчёта цены недостаточно. Укажите объём, вид упаковки — новые стальные бочки, биг-бэги, налив в битумный контейнер или обогреваемую цистерну меняют и стоимость, и обработку, — пункт назначения и требуемый при приёмке сертификат. Сертификат анализа обычно приводит пенетрацию вместе с температурой размягчения, растяжимостью, температурой вспышки и растворимостью; а если вы хотите, чтобы пробу при погрузке отбирал независимый сюрвейер, укажите это в запросе, а не после отправки груза."
+            ]
+        },
+        "links": [
+            {
+                "href": "/products/energy-bitumen",
+                "label": {
+                    "en": "Energy & Bitumen: what we supply and how",
+                    "fa": "انرژی و قیر: چه تأمین می‌کنیم و چگونه",
+                    "ar": "الطاقة والبيتومين: ماذا نورّد وكيف",
+                    "ru": "Энергия и битум: что мы поставляем и как"
+                }
+            },
+            {
+                "href": "/quality",
+                "label": {
+                    "en": "How we check a cargo before it leaves",
+                    "fa": "چطور بار را پیش از حرکت کنترل می‌کنیم",
+                    "ar": "كيف نفحص البضاعة قبل مغادرتها",
+                    "ru": "Как мы проверяем груз до отправки"
+                }
+            },
+            {
+                "href": "/contact",
+                "label": {
+                    "en": "Send your grade, quantity and destination",
+                    "fa": "گرید، مقدار و مقصد خود را بفرستید",
+                    "ar": "أرسل الدرجة والكمية والوجهة",
+                    "ru": "Отправьте марку, объём и пункт назначения"
+                }
+            }
+        ]
+    },
+    {
         "slug": "khorasan-razavi-delegation-uzbekistan",
         "date": "2026-08-23",
         "image": "/images/photo_2026-06-22_16-03-13.jpg",
         "featured": true,
         "title": {
-            "en": "CEO joins the Khorasan Razavi economic delegation to Uzbekistan",
+            "en": "CEO joins Khorasan Razavi delegation to Uzbekistan",
             "fa": "حضور مدیرعامل در سفر هیئت اقتصادی خراسان رضوی به ازبکستان",
-            "ar": "مشاركة الرئيس التنفيذي في زيارة الوفد الاقتصادي لخراسان رضوي إلى أوزبكستان",
-            "ru": "Генеральный директор в составе экономической делегации Хорасан-Резави в Узбекистане"
+            "ar": "الرئيس التنفيذي ضمن وفد خراسان إلى أوزبكستان",
+            "ru": "Гендиректор в делегации Хорасана в Узбекистане"
         },
         "excerpt": {
             "en": "Mr. Majid Rokhsati travelled with the Khorasan Razavi economic delegation to Uzbekistan for meetings with trade bodies and Uzbek companies.",
@@ -44,7 +376,7 @@
         "date": "2026-07-15",
         "image": "/images/01_global_shipping_port.webp",
         "title": {
-            "en": "Visit to Uzbekistan with the Chamber of Commerce delegation",
+            "en": "Uzbekistan visit with the Chamber of Commerce",
             "fa": "بازدید از ازبکستان با هیئت اتاق بازرگانی",
             "ar": "زيارة إلى أوزبكستان ضمن وفد غرفة التجارة",
             "ru": "Визит в Узбекистан в составе делегации Торговой палаты"

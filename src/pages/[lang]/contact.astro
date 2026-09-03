@@ -1,6 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import { getTranslation, resolveLang, withLanguagePrefix, localizedLanguages } from '../../i18n';
+import { metaDescription } from '../../data/meta-descriptions';
 import { WHATSAPP_NUMBER, WHATSAPP_URL } from '../../config/contact';
 
 export function getStaticPaths() {
@@ -21,13 +22,20 @@ const productGroups = [
   { code: 'EB', label: t.labels.trade.energyBitumen },
   { code: 'MS', label: t.labels.trade.metalsSteel },
   { code: 'AG', label: t.labels.trade.agriculturalCommodities },
+  { code: 'CP', label: t.labels.trade.chemicalsPetrochemicals },
   { code: 'TX', label: t.labels.trade.textileRawMaterials },
 ];
 
 const whatsappGreetingUrl = `${WHATSAPP_URL}?text=${encodeURIComponent(t.pages.contact.whatsappGreeting)}`;
 ---
 
-<Layout title={t.pages.contact.title} lang={lang} translation={t}>
+<Layout
+  title={t.pages.contact.title}
+  lang={lang}
+  translation={t}
+  description={metaDescription(lang, 'contact') ?? t.pages.contact.intro}
+  breadcrumbs={[{ name: t.pages.contact.title, href: withLanguagePrefix(lang, '/contact') }]}
+>
   <main>
     <section>
       <div class="mx-auto max-w-6xl px-4 py-12 text-center sm:px-6 sm:py-16">
@@ -68,7 +76,7 @@ const whatsappGreetingUrl = `${WHATSAPP_URL}?text=${encodeURIComponent(t.pages.c
                 <p class="text-[10px] font-bold uppercase tracking-[0.2em] text-white/45">{t.pages.contact.addressLabel}</p>
                 <div class="mt-2 flex items-start gap-3">
                   <span class="mt-0.5 inline-flex h-5 w-8 shrink-0 overflow-hidden rounded-sm ring-1 ring-white/15">
-                    <img src="/images/iran-flag.webp" alt="Iran flag" class="h-full w-full object-cover" loading="lazy" />
+                    <img src="/images/iran-flag.webp" alt="Iran flag" class="h-full w-full object-cover" width="297" height="170" loading="lazy" />
                   </span>
                   <p class="text-sm leading-6 text-white/75">{t.pages.contact.address}</p>
                 </div>
@@ -81,7 +89,7 @@ const whatsappGreetingUrl = `${WHATSAPP_URL}?text=${encodeURIComponent(t.pages.c
             <div class="mt-4 grid grid-cols-2 gap-3">
               {productGroups.map((group) => (
                 <a
-                  href={withLanguagePrefix(lang, `/products#${group.code === 'EB' ? 'energy-bitumen' : group.code === 'MS' ? 'metals-steel' : group.code === 'AG' ? 'agricultural-commodities' : 'textile-raw-materials'}`)}
+                  href={withLanguagePrefix(lang, `/products/${group.code === 'EB' ? 'energy-bitumen' : group.code === 'MS' ? 'metals-steel' : group.code === 'AG' ? 'agricultural-commodities' : 'textile-raw-materials'}`)}
                   class="rounded-2xl border border-[#19266A]/10 bg-slate-50 p-4 transition hover:border-[#F3C623]/60 hover:bg-[#F3C623]/10"
                 >
                   <span class="text-[10px] font-extrabold tracking-[0.16em] text-[#19266A]/45">{group.code}</span>
