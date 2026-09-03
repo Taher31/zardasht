@@ -1,5 +1,41 @@
 [
     {
+        "slug": "test1",
+        "date": "2026-09-04",
+        "image": "/images/news/ceo-copy-mtm30qoo.webp",
+        "featured": true,
+        "title": {
+            "en": "test11",
+            "fa": "test1",
+            "ar": "test1",
+            "ru": "ر"
+        },
+        "excerpt": {
+            "en": "test1",
+            "fa": "test1",
+            "ar": "test1",
+            "ru": "test1"
+        },
+        "body": {
+            "en": [
+                "test1"
+            ],
+            "fa": [
+                "test1"
+            ],
+            "ar": [
+                "test1"
+            ],
+            "ru": [
+                "test1"
+            ]
+        },
+        "imageAlt": {
+            "en": "test1",
+            "ar": "test1"
+        }
+    },
+    {
         "slug": "incoterms-rail-fob-cif",
         "date": "2026-08-30",
         "image": "/images/07_rail_logistics.webp",
@@ -480,7 +516,6 @@
         "slug": "chamber-of-commerce-meeting",
         "date": "2026-03-10",
         "image": "/images/06_road_logistics_truck.webp",
-        "featured": false,
         "title": {
             "en": "Meeting at the Chamber of Commerce",
             "fa": "دیدار در اتاق بازرگانی",

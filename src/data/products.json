@@ -7,14 +7,14 @@
             "description": "Bitumen export supply with a current focus on Uzbekistan and qualified regional buyers.",
             "products": [
                 {
-                    "name": "Bitumen exports",
-                    "description": "Supply for Uzbekistan and other regional opportunities based on agreed specification and availability.",
-                    "tag": "Export"
-                },
-                {
                     "name": "Specification matching",
                     "description": "Grade, packaging, and commercial requirements are confirmed against each inquiry.",
                     "tag": "Specs"
+                },
+                {
+                    "name": "Bitumen exports",
+                    "description": "Supply for Uzbekistan and other regional opportunities based on agreed specification and availability.",
+                    "tag": "Export"
                 },
                 {
                     "name": "Logistics planning",
@@ -149,14 +149,14 @@
             "description": "تأمین صادراتی قیر با تمرکز فعلی بر ازبکستان و خریداران مناسب منطقه.",
             "products": [
                 {
-                    "name": "صادرات قیر",
-                    "description": "تأمین برای ازبکستان و فرصت‌های منطقه‌ای بر اساس مشخصات توافق‌شده و موجودی.",
-                    "tag": "صادرات"
-                },
-                {
                     "name": "تطبیق مشخصات",
                     "description": "گرید، نوع بسته‌بندی و نیازهای تجاری برای هر درخواست به‌طور جداگانه تأیید می‌شود.",
                     "tag": "مشخصات"
+                },
+                {
+                    "name": "صادرات قیر",
+                    "description": "تأمین برای ازبکستان و فرصت‌های منطقه‌ای بر اساس مشخصات توافق‌شده و موجودی.",
+                    "tag": "صادرات"
                 },
                 {
                     "name": "برنامه‌ریزی لجستیک",
@@ -291,14 +291,14 @@
             "description": "توريد البيتومين للتصدير مع تركيز حالي على أوزبكستان والمشترين المؤهلين إقليميًا.",
             "products": [
                 {
-                    "name": "تصدير البيتومين",
-                    "description": "توريد إلى أوزبكستان وفرص إقليمية حسب المواصفات المتفق عليها والتوفر.",
-                    "tag": "تصدير"
-                },
-                {
                     "name": "مطابقة المواصفات",
                     "description": "يتم تأكيد الدرجة والتعبئة والمتطلبات التجارية لكل استفسار.",
                     "tag": "مواصفات"
+                },
+                {
+                    "name": "تصدير البيتومين",
+                    "description": "توريد إلى أوزبكستان وفرص إقليمية حسب المواصفات المتفق عليها والتوفر.",
+                    "tag": "تصدير"
                 },
                 {
                     "name": "تخطيط اللوجستيات",
@@ -433,14 +433,14 @@
             "description": "Экспортные поставки битума с текущим фокусом на Узбекистан и подходящих региональных покупателей.",
             "products": [
                 {
-                    "name": "Экспорт битума",
-                    "description": "Поставки в Узбекистан и другие региональные направления по согласованной спецификации и наличию.",
-                    "tag": "Экспорт"
-                },
-                {
                     "name": "Соответствие спецификации",
                     "description": "Марка, упаковка и коммерческие требования подтверждаются для каждого запроса.",
                     "tag": "Спецификация"
+                },
+                {
+                    "name": "Экспорт битума",
+                    "description": "Поставки в Узбекистан и другие региональные направления по согласованной спецификации и наличию.",
+                    "tag": "Экспорт"
                 },
                 {
                     "name": "Логистическое планирование",

@@ -28,6 +28,13 @@ export interface NewsPost {
   title: Record<LanguageCode, string>;
   excerpt: Record<LanguageCode, string>;
   body: Record<LanguageCode, string[]>;
+  /**
+   * What the cover photo shows, for anyone hearing the page read aloud.
+   * Optional and usually absent: on the listing cards the headline sits right
+   * beside the image, so describing it there would just be read twice. It is
+   * used on the article page, where the photo stands on its own.
+   */
+  imageAlt?: Partial<Record<LanguageCode, string>>;
 }
 
 export const newsPosts: NewsPost[] = newsData as NewsPost[];
@@ -49,6 +56,7 @@ export const getNewsPosts = (lang: LanguageCode) =>
       title: post.title[lang] ?? post.title.en,
       excerpt: post.excerpt[lang] ?? post.excerpt.en,
       body: post.body[lang] ?? post.body.en,
+      imageAlt: post.imageAlt?.[lang] ?? post.imageAlt?.en ?? '',
     }));
 
 /** Formats an ISO date for display — Persian and Arabic get their own calendars. */

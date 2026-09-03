@@ -3,6 +3,7 @@ import Layout from '../../layouts/Layout.astro';
 import { getTranslation, resolveLang, withLanguagePrefix, localizedLanguages } from '../../i18n';
 import { metaDescription } from '../../data/meta-descriptions';
 import { imageSize } from '../../data/image-size';
+import { ceoByLanguage, ceoImage, peopleByLanguage, representativesByLanguage } from '../../data/team';
 
 export function getStaticPaths() {
   return localizedLanguages.map((language) => ({ params: { lang: language.code } }));
@@ -11,149 +12,17 @@ export function getStaticPaths() {
 const lang = resolveLang(Astro.props.lang ?? Astro.params.lang);
 const t = getTranslation(lang);
 
-const ceoByLanguage = {
-  en: {
-    eyebrow: 'Leadership',
-    name: 'Mr. Majid Rokhsati',
-    role: 'Chief Executive Officer',
-    intro:
-      'Our leadership is focused on building reliable long-term trading relationships across Central Asia, Russia, and neighboring markets.',
-    quote:
-      'We believe sustainable trade is built on trust, clear commitments, and reliable execution from sourcing to delivery.',
-  },
-  fa: {
-    eyebrow: 'مدیریت',
-    name: "آقای مجید رخصتی",
-    role: 'مدیرعامل',
-    intro:
-      'تمرکز مدیریت شرکت بر ایجاد روابط تجاری بلندمدت و قابل‌اعتماد در آسیای مرکزی، روسیه و بازارهای منطقه است.',
-    quote:
-      'ما معتقدیم تجارت پایدار بر اعتماد، تعهد روشن و اجرای قابل‌اتکا از تأمین تا تحویل شکل می‌گیرد.',
-  },
-  ar: {
-    eyebrow: 'الإدارة',
-    name: 'السيد مجيد رخصتي',
-    role: 'الرئيس التنفيذي',
-    intro:
-      'تركز إدارة الشركة على بناء علاقات تجارية طويلة الأجل وموثوقة في آسيا الوسطى وروسيا والأسواق الإقليمية.',
-    quote:
-      'نؤمن أن التجارة المستدامة تقوم على الثقة والالتزام الواضح والتنفيذ الموثوق من التوريد حتى التسليم.',
-  },
-  ru: {
-    eyebrow: 'Руководство',
-    name: 'Г-н Маджид Рохсати',
-    role: 'Генеральный директор',
-    intro:
-      'Руководство компании сосредоточено на развитии надежных долгосрочных торговых отношений в Центральной Азии, России и соседних рынках.',
-    quote:
-      'Мы считаем, что устойчивый бизнес строится на доверии, четких обязательствах и надежном исполнении от закупки до поставки.',
-  },
-} as const;
-
 const ceo = ceoByLanguage[lang] ?? ceoByLanguage.en;
-const ceoImage = '/images/CEO.webp';
-
-// The desks that carry a shipment from purchase to delivery. The only
-// portrait we hold today is the CEO's, so each desk is introduced by what it
-// is responsible for; give a member a `photo` to swap its icon for a headshot.
-const teamPhoto = '/images/CEO.webp';
-
-// Three named people, each currently shown with the CEO's photo as a
-// placeholder until individual headshots are supplied.
-const peopleByLanguage = {
-  en: {
-    kicker: 'The people leading Zardasht Mahd Binaloud Trading, from sourcing to delivery.',
-    title: 'Our people',
-    roster: [
-      { photo: teamPhoto, name: ceoByLanguage.en.name, role: ceoByLanguage.en.role },
-      { photo: teamPhoto, name: 'Commercial Manager', role: 'Sourcing, supplier relationships and trade terms' },
-      { photo: teamPhoto, name: 'Logistics & Operations Manager', role: 'Freight, customs clearance and delivery' },
-    ],
-  },
-  fa: {
-    kicker: 'افرادی که بازرگانی زردشت مهد بینالود را از تأمین تا تحویل هدایت می‌کنند.',
-    title: 'تیم ما',
-    roster: [
-      { photo: teamPhoto, name: ceoByLanguage.fa.name, role: ceoByLanguage.fa.role },
-      { photo: teamPhoto, name: 'مدیر بازرگانی', role: 'تأمین، ارتباط با تأمین‌کنندگان و شرایط معامله' },
-      { photo: teamPhoto, name: 'مدیر لجستیک و عملیات', role: 'حمل، ترخیص گمرکی و تحویل' },
-    ],
-  },
-  ar: {
-    kicker: 'الأشخاص الذين يقودون شركة زردشت مهد بينالود التجارية من التوريد حتى التسليم.',
-    title: 'فريقنا',
-    roster: [
-      { photo: teamPhoto, name: ceoByLanguage.ar.name, role: ceoByLanguage.ar.role },
-      { photo: teamPhoto, name: 'مدير تجاري', role: 'التوريد وعلاقات الموردين وشروط الصفقة' },
-      { photo: teamPhoto, name: 'مدير اللوجستيات والعمليات', role: 'الشحن والتخليص الجمركي والتسليم' },
-    ],
-  },
-  ru: {
-    kicker: 'Люди, которые ведут Zardasht Mahd Binaloud Trading от закупки до доставки.',
-    title: 'Наша команда',
-    roster: [
-      { photo: teamPhoto, name: ceoByLanguage.ru.name, role: ceoByLanguage.ru.role },
-      { photo: teamPhoto, name: 'Коммерческий директор', role: 'Закупки, отношения с поставщиками и условия сделок' },
-      { photo: teamPhoto, name: 'Директор по логистике и операциям', role: 'Перевозка, таможенное оформление и доставка' },
-    ],
-  },
-} as const;
 
 const people = peopleByLanguage[lang] ?? peopleByLanguage.en;
 
-// One on-the-ground contact per market. Every entry currently shows the same
-// placeholder name and photo until real headshots and names are supplied —
-// swap `name`/`photo` per person once they're on hand, the markup below
-// already keys off both.
-const representativesByLanguage = {
-  en: {
-    eyebrow: 'Our network',
-    title: 'Our representatives in the region',
-    kicker: 'A local contact in each of our key markets, not a handoff to a stranger.',
-    roster: [
-      { photo: '/images/rep-korosh.webp', name: 'Kourosh Rokhsat', role: 'Representative', flag: '/images/flag-uz.webp', country: 'Uzbekistan' },
-      { photo: '/images/rep-saqi.webp', landmark: '/images/landmark-uzbekistan.webp' , name: 'Kourosh Rokhsat', role: 'Representative', flag: '/images/flag-kz.webp', country: 'Kazakhstan' },
-      { photo: '/images/rep-korosh.webp', landmark: '/images/landmark-russia.webp', name: 'Kourosh Rokhsat', role: 'Representative', flag: '/images/flag-ru.webp', country: 'Russia' },
-    ],
-  },
-  fa: {
-    eyebrow: 'شبکه ما',
-    title: 'نمایندگان ما در منطقه',
-    kicker: 'در هر بازار کلیدی، یک تماس محلی و مستقیم داریم؛ نه واگذاری به یک غریبه.',
-    roster: [
-      { photo: '/images/rep-korosh.webp', name: 'کوروش رخصت', role: 'نماینده', flag: '/images/flag-uz.webp', country: 'ازبکستان' },
-      { photo: '/images/rep-korosh.webp', name: 'کوروش رخصت', role: 'نماینده', flag: '/images/flag-kz.webp', country: 'قزاقستان' },
-      { photo: '/images/rep-korosh.webp', landmark: '/images/landmark-russia.webp', name: 'کوروش رخصت', role: 'نماینده', flag: '/images/flag-ru.webp', country: 'روسیه' },
-    ],
-  },
-  ar: {
-    eyebrow: 'شبكتنا',
-    title: 'ممثلونا في المنطقة',
-    kicker: 'جهة اتصال محلية في كل سوق رئيسي، لا تسليم إلى شخص غريب.',
-    roster: [
-      { photo: '/images/rep-korosh.webp', name: 'كوروش رخصت', role: 'ممثل', flag: '/images/flag-uz.webp', country: 'أوزبكستان' },
-      { photo: '/images/rep-korosh.webp', name: 'كوروش رخصت', role: 'ممثل', flag: '/images/flag-kz.webp', country: 'كازاخستان' },
-      { photo: '/images/rep-korosh.webp', landmark: '/images/landmark-russia.webp', name: 'كوروش رخصت', role: 'ممثل', flag: '/images/flag-ru.webp', country: 'روسيا' },
-    ],
-  },
-  ru: {
-    eyebrow: 'Наша сеть',
-    title: 'Наши представители в регионе',
-    kicker: 'Локальный контакт на каждом ключевом рынке — а не передача незнакомцу.',
-    roster: [
-      { photo: '/images/rep-korosh.webp', name: 'Куруш Рохсат', role: 'Представитель', flag: '/images/flag-uz.webp', country: 'Узбекистан' },
-      { photo: '/images/rep-korosh.webp', name: 'Куруш Рохсат', role: 'Представитель', flag: '/images/flag-kz.webp', country: 'Казахстан' },
-      { photo: '/images/rep-korosh.webp', landmark: '/images/landmark-russia.webp', name: 'Куруш Рохсат', role: 'Представитель', flag: '/images/flag-ru.webp', country: 'Россия' },
-    ],
-  },
-} as const;
-
 const representatives = representativesByLanguage[lang] ?? representativesByLanguage.en;
 
-// The company line, shown on every representative card. `tel:` needs the
-// number without spaces; the visible label keeps them for readability.
-const repPhone = t.pages.contact.phone;
-const repPhoneHref = `tel:${repPhone.replace(/[^\d+]/g, '')}`;
+// The company line is the default on every representative card; a rep with
+// their own number overrides it. `tel:` needs the number without spaces; the
+// visible label keeps them for readability.
+const companyPhone = t.pages.contact.phone;
+const telHref = (number: string) => `tel:${number.replace(/[^\d+]/g, '')}`;
 
 const mapQuery = encodeURIComponent(t.pages.about.mapAddress || t.pages.contact.address);
 const mapUrl = `https://www.google.com/maps/search/?api=1&query=${mapQuery}`;
@@ -381,14 +250,14 @@ const mapEmbedUrl = `https://www.google.com/maps?q=${mapQuery}&output=embed&z=14
               </div>
 
               <a
-                href={repPhoneHref}
+                href={telHref(rep.phone ?? companyPhone)}
                 dir="ltr"
                 class="rep-card__call mt-3 flex items-center justify-center gap-2 rounded-xl bg-[#10184A] py-2.5 text-sm font-bold text-white transition hover:bg-[#19266A]"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 5a2 2 0 012-2h2.2a1 1 0 01.97.757l.9 3.6a1 1 0 01-.29.96l-1.5 1.5a15 15 0 006.9 6.9l1.5-1.5a1 1 0 01.96-.29l3.6.9A1 1 0 0121 16.8V19a2 2 0 01-2 2h-1C9.7 21 3 14.3 3 6V5z" />
                 </svg>
-                {repPhone}
+                {rep.phone ?? companyPhone}
               </a>
             </div>
           </div>

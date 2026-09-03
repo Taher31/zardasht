@@ -25,7 +25,7 @@ astro-dev-error.log
 # jetbrains setting folder
 .idea/
 
-# admin panel: real DB credentials and uploaded images never get committed
-admin/config/config.php
-admin/uploads/news/*
-!admin/uploads/news/.gitkeep
+# Publish pipeline output (written by the admin panel, ~31MB per release).
+# `current` is the symlink Nginx serves; both are build artefacts, not source.
+releases/
+current
