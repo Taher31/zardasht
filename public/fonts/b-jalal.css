@@ -1,0 +1,32 @@
+/* B Jalal — the Persian face for RTL pages.
+
+   B Jalal is a commercial font (Borna Rayaneh), not an open-licensed one like
+   Vazirmatn, so its files are deliberately not committed here. Drop your
+   licensed copies into this folder under the names below and the site picks
+   them up on the next load — no code change needed. Until then Vazirmatn is
+   next in the stack, so Persian pages keep rendering correctly.
+
+   woff2 is listed first because it is roughly half the size of the ttf; the
+   browser takes the first one it can actually fetch, so supplying either works.
+
+   If you only have the regular weight, ship just b-jalal.woff2/.ttf: the bold
+   block below will not resolve, and `font-synthesis: weight` in global.css
+   lets the browser embolden the regular face rather than dropping to a
+   different family mid-paragraph. */
+@font-face {
+  font-family: 'B Jalal';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(/fonts/b-jalal.woff2) format('woff2'),
+       url(/fonts/b-jalal.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: 'B Jalal';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(/fonts/b-jalal-bold.woff2) format('woff2'),
+       url(/fonts/b-jalal-bold.ttf) format('truetype');
+}

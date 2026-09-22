@@ -1,7 +1,26 @@
+---
+import type { LanguageCode, Translation } from '../i18n';
+
+interface Props {
+  lang: LanguageCode;
+  translation: Translation;
+}
+
+const { lang, translation } = Astro.props;
+const phoneHref = translation.pages.contact.phone.replace(/[^\d+]/g, '');
+
+const ariaLabels: Record<LanguageCode, string> = {
+  en: 'Call us',
+  fa: 'تماس با ما',
+  ar: 'اتصل بنا',
+  ru: 'Позвонить нам',
+};
+---
+
 <a
-  href="tel:+1234567890"
+  href={`tel:${phoneHref}`}
   class="call-button"
-  aria-label="Call us"
+  aria-label={ariaLabels[lang] ?? ariaLabels.en}
 >
   ☎
 </a>

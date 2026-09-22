@@ -1,6 +1,10 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import ProductCard from '../../components/ProductCard.astro';
 import { getTranslation, resolveLang, withLanguagePrefix, localizedLanguages } from '../../i18n';
+import { metaDescription } from '../../data/meta-descriptions';
+import { imageSize } from '../../data/image-size';
+import { groupAccents, groupFallbackImage } from '../../data/product-groups';
 
 export function getStaticPaths() {
   return localizedLanguages.map((language) => ({ params: { lang: language.code } }));
@@ -10,17 +14,19 @@ const lang = resolveLang(Astro.props.lang ?? Astro.params.lang);
 const t = getTranslation(lang);
 const stats = t.pages.home.stats;
 
-const sectionAccents: Record<string, { code: string; note: string }> = {
-  'energy-bitumen': { code: '01', note: 'EB' },
-  'metals-steel': { code: '02', note: 'MS' },
-  'agricultural-commodities': { code: '03', note: 'AG' },
-  'textile-raw-materials': { code: '04', note: 'TX' },
-};
+const sectionAccents = groupAccents;
+const fallbackImage = groupFallbackImage;
 ---
 
-<Layout title={t.pages.products.title} lang={lang} translation={t}>
+<Layout
+  title={t.pages.products.title}
+  lang={lang}
+  translation={t}
+  description={metaDescription(lang, 'products') ?? t.pages.products.intro}
+  breadcrumbs={[{ name: t.pages.products.title, href: withLanguagePrefix(lang, '/products') }]}
+>
   <main>
-    <section class="border-b border-[#19266A]/10 bg-white/70">
+    <section>
       <div class="mx-auto grid max-w-6xl gap-8 px-4 py-12 sm:px-6 sm:py-16 lg:grid-cols-[1.15fr,0.85fr] lg:items-end">
         <div>
           <p class="section-eyebrow">{t.pages.products.eyebrow}</p>
@@ -37,11 +43,23 @@ const sectionAccents: Record<string, { code: string; note: string }> = {
           <div class="mt-5 grid grid-cols-2 gap-3">
             {t.pages.products.sections.map((section) => (
               <a
-                href={`#${section.id}`}
-                class="rounded-2xl border border-white/10 bg-white/5 p-4 text-sm font-semibold text-white/90 transition hover:border-[#F3C623]/50 hover:bg-white/10"
+                href={withLanguagePrefix(lang, `/products/${section.id}`)}
+                class="group overflow-hidden rounded-2xl border border-white/10 bg-white/5 transition hover:border-[#F3C623]/50 hover:bg-white/10"
               >
-                <span class="mb-2 block text-[10px] font-bold uppercase tracking-[0.18em] text-[#F3C623]">{section.badge}</span>
-                {section.title}
+                <div class="relative h-16 w-full overflow-hidden">
+                  <img
+                    src={sectionAccents[section.id]?.image ?? fallbackImage}
+                    alt=""
+                    loading="lazy"
+                    data-fallback-image
+                    data-fallback={fallbackImage}
+                    class="h-full w-full object-cover opacity-70 transition duration-500 group-hover:scale-105 group-hover:opacity-90"
+                    {...imageSize(sectionAccents[section.id]?.image ?? fallbackImage)}
+                  />
+                  <div class="absolute inset-0 bg-gradient-to-t from-[#10184A] via-[#10184A]/30 to-transparent"></div>
+                  <span class="absolute start-2 top-2 text-[10px] font-bold uppercase tracking-[0.18em] text-[#F3C623]">{section.badge}</span>
+                </div>
+                <p class="p-3 text-sm font-semibold text-white/90">{section.title}</p>
               </a>
             ))}
           </div>
@@ -61,11 +79,38 @@ const sectionAccents: Record<string, { code: string; note: string }> = {
 
       <div class="mt-12 space-y-10 sm:mt-16 sm:space-y-14">
         {t.pages.products.sections.map((section) => {
-          const accent = sectionAccents[section.id] ?? { code: '00', note: section.badge };
+          const accent = sectionAccents[section.id] ?? { code: '00', note: section.badge, image: fallbackImage };
           return (
             <section id={section.id} class="scroll-mt-32 overflow-hidden rounded-3xl border border-[#19266A]/10 bg-white shadow-[0_24px_60px_-36px_rgba(25,38,106,.4)]">
               <div class="grid lg:grid-cols-[0.78fr,1.22fr]">
                 <div class="relative flex min-h-[260px] flex-col justify-between overflow-hidden bg-[#10184A] p-7 text-white sm:p-9">
+                  {accent.video ? (
+                    <video
+                      class="absolute inset-0 h-full w-full object-cover opacity-100"
+                      poster={accent.image}
+                      muted
+                      loop
+                      playsinline
+                      preload="none"
+                      aria-hidden="true"
+                      data-fallback-video
+                      data-fallback={accent.image}
+                      data-fallback-width={imageSize(accent.image).width}
+                      data-fallback-height={imageSize(accent.image).height}
+                      data-video-src={accent.video}
+                    ></video>
+                  ) : (
+                    <img
+                      src={accent.image}
+                      alt={section.title}
+                      loading="lazy"
+                      data-fallback-image
+                      data-fallback={fallbackImage}
+                      class="absolute inset-0 h-full w-full object-cover opacity-100"
+                      {...imageSize(accent.image)}
+                    />
+                  )}
+                  <div class="absolute inset-0 bg-gradient-to-br from-[#10184A]/95 via-[#10184A]/85 to-[#0b1440]/95"></div>
                   <div class="absolute -right-16 -top-16 h-56 w-56 rounded-full border border-white/10"></div>
                   <div class="absolute -bottom-24 -left-16 h-72 w-72 rounded-full border border-[#F3C623]/20"></div>
                   <div class="absolute inset-0 opacity-20 [background-image:linear-gradient(rgba(255,255,255,.08)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.08)_1px,transparent_1px)] [background-size:42px_42px]"></div>
@@ -87,18 +132,7 @@ const sectionAccents: Record<string, { code: string; note: string }> = {
                 <div class="p-6 sm:p-8">
                   <div class="grid gap-4 sm:grid-cols-2">
                     {section.products.map((product) => (
-                      <article class="rounded-2xl border border-[#19266A]/10 bg-slate-50/70 p-5 transition hover:-translate-y-0.5 hover:border-[#19266A]/20 hover:bg-white hover:shadow-lg">
-                        <div class="flex items-start justify-between gap-4">
-                          <div>
-                            <p class="text-[10px] font-extrabold uppercase tracking-[0.18em] text-[#19266A]/50">{product.tag}</p>
-                            <h3 class="mt-2 text-lg font-semibold text-[#19266A]">{product.name}</h3>
-                          </div>
-                          <span class="inline-flex min-w-9 items-center justify-center rounded-full bg-[#F3C623]/15 px-2.5 py-1 text-[10px] font-bold text-[#19266A]">
-                            {section.badge}
-                          </span>
-                        </div>
-                        <p class="mt-3 text-sm leading-6 text-slate-600">{product.description}</p>
-                      </article>
+                      <ProductCard product={product} badge={section.badge} />
                     ))}
                   </div>
 
@@ -130,14 +164,61 @@ const sectionAccents: Record<string, { code: string; note: string }> = {
             <h2 class="text-2xl font-semibold text-white sm:text-3xl">{t.pages.products.title}</h2>
             <p class="text-white/75">{t.pages.home.heroSubtitle}</p>
           </div>
-          <a
-            class="pill-link shrink-0 bg-[#F3C623] text-[#10184A] shadow-lg shadow-[#F3C623]/25 transition hover:-translate-y-0.5"
-            href={withLanguagePrefix(lang, '/contact')}
-          >
-            {t.labels.trade.inquiry}
-          </a>
+          <div class="flex flex-wrap items-center justify-center gap-3 lg:justify-end">
+            <a
+              class="pill-link shrink-0 border border-white/25 bg-white/10 text-white transition hover:bg-white/15"
+              href="/downloads/zardasht-product-catalog.pdf"
+              download
+            >
+              {t.labels.trade.downloadCatalog}
+            </a>
+            <a
+              class="pill-link shrink-0 bg-[#F3C623] text-[#10184A] shadow-lg shadow-[#F3C623]/25 transition hover:-translate-y-0.5"
+              href={withLanguagePrefix(lang, '/contact')}
+            >
+              {t.labels.trade.inquiry}
+            </a>
+          </div>
         </div>
       </section>
     </div>
   </main>
+
+  <script>
+    document.querySelectorAll('[data-fallback-image]').forEach((image) => {
+      if (!(image instanceof HTMLImageElement)) return;
+      image.addEventListener('error', () => {
+        const fallback = image.dataset.fallback;
+        if (!fallback || image.src.endsWith(fallback)) return;
+        image.src = fallback;
+      }, { once: true });
+    });
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    document.querySelectorAll('[data-fallback-video]').forEach((video) => {
+      if (!(video instanceof HTMLVideoElement)) return;
+      if (reduceMotion) {
+        video.pause();
+        video.removeAttribute('autoplay');
+        return;
+      }
+      // A failed source (unsupported codec, bad path) should degrade to the
+      // still image rather than leaving a blank/broken video box.
+      video.addEventListener('error', () => {
+        const fallback = video.dataset.fallback;
+        if (!fallback) return;
+        const image = document.createElement('img');
+        image.src = fallback;
+        image.alt = '';
+        image.loading = 'lazy';
+        image.className = video.className;
+        // Sizes travel on the element so the swapped-in still reserves the
+        // same box the video occupied.
+        if (video.dataset.fallbackWidth) image.width = Number(video.dataset.fallbackWidth);
+        if (video.dataset.fallbackHeight) image.height = Number(video.dataset.fallbackHeight);
+        video.replaceWith(image);
+      }, { once: true });
+    });
+  </script>
 </Layout>

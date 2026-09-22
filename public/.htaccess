@@ -1,0 +1,124 @@
+# Apache configuration for cPanel hosting.
+#
+# This file lives in public/ so `astro build` copies it to the root of dist/,
+# which is what gets uploaded to the host. It replaces public/_redirects —
+# that file is Netlify/Cloudflare syntax and Apache ignores it completely, so
+# the legacy /en/* redirects below had silently stopped working.
+#
+# Everything is wrapped in <IfModule> so a host without one of these modules
+# serves the site normally instead of returning a 500.
+
+# ----------------------------------------------------------------------------
+# Directory listing. Ten folders here have no index.html — /video, /images,
+# /downloads, /data and the rest. Without this Apache generates a browsable
+# index for each one, publishing the full file list of the site to anyone who
+# types the folder name.
+#
+# IF THE SITE RETURNS 500 AFTER UPLOADING, DELETE THIS ONE LINE FIRST. It is
+# the only directive here that a host can forbid outright: `Options` requires
+# AllowOverride Options (or All), and a locked-down plan answers with a 500
+# rather than ignoring it. Everything below is inside <IfModule> and is safe
+# either way. cPanel also has "Index Manager" in its UI as an alternative.
+# ----------------------------------------------------------------------------
+Options -Indexes
+
+# ----------------------------------------------------------------------------
+# Compression. The single biggest win available here. Brotli is tried first
+# because it beats gzip noticeably on this site's files (the trade map's
+# geojson: 938KB raw, 314KB gzipped, 210KB brotli), with gzip as the fallback
+# for hosts or browsers without it. Images, fonts and video are already
+# compressed formats and are deliberately left out — re-compressing them costs
+# CPU and saves nothing.
+# ----------------------------------------------------------------------------
+<IfModule mod_brotli.c>
+  AddOutputFilterByType BROTLI_COMPRESS text/html text/plain text/css text/xml
+  AddOutputFilterByType BROTLI_COMPRESS application/javascript application/x-javascript
+  AddOutputFilterByType BROTLI_COMPRESS application/json application/geo+json
+  AddOutputFilterByType BROTLI_COMPRESS application/xml application/rss+xml
+  AddOutputFilterByType BROTLI_COMPRESS image/svg+xml
+</IfModule>
+
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/css text/xml
+  AddOutputFilterByType DEFLATE application/javascript application/x-javascript
+  AddOutputFilterByType DEFLATE application/json application/geo+json
+  AddOutputFilterByType DEFLATE application/xml application/rss+xml
+  AddOutputFilterByType DEFLATE image/svg+xml
+  AddOutputFilterByType DEFLATE font/ttf font/otf
+</IfModule>
+
+# Apache does not know .geojson by default and would send it as a binary
+# download, which keeps it out of the compression rules above.
+<IfModule mod_mime.c>
+  AddType application/geo+json .geojson
+  AddType application/json .json
+  AddType image/webp .webp
+  AddType font/woff2 .woff2
+  AddType video/mp4 .mp4
+</IfModule>
+
+# ----------------------------------------------------------------------------
+# Caching. Astro fingerprints the files in /_astro/, so those can be cached
+# forever. Fonts, images and video never change under the same name here
+# either. HTML is the exception: it must revalidate, or a visitor keeps seeing
+# yesterday's page after content is republished.
+# ----------------------------------------------------------------------------
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresDefault                        "access plus 1 week"
+
+  ExpiresByType text/html               "access plus 0 seconds"
+  ExpiresByType application/geo+json    "access plus 1 week"
+  ExpiresByType application/json        "access plus 1 hour"
+
+  ExpiresByType text/css                "access plus 1 year"
+  ExpiresByType application/javascript  "access plus 1 year"
+
+  ExpiresByType image/webp              "access plus 1 year"
+  ExpiresByType image/png               "access plus 1 year"
+  ExpiresByType image/jpeg              "access plus 1 year"
+  ExpiresByType image/svg+xml           "access plus 1 year"
+  ExpiresByType image/x-icon            "access plus 1 year"
+  ExpiresByType font/woff2              "access plus 1 year"
+  ExpiresByType video/mp4               "access plus 1 year"
+</IfModule>
+
+<IfModule mod_headers.c>
+  # Hashed build output can never go stale under the same name.
+  <FilesMatch "\.(css|js|woff2)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+
+  # HTML always gets re-checked so a fresh upload is picked up immediately.
+  <FilesMatch "\.html$">
+    Header set Cache-Control "public, max-age=0, must-revalidate"
+  </FilesMatch>
+
+  Header set X-Content-Type-Options "nosniff"
+  Header always append X-Frame-Options "SAMEORIGIN"
+</IfModule>
+
+# ----------------------------------------------------------------------------
+# Redirects. English is the default language and has no prefix, so the old
+# /en/... addresses must point at the unprefixed ones. Without this they 404.
+# ----------------------------------------------------------------------------
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # HTTPS. cPanel's free AutoSSL usually covers this, but leave it commented
+  # until the certificate is actually issued — turning it on without a working
+  # certificate makes the site unreachable.
+  # RewriteCond %{HTTPS} !=on
+  # RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
+
+  RewriteRule ^en/?$ / [R=301,L]
+  RewriteRule ^en/(.*)$ /$1 [R=301,L]
+</IfModule>
+
+# UTF-8 everywhere; the site is Persian, Arabic and Russian as well as English.
+AddDefaultCharset UTF-8
+
+# No ErrorDocument is set on purpose: the site has no 404 page yet, and
+# pointing at one that does not exist just produces Apache's bare error page
+# with an extra failed request. Add `ErrorDocument 404 /404.html` here once
+# src/pages/404.astro exists.

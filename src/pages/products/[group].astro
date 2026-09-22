@@ -1,0 +1,15 @@
+---
+import Page from '../[lang]/products/[group].astro';
+import productsData from '../../data/products.json';
+
+export function getStaticPaths() {
+  return productsData.en.map((section) => ({
+    params: { group: section.id },
+    props: { group: section.id },
+  }));
+}
+
+const { group } = Astro.props;
+---
+
+<Page group={group} lang="en" />

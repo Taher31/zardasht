@@ -1,0 +1,27 @@
+---
+interface Product {
+  name: string;
+  description: string;
+  tag: string;
+}
+
+interface Props {
+  product: Product;
+  badge: string;
+}
+
+const { product, badge } = Astro.props;
+---
+
+<article class="rounded-2xl border border-[#19266A]/10 bg-slate-50/70 p-5 transition hover:-translate-y-0.5 hover:border-[#19266A]/20 hover:bg-white hover:shadow-lg">
+  <div class="flex items-start justify-between gap-4">
+    <div>
+      <p class="text-[10px] font-extrabold uppercase tracking-[0.18em] text-[#19266A]/50">{product.tag}</p>
+      <h3 class="mt-2 text-lg font-semibold text-[#19266A]">{product.name}</h3>
+    </div>
+    <span class="inline-flex min-w-9 items-center justify-center rounded-full bg-[#F3C623]/15 px-2.5 py-1 text-[10px] font-bold text-[#19266A]">
+      {badge}
+    </span>
+  </div>
+  <p class="mt-3 text-sm leading-6 text-slate-600">{product.description}</p>
+</article>
