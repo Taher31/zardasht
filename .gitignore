@@ -28,4 +28,6 @@ astro-dev-error.log
 # Publish pipeline output (written by the admin panel, ~31MB per release).
 # `current` is the symlink Nginx serves; both are build artefacts, not source.
 releases/
+release/
+
 current
