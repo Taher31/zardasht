@@ -123,3 +123,9 @@ Set the **`SITE_URL`** environment variable to your production domain (e.g. `htt
 ```bash
 npm run build   # outputs to ./dist/
 ```
+
+### 404 page
+
+Missing URLs get `src/pages/[lang]/404.astro`, the "Bay 404" page with its parking game: trucks, tractor-trailers and a container ship (`src/components/ParkingGame.astro`; levels and physics in `src/utils/parking-engine.ts`, copy in `src/data/parking-game.ts`). To add a level, append it to `LEVELS` with a new id and give that id a name and hint in all four languages; the type checker flags any language that is missing one. It builds to `dist/404.html` (English) and `dist/fa/404/index.html`, `dist/ar/404/index.html`, `dist/ru/404/index.html`.
+
+Static hosts serve `404.html` for any missing URL on their own; when that URL starts with `/fa/`, `/ar/` or `/ru/`, a small script on the English page forwards the visitor to that language's 404 page. The Node server (`server/handler.mjs`) serves the right language directly, still with a 404 status. Behind Nginx, point `error_page 404` at `/404.html` (or at `/fa/404/`, `/ar/404/` and `/ru/404/` wherever those prefixes are served, which skips the forwarding step). In `npm run dev`, `/fa/anything-missing` renders in Persian too.

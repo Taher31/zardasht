@@ -201,6 +201,13 @@ export interface Translation {
       selectPrompt: string;
       ctaBack: string;
     };
+    notFound: {
+      title: string;
+      eyebrow: string;
+      heading: string;
+      intro: string;
+      ctaHome: string;
+    };
   };
 }
 
@@ -461,6 +468,13 @@ const en: Omit<Translation, 'lang' | 'dir'> = {
       selectPrompt: 'Select a country',
       ctaBack: 'Back to map',
     },
+    notFound: {
+      title: 'Page not found',
+      eyebrow: 'Error 404',
+      heading: 'This shipment took a wrong turn',
+      intro: 'The page you requested is not at this address. It may have moved, or the link may be incomplete. The links below will bring you back on route.',
+      ctaHome: 'Return to homepage',
+    },
   },
 };
 const fa: Omit<Translation, 'lang' | 'dir'> = {
@@ -704,6 +718,13 @@ const fa: Omit<Translation, 'lang' | 'dir'> = {
       selectPrompt: 'یک کشور را انتخاب کنید',
       ctaBack: 'بازگشت به نقشه',
     },
+    notFound: {
+      title: 'صفحه پیدا نشد',
+      eyebrow: 'خطای ۴۰۴',
+      heading: 'این محموله راه را اشتباه رفته است',
+      intro: 'صفحه‌ای که درخواست کردید در این نشانی نیست. ممکن است جابه‌جا شده یا پیوند ناقص باشد. با پیوندهای زیر به مسیر بازگردید.',
+      ctaHome: 'بازگشت به صفحهٔ اصلی',
+    },
   },
 };
 
@@ -936,6 +957,13 @@ const ar: Omit<Translation, 'lang' | 'dir'> = {
       selectPrompt: 'اختر دولة',
       ctaBack: 'العودة إلى الخريطة',
     },
+    notFound: {
+      title: 'الصفحة غير موجودة',
+      eyebrow: 'خطأ 404',
+      heading: 'هذه الشحنة سلكت طريقًا خاطئًا',
+      intro: 'الصفحة التي طلبتها غير موجودة على هذا العنوان. ربما نُقلت أو أن الرابط غير مكتمل. استخدم الروابط أدناه للعودة إلى المسار.',
+      ctaHome: 'العودة إلى الصفحة الرئيسية',
+    },
   },
 };
 
@@ -1156,6 +1184,13 @@ const ru: Omit<Translation, 'lang' | 'dir'> = {
       projectsEmpty: 'Пока нет деталей.',
       selectPrompt: 'Выберите страну',
       ctaBack: 'Назад к карте',
+    },
+    notFound: {
+      title: 'Страница не найдена',
+      eyebrow: 'Ошибка 404',
+      heading: 'Этот груз свернул не туда',
+      intro: 'Запрошенной страницы по этому адресу нет. Возможно, она была перемещена или ссылка неполная. Ссылки ниже вернут вас на маршрут.',
+      ctaHome: 'На главную',
     },
   },
 };

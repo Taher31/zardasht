@@ -24,6 +24,9 @@ interface Props {
   breadcrumbs?: { name: string; href: string }[];
   /** Extra JSON-LD blocks (FAQPage, NewsArticle, ItemList, …). */
   schema?: Record<string, unknown>[];
+  /** Error pages: kept out of the index, with no canonical or hreflang, since
+   *  they are served at whatever URL was missing rather than at their own. */
+  noindex?: boolean;
 }
 
 const {
@@ -38,6 +41,7 @@ const {
   modifiedTime,
   breadcrumbs = [],
   schema: extraSchema = [],
+  noindex = false,
 } = Astro.props;
 const dir = translation.dir;
 const brand = translation.labels.brand;
@@ -196,20 +200,20 @@ const jsonLdBlocks = [
     <title>{metaTitle}</title>
     <meta name="description" content={description} />
     <meta name="keywords" content={keywords.join(', ')} />
-    <meta name="robots" content="index,follow" />
+    <meta name="robots" content={noindex ? 'noindex,follow' : 'index,follow'} />
     <meta name="language" content={lang} />
     <meta name="theme-color" content="#19266A" />
 
-    <link rel="canonical" href={canonical} />
-    {alternateLinks.map((link) => (
+    {!noindex && <link rel="canonical" href={canonical} />}
+    {!noindex && alternateLinks.map((link) => (
       <link rel="alternate" href={link.href} hreflang={link.hreflang} />
     ))}
-    <link rel="alternate" href={xDefault} hreflang="x-default" />
+    {!noindex && <link rel="alternate" href={xDefault} hreflang="x-default" />}
 
     <meta property="og:type" content={type} />
     <meta property="og:title" content={metaTitle} />
     <meta property="og:description" content={description} />
-    <meta property="og:url" content={canonical} />
+    {!noindex && <meta property="og:url" content={canonical} />}
     <meta property="og:site_name" content={brand} />
     <meta property="og:locale" content={ogLocale} />
     {alternateOgLocales.map((locale) => (

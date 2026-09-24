@@ -1,0 +1,12 @@
+---
+import Page from './[lang]/404.astro';
+import { resolveLang } from '../i18n';
+
+// Unlike the other shims, not always English: when this page is rendered for a
+// missing URL (the dev server does that), it speaks the URL's language, so
+// /fa/anything-missing and the header's language switcher both land in Persian.
+// The static build renders it once, at /404, which resolves to English.
+const lang = resolveLang(Astro.url.pathname.split('/')[1]);
+---
+
+<Page lang={lang} />

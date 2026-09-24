@@ -1,0 +1,2078 @@
+---
+// "Bay 404 is free": a top-down parking game for the 404 page. Trucks,
+// tractor-trailers and a container ship, each fleet with its own bays, drawn
+// on one canvas in the site's navy and gold and driven with the keyboard or,
+// on touch screens, an on-screen pedal pad. Levels and physics live in
+// src/utils/parking-engine.ts; all copy in src/data/parking-game.ts, of which
+// only the page's language is shipped.
+import type { LanguageCode } from '../i18n';
+import { parkingStrings } from '../data/parking-game';
+import { LEVELS, type Fleet } from '../utils/parking-engine';
+
+interface Props {
+  lang: LanguageCode;
+  /** Where the closing panel's inquiry button leads. */
+  contactHref: string;
+  inquiryLabel: string;
+}
+
+const { lang, contactHref, inquiryLabel } = Astro.props;
+const s = parkingStrings[lang] ?? parkingStrings.en;
+const fleets: Fleet[] = ['truck', 'trailer', 'ship'];
+// Level numbers restart in each fleet: Truck 1-7, Trailer 1-4, Ship 1-4.
+const position = (index: number) => LEVELS.slice(0, index).filter((level) => level.fleet === LEVELS[index].fleet).length;
+const digits = (n: number) => (lang === 'fa' ? n.toLocaleString('fa') : String(n));
+---
+
+<section class="parking" data-parking data-lang={lang} data-strings={JSON.stringify(s)} aria-labelledby="parking-title">
+  <div class="parking__head">
+    <div class="parking__heading">
+      <span class="parking__badge" aria-hidden="true">P</span>
+      <div>
+        <h2 id="parking-title" class="parking__title">{s.title}</h2>
+        <p class="parking__subtitle text-start">{s.subtitle}</p>
+      </div>
+    </div>
+    <div class="parking__tools">
+      <button type="button" class="parking__sound" data-fullscreen aria-label={s.fullscreen} title={s.fullscreen} hidden>
+        <svg class="parking__fs-enter" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        <svg class="parking__fs-exit" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </button>
+      <button type="button" class="parking__sound" data-sound aria-pressed="true" aria-label={s.sound} title={s.sound}>
+        <svg class="parking__sound-on" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor" />
+          <path d="M16 9.5a3.5 3.5 0 0 1 0 5M18.5 7a7 7 0 0 1 0 10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+        </svg>
+        <svg class="parking__sound-off" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor" />
+          <path d="m16.5 9.5 5 5m0-5-5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="parking__hud">
+    <div class="parking__hud-item parking__fleets">
+      {fleets.map((fleet) => (
+        <button type="button" class="parking__fleet" data-fleet-tab={fleet} aria-pressed={fleet === 'truck' ? 'true' : 'false'}>
+          {s.fleets[fleet]}
+        </button>
+      ))}
+    </div>
+    <div class="parking__hud-item">
+      <span class="parking__hud-label">{s.level}</span>
+      <span class="parking__levels">
+        {LEVELS.map((level, index) => (
+          <button
+            type="button"
+            class="parking__level"
+            data-level={index}
+            data-fleet={level.fleet}
+            aria-label={`${s.fleets[level.fleet]} · ${s.level} ${position(index) + 1}: ${s.levels[level.id].name}`}
+            disabled={position(index) > 0}
+            hidden={level.fleet !== 'truck'}
+          >
+            {digits(position(index) + 1)}
+          </button>
+        ))}
+      </span>
+    </div>
+    <div class="parking__hud-item parking__hud-item--name">
+      <strong data-hud-name>{s.levels[LEVELS[0].id].name}</strong>
+    </div>
+    <div class="parking__hud-item">
+      <span class="parking__hud-label">{s.time}</span>
+      <strong class="parking__hud-value" data-hud-time>–</strong>
+    </div>
+    <div class="parking__hud-item">
+      <span class="parking__hud-label">{s.best}</span>
+      <strong class="parking__hud-value" data-hud-best>–</strong>
+    </div>
+  </div>
+
+  {/* The yard and its touch pad, sized and scrolled into view as one. */}
+  <div class="parking__play" data-play>
+    <div class="parking__stage">
+      <canvas class="parking__canvas" data-canvas tabindex="0" role="img" aria-label={s.canvasLabel}></canvas>
+
+      <p class="parking__hint text-start" data-hint hidden>
+        <strong data-hint-name></strong>
+        <span data-hint-text></span>
+      </p>
+
+      <p class="parking__coach text-center" data-coach aria-live="polite" hidden></p>
+
+      <div class="parking__overlay" data-overlay>
+        <div class="parking__panel">
+          <p class="parking__kicker text-center" data-kicker>{s.fleets.truck} · {s.level} {digits(1)}</p>
+          <h3 class="parking__panel-title" data-panel-title>{s.levels[LEVELS[0].id].name}</h3>
+          <p class="parking__panel-body text-center" data-panel-body>{s.intro}</p>
+          <p class="parking__stars text-center" data-stars role="img" hidden>
+            <span data-star>★</span><span data-star>★</span><span data-star>★</span>
+          </p>
+          <div class="parking__actions">
+            <button type="button" class="parking__btn parking__btn--primary" data-primary>{s.start}</button>
+            <a class="parking__btn parking__btn--ghost" data-inquiry href={contactHref} hidden>{inquiryLabel}</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {/* Physical directions, so the pad stays laid out left-to-right on RTL pages. */}
+    <div class="parking__pad" dir="ltr">
+      <div class="parking__pad-group">
+        <button type="button" class="parking__key" data-control="left" aria-label={s.steerLeft}>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 8 12l7 7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" /></svg>
+        </button>
+        <button type="button" class="parking__key" data-control="right" aria-label={s.steerRight}>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" /></svg>
+        </button>
+      </div>
+      <div class="parking__pad-group">
+        <button type="button" class="parking__key parking__key--reverse" data-control="reverse" aria-label={s.reverse}>
+          <span aria-hidden="true">R</span>
+        </button>
+        <button type="button" class="parking__key parking__key--forward" data-control="forward" aria-label={s.forward}>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 15l7-7 7 7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" /></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <p class="parking__keys text-center">{s.keys}</p>
+  <p class="sr-only" data-announce aria-live="polite"></p>
+</section>
+
+<style>
+  [hidden] {
+    display: none !important;
+  }
+
+  /* As wide as the page allows, but never so tall that the yard can't be seen
+     whole below the sticky header: the 640x400 yard is 1.6x as wide as it
+     is tall, and ~130px of the screen goes to the header and breathing room. */
+  .parking {
+    --gutter: 12px;
+    width: min(100%, max(360px, calc((100vh - 130px) * 1.6 + var(--gutter) * 2)));
+    width: min(100%, max(360px, calc((100svh - 130px) * 1.6 + var(--gutter) * 2)));
+    margin: clamp(28px, 4vw, 44px) auto 0;
+    padding: var(--gutter);
+    border-radius: 28px;
+    background: #ffffff;
+    box-shadow:
+      0 0 0 1px rgba(25, 38, 106, 0.1),
+      0 30px 60px -40px rgba(25, 38, 106, 0.55),
+      0 6px 16px rgba(25, 38, 106, 0.06);
+  }
+
+  /* Full screen takes the whole card, timer and all; everything in it is held
+     to the width at which the yard still fits the screen's height. */
+  .parking:fullscreen {
+    --chrome: 190px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 16px;
+    border-radius: 0;
+    overflow: auto;
+    box-shadow: none;
+  }
+
+  .parking:fullscreen > :not(.sr-only) {
+    width: min(100%, calc((100vh - var(--chrome)) * 1.6));
+  }
+
+  .parking__tools {
+    flex: none;
+    display: flex;
+    gap: 8px;
+  }
+
+  .parking:not([data-fullscreen]) .parking__fs-exit,
+  .parking[data-fullscreen] .parking__fs-enter {
+    display: none;
+  }
+
+  .parking__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .parking__heading {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 0;
+  }
+
+  /* A parking sign: the one piece of road furniture everyone reads at once. */
+  .parking__badge {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: #19266a;
+    color: #f3c623;
+    font: 800 24px/1 'Manrope', system-ui, sans-serif;
+    box-shadow: inset 0 0 0 3px #ffffff, 0 0 0 1px #19266a;
+  }
+
+  .parking__title {
+    color: #19266a;
+    font-size: clamp(1.15rem, 2.2vw, 1.45rem);
+    font-weight: 700;
+    line-height: 1.3;
+  }
+
+  .parking__subtitle {
+    margin-top: 2px;
+    color: #475569;
+    font-size: 0.95rem;
+  }
+
+  .parking__sound {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 999px;
+    color: #19266a;
+    background: #f1f4fa;
+    transition: background-color 0.15s;
+  }
+
+  .parking__sound:hover {
+    background: #e3e8f4;
+  }
+
+  .parking__sound svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .parking__sound[aria-pressed='true'] .parking__sound-off,
+  .parking__sound[aria-pressed='false'] .parking__sound-on {
+    display: none;
+  }
+
+  .parking__hud {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin: 16px 0 12px;
+  }
+
+  .parking__hud-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 36px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: #f1f4fa;
+    color: #19266a;
+    font-size: 13px;
+  }
+
+  .parking__hud-item--name {
+    background: #19266a;
+    color: #ffffff;
+  }
+
+  .parking__hud-label {
+    color: #64748b;
+    font-weight: 600;
+  }
+
+  .parking__hud-value {
+    min-width: 3ch;
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+  }
+
+  .parking__fleets {
+    gap: 2px;
+    padding: 3px;
+  }
+
+  .parking__fleet {
+    min-height: 30px;
+    padding: 2px 12px;
+    border-radius: 999px;
+    color: #19266a;
+    font-size: 13px;
+    font-weight: 700;
+    transition: background-color 0.15s, color 0.15s;
+  }
+
+  .parking__fleet:hover {
+    background: #e3e8f4;
+  }
+
+  .parking__fleet[aria-pressed='true'] {
+    background: #19266a;
+    color: #ffffff;
+  }
+
+  .parking__levels {
+    display: inline-flex;
+    gap: 4px;
+  }
+
+  .parking__level {
+    display: grid;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 999px;
+    background: #ffffff;
+    color: #19266a;
+    font-size: 12px;
+    font-weight: 700;
+    box-shadow: inset 0 0 0 1px rgba(25, 38, 106, 0.2);
+    transition: background-color 0.15s, color 0.15s;
+  }
+
+  .parking__level:not(:disabled):hover {
+    background: #fdf3cf;
+  }
+
+  .parking__level[data-cleared] {
+    background: #f3c623;
+    box-shadow: none;
+  }
+
+  .parking__level[aria-current='step'] {
+    background: #19266a;
+    color: #ffffff;
+    box-shadow: none;
+  }
+
+  .parking__level:disabled {
+    color: rgba(25, 38, 106, 0.3);
+    box-shadow: inset 0 0 0 1px rgba(25, 38, 106, 0.1);
+    cursor: not-allowed;
+  }
+
+  /* Canvas and overlay share one grid cell, so a panel with more to say than a
+     narrow phone's canvas has room for grows the stage instead of clipping. */
+  .parking__stage {
+    position: relative;
+    display: grid;
+    overflow: hidden;
+    border-radius: 18px;
+    background: #2a3247;
+  }
+
+  .parking[data-fleet='ship'] .parking__stage {
+    background: #1d4674;
+  }
+
+  .parking__canvas {
+    grid-area: 1 / 1;
+    align-self: start;
+    display: block;
+    width: 100%;
+    aspect-ratio: 640 / 400;
+    outline: none;
+  }
+
+  .parking[data-state='intro'] .parking__canvas,
+  .parking[data-state='paused'] .parking__canvas,
+  .parking[data-state='crashed'] .parking__canvas {
+    cursor: pointer;
+  }
+
+  .parking__canvas:focus-visible {
+    box-shadow: inset 0 0 0 3px #f3c623;
+  }
+
+  .parking__hint {
+    position: absolute;
+    top: 10px;
+    inset-inline-start: 10px;
+    max-width: min(80%, 440px);
+    padding: 7px 12px;
+    border-radius: 12px;
+    background: rgba(16, 24, 74, 0.82);
+    color: #ffffff;
+    font-size: 13px;
+    line-height: 1.5;
+    pointer-events: none;
+    transition: opacity 0.5s;
+  }
+
+  .parking__hint[data-fading] {
+    opacity: 0;
+  }
+
+  /* Coaching, when the truck sits on the bay but it doesn't count yet. */
+  .parking__coach {
+    position: absolute;
+    bottom: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: max-content;
+    max-width: min(92%, 480px);
+    padding: 7px 16px;
+    border-radius: 999px;
+    background: #f3c623;
+    color: #10184a;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.5;
+    box-shadow: 0 10px 24px -10px rgba(4, 8, 24, 0.7);
+    pointer-events: none;
+  }
+
+  .parking__hint strong {
+    color: #f3c623;
+    margin-inline-end: 6px;
+  }
+
+  /* No veil over the yard: the panel floats as a card and the scene around it
+     stays sharp. Clicks outside the card fall through to the canvas, which
+     starts the drive. */
+  .parking__overlay {
+    grid-area: 1 / 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(10px, 2.4vw, 24px);
+    pointer-events: none;
+  }
+
+  .parking__panel {
+    max-width: 400px;
+    padding: clamp(14px, 2.4vw, 22px) clamp(16px, 3vw, 28px);
+    border-radius: 20px;
+    background: rgba(16, 24, 74, 0.92);
+    color: #ffffff;
+    text-align: center;
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, 0.1),
+      0 24px 48px -18px rgba(4, 8, 24, 0.75);
+    pointer-events: auto;
+  }
+
+  .parking__kicker {
+    color: #f3c623;
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .parking__panel-title {
+    margin-top: 2px;
+    font-size: clamp(1.3rem, 3vw, 1.8rem);
+    font-weight: 800;
+    line-height: 1.25;
+  }
+
+  .parking__panel-body {
+    margin-top: 8px;
+    color: rgba(255, 255, 255, 0.84);
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+
+  .parking__stars {
+    margin-top: 8px;
+    color: rgba(255, 255, 255, 0.22);
+    font-size: 28px;
+    line-height: 1;
+  }
+
+  .parking__stars span + span {
+    margin-inline-start: 6px;
+  }
+
+  .parking__stars [data-on] {
+    color: #f3c623;
+  }
+
+  .parking__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 16px;
+  }
+
+  .parking__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 10px 24px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 700;
+    transition: transform 0.15s, background-color 0.15s;
+  }
+
+  .parking__btn:hover {
+    transform: translateY(-1px);
+  }
+
+  .parking__btn:focus-visible {
+    outline: 3px solid #ffffff;
+    outline-offset: 2px;
+  }
+
+  .parking__btn--primary {
+    background: #f3c623;
+    color: #10184a;
+    box-shadow: 0 10px 24px -10px rgba(243, 198, 35, 0.7);
+  }
+
+  .parking__btn--primary:hover {
+    background: #ffd85f;
+  }
+
+  .parking__btn--ghost {
+    color: #ffffff;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+  }
+
+  .parking__btn--ghost:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  /* The pedal pad is for touch screens; keyboards get the key legend instead. */
+  .parking__play {
+    scroll-margin-bottom: 12px;
+  }
+
+  .parking__pad {
+    display: none;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 12px;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+  }
+
+  .parking__pad-group {
+    display: flex;
+    gap: 10px;
+  }
+
+  .parking__key {
+    display: grid;
+    place-items: center;
+    width: 68px;
+    height: 58px;
+    border-radius: 16px;
+    background: #19266a;
+    color: #ffffff;
+    font: 800 20px/1 'Manrope', system-ui, sans-serif;
+    box-shadow: 0 5px 0 #0b1338;
+    touch-action: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 0.05s, box-shadow 0.05s;
+  }
+
+  .parking__key svg {
+    width: 26px;
+    height: 26px;
+  }
+
+  .parking__key--forward {
+    background: #f3c623;
+    color: #10184a;
+    box-shadow: 0 5px 0 #b48f0e;
+  }
+
+  .parking__key[data-down] {
+    transform: translateY(4px);
+    box-shadow: 0 1px 0 #0b1338;
+  }
+
+  .parking__key--forward[data-down] {
+    box-shadow: 0 1px 0 #b48f0e;
+  }
+
+  .parking__keys {
+    margin-top: 12px;
+    color: #64748b;
+    font-size: 13px;
+  }
+
+  @media (hover: none) and (pointer: coarse) {
+    .parking__pad {
+      display: flex;
+    }
+
+    .parking__keys {
+      display: none;
+    }
+
+    .parking:fullscreen {
+      --chrome: 240px; /* the pedal pad instead of the key legend */
+    }
+  }
+
+  @media (max-width: 480px) {
+    .parking__badge {
+      display: none; /* the title needs the room more than the sign does */
+    }
+
+    .parking__hud-item {
+      min-height: 32px;
+      padding: 3px 10px;
+      font-size: 12px;
+    }
+
+    .parking__hint {
+      font-size: 12px;
+      padding: 5px 10px;
+    }
+
+    .parking__panel-body {
+      font-size: 0.875rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .parking__btn,
+    .parking__hint,
+    .parking__key {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  import type { ParkingStrings } from '../data/parking-game';
+  import {
+    COLORS,
+    H,
+    HOLD,
+    LEVELS,
+    SHIP,
+    STEP,
+    TRAILER,
+    W,
+    advance,
+    bodies,
+    clamp,
+    createSim,
+    rigOf,
+    wrap,
+    type Box,
+    type Control,
+    type Decor,
+    type Fleet,
+    type Input,
+    type LevelId,
+    type Obstacle,
+    type Rig,
+    type Tip,
+  } from '../utils/parking-engine';
+
+  type State = 'intro' | 'playing' | 'paused' | 'crashed' | 'parked' | 'done';
+
+  const FLEETS: Fleet[] = ['truck', 'trailer', 'ship'];
+  /** A level's number within its own fleet, counted from 0. */
+  const positionOf = (i: number) => LEVELS.slice(0, i).filter((level) => level.fleet === LEVELS[i].fleet).length;
+  const countOf = (fleet: Fleet) => LEVELS.filter((level) => level.fleet === fleet).length;
+  const firstOf = (fleet: Fleet) => LEVELS.findIndex((level) => level.fleet === fleet);
+
+  const HALF_PI = Math.PI / 2;
+  const SHADOW = 'rgba(4, 8, 24, 0.38)';
+
+  // -------------------------------------------------------------- drawing kit
+
+  const roundRect = (ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) => {
+    const radius = Math.min(r, w / 2, h / 2);
+    ctx.beginPath();
+    ctx.moveTo(x + radius, y);
+    ctx.arcTo(x + w, y, x + w, y + h, radius);
+    ctx.arcTo(x + w, y + h, x, y + h, radius);
+    ctx.arcTo(x, y + h, x, y, radius);
+    ctx.arcTo(x, y, x + w, y, radius);
+    ctx.closePath();
+  };
+
+  /** Runs `paint` in a frame centred on `b` and turned to its heading. */
+  const inBox = (ctx: CanvasRenderingContext2D, b: Box, paint: () => void, dx = 0, dy = 0) => {
+    ctx.save();
+    ctx.translate(b.x + dx, b.y + dy);
+    ctx.rotate(b.a);
+    paint();
+    ctx.restore();
+  };
+
+  /** Roof lettering, turned so it never reads upside down. */
+  const letter = (ctx: CanvasRenderingContext2D, text: string, x: number, size: number, heading: number) => {
+    ctx.save();
+    ctx.translate(x, 0);
+    if (Math.cos(heading) < -0.02) ctx.rotate(Math.PI);
+    ctx.fillStyle = COLORS.gold;
+    ctx.font = `800 ${size}px Manrope, system-ui, sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(text, 0, 0.5);
+    ctx.restore();
+  };
+
+  const ribs = (ctx: CanvasRenderingContext2D, x0: number, x1: number, half: number, gap: number, color: string) => {
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    for (let x = x0 + gap; x < x1 - 1; x += gap) {
+      ctx.moveTo(x, -half + 1.5);
+      ctx.lineTo(x, half - 1.5);
+    }
+    ctx.stroke();
+  };
+
+  const drawCone = (ctx: CanvasRenderingContext2D, o: Obstacle) => {
+    const disc = (x: number, y: number, r: number) => {
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+    };
+    ctx.fillStyle = SHADOW;
+    disc(o.x + 1.5, o.y + 2.5, 5.5);
+    ctx.fill();
+    ctx.fillStyle = '#f28c28';
+    disc(o.x, o.y, 5);
+    ctx.fill();
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 1.4;
+    disc(o.x, o.y, 2.8);
+    ctx.stroke();
+    ctx.fillStyle = '#b85e12';
+    disc(o.x, o.y, 1);
+    ctx.fill();
+  };
+
+  const drawBuilding = (ctx: CanvasRenderingContext2D, o: Obstacle) => {
+    const { w, h } = o;
+    ctx.fillStyle = '#343e5c';
+    ctx.fillRect(-w / 2, -h / 2, w, h);
+    ctx.fillStyle = '#3c476a';
+    ctx.fillRect(-w / 2 + 4, -h / 2 + 4, w - 8, h - 8);
+    // skylights down the long side of the roof
+    const long = w >= h;
+    const span = long ? w : h;
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.06)';
+    for (let t = -span / 2 + 24; t < span / 2 - 24; t += 44) {
+      if (long) ctx.fillRect(t, -Math.min(8, h / 4), 22, Math.min(16, h / 2));
+      else ctx.fillRect(-Math.min(8, w / 4), t, Math.min(16, w / 2), 22);
+    }
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
+    ctx.lineWidth = 1.5;
+    ctx.strokeRect(-w / 2 + 0.75, -h / 2 + 0.75, w - 1.5, h - 1.5);
+    if (span >= 300) {
+      ctx.save();
+      if (!long) ctx.rotate(-HALF_PI);
+      ctx.fillStyle = 'rgba(243, 198, 35, 0.5)';
+      ctx.font = '800 16px Manrope, system-ui, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('ZMB', 0, 1);
+      ctx.restore();
+    }
+  };
+
+  const drawKerb = (ctx: CanvasRenderingContext2D, o: Obstacle) => {
+    const { w, h } = o;
+    ctx.fillStyle = '#6e788e';
+    ctx.fillRect(-w / 2, -h / 2, w, h);
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    for (let x = -w / 2 + 24; x < w / 2; x += 24) {
+      ctx.moveTo(x, -h / 2 + 4);
+      ctx.lineTo(x, h / 2);
+    }
+    ctx.stroke();
+    ctx.fillStyle = '#c9cfdb';
+    ctx.fillRect(-w / 2, -h / 2, w, 3.5);
+  };
+
+  const drawContainer = (ctx: CanvasRenderingContext2D, o: Obstacle) => {
+    const { w, h } = o;
+    ctx.fillStyle = o.color;
+    roundRect(ctx, -w / 2, -h / 2, w, h, 2);
+    ctx.fill();
+    ribs(ctx, -w / 2, w / 2, h / 2, 4, 'rgba(0, 0, 0, 0.16)');
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+    ctx.fillRect(-w / 2 + 1, -h / 2 + 1, w - 2, 1.6);
+    ctx.strokeStyle = 'rgba(0, 0, 0, 0.35)';
+    ctx.lineWidth = 1;
+    roundRect(ctx, -w / 2 + 0.5, -h / 2 + 0.5, w - 1, h - 1, 2);
+    ctx.stroke();
+  };
+
+  /** Someone else's truck or trailer, parked; the front is at +x. */
+  const drawParked = (ctx: CanvasRenderingContext2D, o: Obstacle) => {
+    const { w, h } = o;
+    const cab = o.kind === 'truck' ? 15 : 0;
+    const bodyEnd = w / 2 - (cab ? cab + 2 : 0);
+    ctx.fillStyle = o.color;
+    roundRect(ctx, -w / 2, -h / 2, bodyEnd + w / 2, h, 2.5);
+    ctx.fill();
+    ribs(ctx, -w / 2, bodyEnd, h / 2, 6, 'rgba(0, 0, 0, 0.1)');
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.22)';
+    ctx.fillRect(bodyEnd - 2.5, -h / 2 + 1, 2.5, h - 2); // headboard
+    if (!cab) return;
+    ctx.fillStyle = COLORS.deep;
+    ctx.fillRect(bodyEnd - 1, -h / 2 + 4, 4, h - 8);
+    ctx.fillStyle = '#dde3ee';
+    roundRect(ctx, w / 2 - cab, -h / 2 + 0.5, cab, h - 1, 4);
+    ctx.fill();
+    ctx.fillStyle = '#1b2440';
+    roundRect(ctx, w / 2 - 4.5, -h / 2 + 3, 3, h - 6, 1.2);
+    ctx.fill();
+  };
+
+  const drawObstacle = (ctx: CanvasRenderingContext2D, o: Obstacle) => {
+    if (o.kind === 'cone') return drawCone(ctx, o);
+    if (o.kind === 'buoy') return drawBuoy(ctx, o);
+    if (o.kind === 'quay') return drawQuay(ctx, o);
+    if (o.kind === 'rocks') return drawRocks(ctx, o);
+    if (o.kind === 'building') return inBox(ctx, o, () => drawBuilding(ctx, o));
+    if (o.kind === 'kerb') return inBox(ctx, o, () => drawKerb(ctx, o));
+    if (o.kind === 'barrier') return inBox(ctx, o, () => drawBarrier(ctx, o));
+    if (o.kind === 'ship') {
+      inBox(ctx, o, () => {
+        hullPath(ctx, o.w, o.h);
+        ctx.fillStyle = 'rgba(4, 8, 24, 0.3)';
+        ctx.fill();
+      }, 2, 3);
+      return inBox(ctx, o, () => drawShip(ctx, o.w, o.h, o.color, Math.round(o.x + o.y), false));
+    }
+    inBox(ctx, o, () => {
+      ctx.fillStyle = SHADOW;
+      roundRect(ctx, -o.w / 2, -o.h / 2, o.w, o.h, 3);
+      ctx.fill();
+    }, 2.5, 3.5);
+    inBox(ctx, o, () => (o.kind === 'container' ? drawContainer(ctx, o) : drawParked(ctx, o)));
+  };
+
+  const drawDecor = (ctx: CanvasRenderingContext2D, d: Decor) => {
+    if (d.t === 'plate') return drawPlate(ctx, d.x0, d.y0, d.x1, d.y1);
+    if (d.t === 'arrow') return drawArrow(ctx, d.x, d.y, d.a);
+    if (d.t === 'crane') return; // overhead: drawn over the vehicles, each frame
+    if (d.t === 'line') {
+      ctx.strokeStyle = d.dash ? 'rgba(255, 255, 255, 0.3)' : 'rgba(255, 255, 255, 0.55)';
+      ctx.lineWidth = 2;
+      ctx.setLineDash(d.dash ? [12, 10] : []);
+      ctx.beginPath();
+      ctx.moveTo(d.x0, d.y0);
+      ctx.lineTo(d.x1, d.y1);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      return;
+    }
+    // Dock door: a roller shutter with a black bumper at each end.
+    const w = d.x1 - d.x0;
+    const h = d.y1 - d.y0;
+    const across = w > h;
+    ctx.fillStyle = '#a9b3c9';
+    ctx.fillRect(d.x0, d.y0, w, h);
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.18)';
+    if (across) for (let x = d.x0 + 4; x < d.x1; x += 4) ctx.fillRect(x, d.y0, 1, h);
+    else for (let y = d.y0 + 4; y < d.y1; y += 4) ctx.fillRect(d.x0, y, w, 1);
+    ctx.fillStyle = '#111827';
+    if (across) {
+      ctx.fillRect(d.x0 - 4, d.y0 - 1, 4, h + 2);
+      ctx.fillRect(d.x1, d.y0 - 1, 4, h + 2);
+    } else {
+      ctx.fillRect(d.x0 - 1, d.y0 - 4, w + 2, 4);
+      ctx.fillRect(d.x0 - 1, d.y1, w + 2, 4);
+    }
+  };
+
+  /** Deterministic noise, so a level's asphalt looks the same every visit. */
+  const seeded = (seed: number) => () => {
+    seed = (seed + 0x6d2b79f5) | 0;
+    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+
+  const wheel = (ctx: CanvasRenderingContext2D, x: number, y: number, length: number, angle = 0) => {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(angle);
+    roundRect(ctx, -length / 2, -2, length, 4, 1.5);
+    ctx.fill();
+    ctx.restore();
+  };
+
+  const cabin = (ctx: CanvasRenderingContext2D, rig: Rig) => {
+    const { front, half } = rig;
+    ctx.fillStyle = COLORS.gold;
+    roundRect(ctx, front - 16, -half + 0.5, 16, half * 2 - 1, 4.5);
+    ctx.fill();
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.28)';
+    roundRect(ctx, front - 14, -half + 3.5, 7, half * 2 - 7, 2);
+    ctx.fill();
+    ctx.fillStyle = '#1b2440';
+    roundRect(ctx, front - 5, -half + 2.5, 3.2, half * 2 - 5, 1.2);
+    ctx.fill();
+    ctx.fillRect(front - 7.5, -half - 2.6, 2.2, 3); // mirrors
+    ctx.fillRect(front - 7.5, half - 0.4, 2.2, 3);
+    ctx.fillStyle = '#fff6d0';
+    for (const side of [-1, 1]) {
+      ctx.beginPath();
+      ctx.arc(front - 0.6, side * (half - 3.2), 1.4, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  };
+
+  const headlights = (ctx: CanvasRenderingContext2D, rig: Rig) => {
+    const { front, half } = rig;
+    const beam = ctx.createLinearGradient(front, 0, front + 50, 0);
+    beam.addColorStop(0, 'rgba(255, 246, 208, 0.22)');
+    beam.addColorStop(1, 'rgba(255, 246, 208, 0)');
+    ctx.fillStyle = beam;
+    ctx.beginPath();
+    ctx.moveTo(front, -half + 2);
+    ctx.lineTo(front + 50, -half - 10);
+    ctx.lineTo(front + 50, half + 10);
+    ctx.lineTo(front, half - 2);
+    ctx.closePath();
+    ctx.fill();
+  };
+
+  /** Box body with gold rails and roof lettering, from x0 back to x1 forward. */
+  const cargoBox = (ctx: CanvasRenderingContext2D, x0: number, x1: number, half: number, heading: number, label: string) => {
+    ctx.fillStyle = COLORS.navy;
+    roundRect(ctx, x0, -half, x1 - x0, half * 2, 2.5);
+    ctx.fill();
+    ribs(ctx, x0, x1, half, 5, 'rgba(255, 255, 255, 0.06)');
+    ctx.fillStyle = COLORS.gold;
+    ctx.fillRect(x0 + 2, -half + 2, x1 - x0 - 4, 1.6);
+    ctx.fillRect(x0 + 2, half - 3.6, x1 - x0 - 4, 1.6);
+    letter(ctx, label, (x0 + x1) / 2, 11, heading);
+  };
+
+  const tailLights = (ctx: CanvasRenderingContext2D, x: number, half: number, braking: boolean, reversing: boolean) => {
+    ctx.fillStyle = braking ? '#ff4d4d' : '#9b2a22';
+    ctx.fillRect(x - 0.8, -half + 2, 1.6, 3.2);
+    ctx.fillRect(x - 0.8, half - 5.2, 1.6, 3.2);
+    if (reversing) {
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(x - 0.8, -half + 5.6, 1.6, 2.4);
+      ctx.fillRect(x - 0.8, half - 8, 1.6, 2.4);
+    }
+  };
+
+  // ------------------------------------------------------------ road extras
+
+  /** Jersey barrier: concrete sections with a red-and-white reflector strip. */
+  const drawBarrier = (ctx: CanvasRenderingContext2D, o: Obstacle) => {
+    const { w, h } = o;
+    ctx.fillStyle = '#c9cfd8';
+    roundRect(ctx, -w / 2, -h / 2, w, h, 3);
+    ctx.fill();
+    ctx.fillStyle = '#e6eaf0';
+    ctx.fillRect(-w / 2 + 1, -h / 2 + h * 0.3, w - 2, h * 0.4);
+    for (let x = -w / 2 + 3, i = 0; x < w / 2 - 3; x += 6, i += 1) {
+      ctx.fillStyle = i % 2 ? '#ffffff' : '#d33b32';
+      ctx.fillRect(x, -1.5, 6, 3);
+    }
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.25)';
+    for (let x = -w / 2 + 22; x < w / 2; x += 22) ctx.fillRect(x, -h / 2, 1, h);
+  };
+
+  /** A weighbridge's chequered steel plate, bolted down at the corners. */
+  const drawPlate = (ctx: CanvasRenderingContext2D, x0: number, y0: number, x1: number, y1: number) => {
+    ctx.fillStyle = '#7f8aa0';
+    ctx.fillRect(x0, y0, x1 - x0, y1 - y0);
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(x0, y0, x1 - x0, y1 - y0);
+    ctx.clip();
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.14)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    for (let t = x0 - (y1 - y0); t < x1; t += 5) {
+      ctx.moveTo(t, y1);
+      ctx.lineTo(t + (y1 - y0), y0);
+    }
+    ctx.stroke();
+    ctx.restore();
+    ctx.strokeStyle = '#4b556a';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(x0 + 1, y0 + 1, x1 - x0 - 2, y1 - y0 - 2);
+    ctx.fillStyle = '#39415a';
+    for (const [x, y] of [[x0 + 4, y0 + 4], [x1 - 4, y0 + 4], [x0 + 4, y1 - 4], [x1 - 4, y1 - 4]]) {
+      ctx.beginPath();
+      ctx.arc(x, y, 1.3, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  };
+
+  // ---------------------------------------------------------------- harbour
+
+  /** A hull in its own frame, bow at +x: square stern, tapered bow. */
+  const hullPath = (ctx: CanvasRenderingContext2D, length: number, beam: number) => {
+    const hw = length / 2;
+    const hh = beam / 2;
+    const shoulder = hw - Math.min(SHIP.bow, length * 0.2);
+    ctx.beginPath();
+    ctx.moveTo(hw, 0);
+    ctx.quadraticCurveTo(hw - 3, hh * 0.8, shoulder, hh);
+    ctx.lineTo(-hw + 3, hh);
+    ctx.quadraticCurveTo(-hw, hh, -hw, hh - 3);
+    ctx.lineTo(-hw, -hh + 3);
+    ctx.quadraticCurveTo(-hw, -hh, -hw + 3, -hh);
+    ctx.lineTo(shoulder, -hh);
+    ctx.quadraticCurveTo(hw - 3, -hh * 0.8, hw, 0);
+    ctx.closePath();
+  };
+
+  const CARGO = [COLORS.gold, COLORS.blue, COLORS.rust, COLORS.teal, COLORS.white, '#6c7a96'];
+
+  /** A container ship from above: hull, two rows of boxes, bridge aft. */
+  const drawShip = (ctx: CanvasRenderingContext2D, length: number, beam: number, hullColor: string, seed: number, ours: boolean) => {
+    const hw = length / 2;
+    const hh = beam / 2;
+    const bow = Math.min(SHIP.bow, length * 0.2);
+    hullPath(ctx, length, beam);
+    ctx.fillStyle = hullColor;
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(0, 0, 0, 0.35)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    // deck, a shade inside the hull
+    ctx.save();
+    ctx.scale(1 - 3 / hw, 1 - 3 / hh);
+    hullPath(ctx, length, beam);
+    ctx.fillStyle = ours ? '#26347e' : '#5f6b82';
+    ctx.fill();
+    ctx.restore();
+    if (ours) {
+      ctx.strokeStyle = COLORS.gold;
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.moveTo(-hw + 3, -hh + 1.2);
+      ctx.lineTo(hw - bow, -hh + 1.2);
+      ctx.moveTo(-hw + 3, hh - 1.2);
+      ctx.lineTo(hw - bow, hh - 1.2);
+      ctx.stroke();
+    }
+    // containers, two rows of bays between the bridge and the bow
+    const random = seeded(seed);
+    const rowH = (beam - 7) / 2;
+    for (let x = -hw + 20; x + 9 <= hw - bow + 2; x += 10.5) {
+      for (const y of [-hh + 3.5, -hh + 3.5 + rowH]) {
+        ctx.fillStyle = CARGO[Math.floor(random() * CARGO.length)];
+        ctx.fillRect(x, y, 9, rowH - 0.8);
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
+        ctx.fillRect(x + 4.2, y, 0.6, rowH - 0.8);
+      }
+    }
+    // bridge and funnel, aft
+    ctx.fillStyle = '#eef2f8';
+    roundRect(ctx, -hw + 5, -hh + 2.5, 11, beam - 5, 1.5);
+    ctx.fill();
+    ctx.fillStyle = '#1b2440';
+    ctx.fillRect(-hw + 14.2, -hh + 3.5, 1.4, beam - 7);
+    ctx.fillStyle = ours ? COLORS.navy : '#39415a';
+    ctx.fillRect(-hw + 7, -3, 4, 6);
+    ctx.fillStyle = COLORS.gold;
+    ctx.fillRect(-hw + 7, -1, 4, 2);
+  };
+
+  /** Quays run the full width or height of the harbour; the edge that faces
+   *  the middle of it is the one on the water. */
+  const drawQuay = (ctx: CanvasRenderingContext2D, o: Obstacle) => {
+    const x0 = o.x - o.w / 2;
+    const y0 = o.y - o.h / 2;
+    ctx.fillStyle = '#7b8498';
+    ctx.fillRect(x0, y0, o.w, o.h);
+    ctx.strokeStyle = 'rgba(0, 0, 0, 0.08)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    for (let x = x0 + 32; x < x0 + o.w; x += 32) {
+      ctx.moveTo(x, y0);
+      ctx.lineTo(x, y0 + o.h);
+    }
+    for (let y = y0 + 32; y < y0 + o.h; y += 32) {
+      ctx.moveTo(x0, y);
+      ctx.lineTo(x0 + o.w, y);
+    }
+    ctx.stroke();
+
+    const alongX = o.w >= o.h;
+    const edge = alongX ? (o.y < H / 2 ? y0 + o.h : y0) : o.x > W / 2 ? x0 : x0 + o.w;
+    const inland = alongX ? (o.y < H / 2 ? -1 : 1) : o.x > W / 2 ? 1 : -1;
+    const span = alongX ? o.w : o.h;
+    const start = alongX ? x0 : y0;
+    /** A point `t` along the quay, `d` in from its edge. */
+    const at = (t: number, d: number): [number, number] => (alongX ? [t, edge + inland * d] : [edge + inland * d, t]);
+
+    // crane rails, then the darker coping stone along the edge
+    ctx.strokeStyle = 'rgba(30, 36, 52, 0.45)';
+    ctx.lineWidth = 1.2;
+    for (const d of [12, 34]) {
+      ctx.beginPath();
+      ctx.moveTo(...at(start, d));
+      ctx.lineTo(...at(start + span, d));
+      ctx.stroke();
+    }
+    const [cx, cy] = at(start, 0);
+    const [ex, ey] = at(start + span, 5);
+    ctx.fillStyle = '#5d6679';
+    ctx.fillRect(Math.min(cx, ex), Math.min(cy, ey), Math.abs(ex - cx), Math.abs(ey - cy));
+    // fenders on the face, bollards just behind it
+    ctx.fillStyle = '#111827';
+    for (let t = start + 18; t < start + span; t += 36) {
+      const [fx, fy] = at(t, 1.5);
+      ctx.fillRect(fx - (alongX ? 4 : 1.5), fy - (alongX ? 1.5 : 4), alongX ? 8 : 3, alongX ? 3 : 8);
+    }
+    ctx.fillStyle = '#2b3246';
+    for (let t = start + 36; t < start + span; t += 72) {
+      const [bx, by] = at(t, 8);
+      ctx.beginPath();
+      ctx.arc(bx, by, 2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  };
+
+  /** Breakwater: a bank of boulders with surf along its faces. */
+  const drawRocks = (ctx: CanvasRenderingContext2D, o: Obstacle) => {
+    const x0 = o.x - o.w / 2;
+    const y0 = o.y - o.h / 2;
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.35)';
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([5, 4]);
+    ctx.strokeRect(x0 - 1.5, y0 - 1.5, o.w + 3, o.h + 3);
+    ctx.setLineDash([]);
+    ctx.fillStyle = '#4f596c';
+    roundRect(ctx, x0, y0, o.w, o.h, 6);
+    ctx.fill();
+    const random = seeded(Math.round(o.x * 7 + o.y));
+    for (let i = 0; i < (o.w * o.h) / 40; i += 1) {
+      const shade = 90 + Math.floor(random() * 50);
+      ctx.fillStyle = `rgb(${shade}, ${shade + 6}, ${shade + 18})`;
+      ctx.beginPath();
+      ctx.arc(x0 + 3 + random() * (o.w - 6), y0 + 3 + random() * (o.h - 6), 2.5 + random() * 3.5, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  };
+
+  const drawBuoy = (ctx: CanvasRenderingContext2D, o: Obstacle) => {
+    const r = o.w / 2;
+    ctx.fillStyle = 'rgba(4, 8, 24, 0.3)';
+    ctx.beginPath();
+    ctx.arc(o.x + 1.5, o.y + 2, r, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = o.color === 'red' ? '#d9433b' : '#2f9e5b';
+    ctx.beginPath();
+    ctx.arc(o.x, o.y, r, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 1.4;
+    ctx.beginPath();
+    ctx.arc(o.x, o.y, r * 0.55, 0, Math.PI * 2);
+    ctx.stroke();
+  };
+
+  /** Ship-to-shore crane: gantry on the quay, boom out over the berth. It is
+   *  overhead, so it is drawn over the ships, a little see-through. */
+  const drawCrane = (ctx: CanvasRenderingContext2D, x: number, y: number, a: number, reach: number) => {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(a);
+    ctx.globalAlpha = 0.88;
+    ctx.fillStyle = 'rgba(4, 8, 24, 0.25)';
+    ctx.fillRect(-6, 1, reach + 22, 8);
+    // boom, a lattice from behind the gantry out over the water
+    ctx.fillStyle = '#e8b422';
+    ctx.fillRect(-12, -3.5, reach + 22, 7);
+    ctx.strokeStyle = 'rgba(80, 56, 0, 0.55)';
+    ctx.lineWidth = 0.8;
+    ctx.beginPath();
+    for (let t = -10; t < reach + 8; t += 6) {
+      ctx.moveTo(t, -3.5);
+      ctx.lineTo(t + 6, 3.5);
+    }
+    ctx.stroke();
+    // gantry legs and the machinery house on top
+    ctx.strokeStyle = '#c9951a';
+    ctx.lineWidth = 2.5;
+    ctx.strokeRect(-11, -14, 22, 28);
+    ctx.fillStyle = '#f3f5f9';
+    ctx.fillRect(-9, -6, 10, 12);
+    // trolley, parked out over the berth
+    ctx.fillStyle = COLORS.navy;
+    ctx.fillRect(reach - 18, -5, 8, 10);
+    ctx.restore();
+  };
+
+  /** Which way the water runs: a faint chevron with a tail. */
+  const drawArrow = (ctx: CanvasRenderingContext2D, x: number, y: number, a: number) => {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(a);
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.22)';
+    ctx.lineWidth = 2;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.beginPath();
+    ctx.moveTo(-12, 0);
+    ctx.lineTo(8, 0);
+    ctx.moveTo(2, -6);
+    ctx.lineTo(8, 0);
+    ctx.lineTo(2, 6);
+    ctx.stroke();
+    ctx.restore();
+  };
+
+  // ---------------------------------------------------------------------- game
+
+  const init = (root: HTMLElement) => {
+    const s = JSON.parse(root.dataset.strings ?? '{}') as ParkingStrings;
+    const lang = root.dataset.lang ?? 'en';
+    const canvas = root.querySelector<HTMLCanvasElement>('[data-canvas]');
+    const ctx = canvas?.getContext('2d');
+    if (!canvas || !ctx) return;
+
+    const $ = <T extends Element>(selector: string) => root.querySelector<T>(selector)!;
+    const overlay = $<HTMLElement>('[data-overlay]');
+    const kicker = $<HTMLElement>('[data-kicker]');
+    const panelTitle = $<HTMLElement>('[data-panel-title]');
+    const panelBody = $<HTMLElement>('[data-panel-body]');
+    const starsRow = $<HTMLElement>('[data-stars]');
+    const stars = Array.from(root.querySelectorAll<HTMLElement>('[data-star]'));
+    const primary = $<HTMLButtonElement>('[data-primary]');
+    const inquiry = $<HTMLElement>('[data-inquiry]');
+    const hint = $<HTMLElement>('[data-hint]');
+    const hintName = $<HTMLElement>('[data-hint-name]');
+    const hintText = $<HTMLElement>('[data-hint-text]');
+    const coach = $<HTMLElement>('[data-coach]');
+    const hudName = $<HTMLElement>('[data-hud-name]');
+    const hudTime = $<HTMLElement>('[data-hud-time]');
+    const hudBest = $<HTMLElement>('[data-hud-best]');
+    const announce = $<HTMLElement>('[data-announce]');
+    const soundButton = $<HTMLButtonElement>('[data-sound]');
+    const levelButtons = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-level]'));
+    const fleetTabs = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-fleet-tab]'));
+    const fullscreenButton = $<HTMLButtonElement>('[data-fullscreen]');
+
+    // Safari before 16.4 only has the prefixed Fullscreen API.
+    const doc = document as Document & {
+      webkitFullscreenEnabled?: boolean;
+      webkitFullscreenElement?: Element | null;
+      webkitExitFullscreen?: () => void;
+    };
+    const fullscreenElement = () => doc.fullscreenElement ?? doc.webkitFullscreenElement ?? null;
+
+    // Persian pages write Persian digits; Arabic pages on this site use Latin ones.
+    const numbers = lang === 'fa' ? 'fa' : 'en';
+    const oneDecimal = new Intl.NumberFormat(numbers, { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+    const whole = new Intl.NumberFormat(numbers);
+    const fill = (template: string, values: Record<string, string>) =>
+      template.replace(/\{(\w+)\}/g, (_, key: string) => values[key] ?? '');
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    // Storage is a convenience: in a private window or with storage blocked,
+    // best times and unlocked bays simply last for this visit only.
+    const read = (key: string) => {
+      try {
+        return window.localStorage.getItem(key);
+      } catch {
+        return null;
+      }
+    };
+    const write = (key: string, value: string) => {
+      try {
+        window.localStorage.setItem(key, value);
+      } catch {
+        /* nothing to do: the game works without it */
+      }
+    };
+
+    // Saved by level id, so levels can be added or reordered without mixing
+    // up anyone's times. `reached` is, per fleet, the furthest level open
+    // (from 0); the first level of every fleet always is.
+    interface Progress {
+      best: Partial<Record<LevelId, number>>;
+      reached: Record<Fleet, number>;
+    }
+    const progress: Progress = { best: {}, reached: { truck: 0, trailer: 0, ship: 0 } };
+    try {
+      const saved = JSON.parse(read('zmb-parking-v2') ?? 'null') as Partial<Progress> | null;
+      for (const level of LEVELS) {
+        const time = saved?.best?.[level.id];
+        if (typeof time === 'number' && time > 0) progress.best[level.id] = time;
+      }
+      for (const fleet of FLEETS) {
+        const reached = Number(saved?.reached?.[fleet]);
+        if (Number.isInteger(reached) && reached > 0) progress.reached[fleet] = Math.min(reached, countOf(fleet) - 1);
+      }
+    } catch {
+      /* unreadable: start fresh */
+    }
+    const save = () => write('zmb-parking-v2', JSON.stringify(progress));
+    const isOpen = (i: number) => positionOf(i) <= progress.reached[LEVELS[i].fleet];
+
+    // ---------------------------------------------------------------- sound
+    // Synthesised on demand like the footer truck's horn: no files to fetch,
+    // and nothing is built before the first press, which browsers require.
+    const AudioCtor =
+      window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+    let audio: AudioContext | null = null;
+    let muted = read('zmb-parking-muted') === '1';
+
+    const voice = () => {
+      if (muted || !AudioCtor) return null;
+      audio ??= new AudioCtor();
+      if (audio.state === 'suspended') void audio.resume();
+      return audio;
+    };
+
+    const tone = (freq: number, delay: number, length: number, type: OscillatorType, level: number, cutoff = 4000) => {
+      const out = voice();
+      if (!out) return;
+      const t = out.currentTime + delay;
+      const osc = out.createOscillator();
+      osc.type = type;
+      osc.frequency.value = freq;
+      const filter = out.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.value = cutoff;
+      const gain = out.createGain();
+      gain.gain.setValueAtTime(0.0001, t);
+      gain.gain.exponentialRampToValueAtTime(level, t + 0.015);
+      gain.gain.setValueAtTime(level, t + Math.max(0.02, length - 0.04));
+      gain.gain.exponentialRampToValueAtTime(0.0001, t + length);
+      osc.connect(filter).connect(gain).connect(out.destination);
+      osc.start(t);
+      osc.stop(t + length + 0.02);
+    };
+
+    const thud = () => {
+      const out = voice();
+      if (!out) return;
+      const length = Math.floor(out.sampleRate * 0.35);
+      const buffer = out.createBuffer(1, length, out.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < length; i += 1) data[i] = (Math.random() * 2 - 1) * (1 - i / length) ** 2;
+      const noise = out.createBufferSource();
+      noise.buffer = buffer;
+      const filter = out.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.value = 520;
+      const gain = out.createGain();
+      gain.gain.value = 0.5;
+      noise.connect(filter).connect(gain).connect(out.destination);
+      noise.start();
+      tone(70, 0, 0.3, 'sine', 0.3, 300);
+    };
+
+    const chime = () => {
+      tone(659, 0, 0.18, 'triangle', 0.09);
+      tone(880, 0.12, 0.18, 'triangle', 0.09);
+      tone(1319, 0.24, 0.42, 'triangle', 0.08);
+    };
+
+    const horn = () => {
+      if (sim.level.fleet === 'ship') {
+        // a ship's whistle: low, long, and heard across the harbour
+        tone(92, 0, 1.4, 'sawtooth', 0.07, 420);
+        tone(138, 0, 1.4, 'sawtooth', 0.035, 420);
+        return;
+      }
+      tone(311, 0, 0.42, 'sawtooth', 0.05, 1300);
+      tone(392, 0, 0.42, 'sawtooth', 0.04, 1300);
+    };
+
+    // The reversing alarm every truck in a real yard makes.
+    const beep = () => tone(1047, 0, 0.36, 'square', 0.022, 2600);
+
+    const setMuted = (value: boolean) => {
+      muted = value;
+      soundButton.setAttribute('aria-pressed', String(!muted));
+      write('zmb-parking-muted', muted ? '1' : '0');
+    };
+    setMuted(muted);
+    soundButton.addEventListener('click', () => setMuted(!muted));
+
+    // ---------------------------------------------------------------- state
+    let index = 0;
+    let sim = createSim(LEVELS[0]);
+    let state: State = 'intro';
+    const input: Input = { forward: false, reverse: false, left: false, right: false };
+    let elapsed = 0;
+    let started = false;
+    let beepClock = 0;
+    let shake = 0;
+    let flash = 0;
+    let celebrate = 0;
+    let clock = 0;
+    let panelTimer = 0;
+    let hintTimer = 0;
+    let tipTime = 0;
+    let shownTip: Tip = null;
+
+    /** Changes state, mirrored on the root for CSS (the yard's cursor). */
+    const enter = (next: State) => {
+      state = next;
+      root.dataset.state = next;
+    };
+    enter('intro');
+
+    const releaseControls = () => {
+      (Object.keys(input) as Control[]).forEach((control) => {
+        input[control] = false;
+      });
+      root.querySelectorAll('[data-control]').forEach((key) => key.removeAttribute('data-down'));
+    };
+
+    // ------------------------------------------------------------------ HUD
+    let shownTime = '';
+    const showTime = () => {
+      const text = started ? oneDecimal.format(elapsed) : '–';
+      if (text !== shownTime) {
+        hudTime.textContent = text;
+        shownTime = text;
+      }
+    };
+
+    const refreshHud = () => {
+      const { id, fleet } = sim.level;
+      root.dataset.fleet = fleet;
+      hudName.textContent = s.levels[id].name;
+      const best = progress.best[id];
+      hudBest.textContent = best ? oneDecimal.format(best) : '–';
+      fleetTabs.forEach((tab) => tab.setAttribute('aria-pressed', String(tab.dataset.fleetTab === fleet)));
+      levelButtons.forEach((button, i) => {
+        button.hidden = LEVELS[i].fleet !== fleet;
+        button.disabled = !isOpen(i);
+        if (i === index) button.setAttribute('aria-current', 'step');
+        else button.removeAttribute('aria-current');
+        if (progress.best[LEVELS[i].id]) button.dataset.cleared = '';
+        else delete button.dataset.cleared;
+      });
+      showTime();
+    };
+
+    const levelLabel = () => `${s.fleets[sim.level.fleet]} · ${s.level} ${whole.format(positionOf(index) + 1)}`;
+
+    // A tip shows once the truck has sat on the bay, not counting, for half a
+    // second - long enough not to flicker while the player is still adjusting.
+    const tips: Record<NonNullable<Tip>, string> = { facing: s.tipFacing, inside: s.tipInside, straight: s.tipStraight };
+    const showCoach = () => {
+      const tip = state === 'playing' && tipTime > 0.5 ? sim.tip : null;
+      if (tip === shownTip) return;
+      shownTip = tip;
+      coach.hidden = !tip;
+      if (tip) coach.textContent = tips[tip];
+    };
+
+    // ---------------------------------------------------------------- panels
+    const panel = (options: { kicker: string; title: string; body: string; action: string; rating?: number; inquiry?: boolean }) => {
+      window.clearTimeout(panelTimer);
+      kicker.textContent = options.kicker;
+      panelTitle.textContent = options.title;
+      panelBody.textContent = options.body;
+      primary.textContent = options.action;
+      const { rating } = options;
+      starsRow.hidden = rating === undefined;
+      if (rating !== undefined) {
+        stars.forEach((star, i) => {
+          if (i < rating) star.dataset.on = '';
+          else delete star.dataset.on;
+        });
+        starsRow.setAttribute('aria-label', fill(s.stars, { n: whole.format(rating) }));
+      }
+      inquiry.hidden = !options.inquiry;
+      overlay.hidden = false;
+      hint.hidden = true;
+      // Only move focus if the player is already in the game; never pull it
+      // away from the rest of the page.
+      if (root.contains(document.activeElement)) primary.focus({ preventScroll: true });
+    };
+
+    const later = (show: () => void, ms: number) => {
+      window.clearTimeout(panelTimer);
+      panelTimer = window.setTimeout(show, ms);
+    };
+
+    // ---------------------------------------------------------------- levels
+    // Asphalt, paint and everything parked are the same all level, so they
+    // are drawn once to an offscreen canvas and copied in each frame.
+    const background = document.createElement('canvas');
+
+    const paintBackground = () => {
+      background.width = canvas.width;
+      background.height = canvas.height;
+      const bg = background.getContext('2d');
+      if (!bg || !canvas.width) return;
+      const k = canvas.width / W;
+      bg.setTransform(k, 0, 0, k, 0, 0);
+
+      const water = sim.level.fleet === 'ship';
+      bg.fillStyle = water ? COLORS.water : COLORS.asphalt;
+      bg.fillRect(0, 0, W, H);
+      const random = seeded(index + 1);
+      if (water) {
+        // ripples, a few catching the light
+        bg.lineWidth = 1.2;
+        for (let i = 0; i < 170; i += 1) {
+          const x = random() * W;
+          const y = random() * H;
+          const length = 6 + random() * 14;
+          bg.strokeStyle = random() > 0.45 ? 'rgba(255, 255, 255, 0.07)' : 'rgba(0, 0, 0, 0.12)';
+          bg.beginPath();
+          bg.moveTo(x, y);
+          bg.quadraticCurveTo(x + length / 2, y - 2.5, x + length, y);
+          bg.stroke();
+        }
+      } else {
+        for (let i = 0; i < 40; i += 1) {
+          bg.fillStyle = random() > 0.5 ? 'rgba(255, 255, 255, 0.018)' : 'rgba(0, 0, 0, 0.045)';
+          bg.beginPath();
+          bg.ellipse(random() * W, random() * H, 8 + random() * 26, 5 + random() * 14, random() * Math.PI, 0, Math.PI * 2);
+          bg.fill();
+        }
+        for (let i = 0; i < 500; i += 1) {
+          bg.fillStyle = random() > 0.5 ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.12)';
+          bg.fillRect(random() * W, random() * H, 1, 1);
+        }
+        bg.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+        bg.lineWidth = 2;
+        bg.strokeRect(4, 4, W - 8, H - 8);
+      }
+
+      // Paint under everything parked; dock doors over the building they are set in.
+      const { decor, obstacles } = sim.level;
+      decor.filter((d) => d.t !== 'door').forEach((d) => drawDecor(bg, d));
+      obstacles.forEach((o) => drawObstacle(bg, o));
+      decor.filter((d) => d.t === 'door').forEach((d) => drawDecor(bg, d));
+    };
+
+    const place = () => {
+      sim = createSim(LEVELS[index]);
+      elapsed = 0;
+      started = false;
+      beepClock = 0;
+      celebrate = 0;
+      tipTime = 0;
+      releaseControls();
+    };
+
+    const load = (i: number) => {
+      index = clamp(i, 0, LEVELS.length - 1);
+      place();
+      paintBackground();
+      refreshHud();
+      draw();
+    };
+
+    // Driving with half the yard under the sticky header or below the fold is
+    // no fun, so starting brings the whole yard (and touch pad) on screen.
+    const playArea = $<HTMLElement>('[data-play]');
+    const bringIntoView = () => {
+      if (fullscreenElement()) return;
+      const box = playArea.getBoundingClientRect();
+      const covered = Math.max(0, document.querySelector('header')?.getBoundingClientRect().bottom ?? 0);
+      if (box.top >= covered && box.bottom <= window.innerHeight) return;
+      playArea.scrollIntoView({ block: 'end', behavior: reduceMotion.matches ? 'auto' : 'smooth' });
+    };
+
+    const play = () => {
+      window.clearTimeout(panelTimer);
+      overlay.hidden = true;
+      enter('playing');
+      hintName.textContent = s.levels[sim.level.id].name;
+      hintText.textContent = s.levels[sim.level.id].hint;
+      hint.hidden = false;
+      delete hint.dataset.fading;
+      window.clearTimeout(hintTimer);
+      hintTimer = window.setTimeout(() => {
+        hint.dataset.fading = '';
+      }, 5000);
+      canvas.focus({ preventScroll: true });
+      bringIntoView();
+      kick();
+    };
+
+    const restart = () => {
+      place();
+      play();
+    };
+
+    const introFor = (i: number) => {
+      load(i);
+      enter('intro');
+      panel({
+        kicker: levelLabel(),
+        title: s.levels[sim.level.id].name,
+        body: s.levels[sim.level.id].hint,
+        action: s.start,
+      });
+      kick();
+    };
+
+    const pause = () => {
+      if (state !== 'playing') return;
+      enter('paused');
+      releaseControls();
+      panel({ kicker: levelLabel(), title: s.paused, body: s.pausedBody, action: s.resume });
+    };
+
+    const crash = (jackknifed: boolean) => {
+      enter('crashed');
+      releaseControls();
+      shake = reduceMotion.matches ? 0 : 0.45;
+      flash = 1;
+      thud();
+      const title = jackknifed ? s.jackknifeTitle : s.crashTitle;
+      const body = jackknifed ? s.jackknife : sim.level.fleet === 'ship' ? s.crashShip : s.crash;
+      announce.textContent = `${title} ${body}`;
+      later(() => panel({ kicker: levelLabel(), title, body, action: s.retry }), 650);
+    };
+
+    const succeed = () => {
+      const { id, fleet, par } = sim.level;
+      const last = index === LEVELS.length - 1;
+      enter(last ? 'done' : 'parked');
+      releaseControls();
+      celebrate = 1;
+      chime();
+      const time = Math.max(elapsed, 0.1);
+      const previous = progress.best[id];
+      const newBest = previous === undefined || time < previous;
+      if (newBest) progress.best[id] = time;
+      const position = positionOf(index);
+      if (position + 1 < countOf(fleet)) progress.reached[fleet] = Math.max(progress.reached[fleet], position + 1);
+      save();
+      refreshHud();
+      const rating = time <= par ? 3 : time <= par * 1.8 ? 2 : 1;
+      const ship = fleet === 'ship';
+      const title = ship ? s.berthed : s.parked;
+      const result = fill(ship ? s.berthResult : s.result, { t: oneDecimal.format(time) });
+      const body = newBest && previous !== undefined ? `${result} · ${s.newBest}` : result;
+      // The last bay closes the game: its panel is the send-off, with the way
+      // to the real thing beside the replay button. Otherwise "next" runs on
+      // through the fleets in order: trucks, then trailers, then ships.
+      if (last) {
+        announce.textContent = `${title}. ${body}. ${s.doneTitle}. ${s.doneBody}`;
+        later(() => panel({ kicker: body, title: s.doneTitle, body: s.doneBody, action: s.replay, rating, inquiry: true }), 700);
+      } else {
+        announce.textContent = `${title}. ${body}`;
+        later(() => panel({ kicker: s.levels[id].name, title, body, action: s.next, rating }), 700);
+      }
+    };
+
+    primary.addEventListener('click', () => {
+      if (state === 'intro' || state === 'paused') play();
+      else if (state === 'crashed') restart();
+      else if (state === 'parked') {
+        load(index + 1);
+        play();
+      } else if (state === 'done') {
+        load(0);
+        play();
+      }
+    });
+
+    levelButtons.forEach((button, i) => {
+      button.addEventListener('click', () => {
+        if (isOpen(i)) introFor(i);
+      });
+    });
+
+    // A fleet opens at the furthest of its levels the player has reached.
+    fleetTabs.forEach((tab) => {
+      tab.addEventListener('click', () => {
+        const fleet = tab.dataset.fleetTab as Fleet;
+        introFor(firstOf(fleet) + progress.reached[fleet]);
+      });
+    });
+
+    const step = () => {
+      if (!started && (input.forward || input.reverse || input.left || input.right)) started = true;
+      if (started) elapsed += STEP;
+      const outcome = advance(sim, input, STEP);
+      tipTime = sim.tip ? tipTime + STEP : 0;
+      if (outcome === 'parked') return succeed();
+      if (outcome) return crash(outcome === 'jackknife');
+      if (sim.level.fleet !== 'ship' && sim.vehicle.v < -3) {
+        beepClock -= STEP;
+        if (beepClock <= 0) {
+          beep();
+          beepClock = 0.9;
+        }
+      } else beepClock = 0;
+    };
+
+    // -------------------------------------------------------------- render
+    const drawBay = () => {
+      const { bay } = sim.level;
+      const progress = clamp(sim.hold / HOLD, 0, 1);
+      inBox(ctx, bay, () => {
+        ctx.fillStyle = `rgba(243, 198, 35, ${0.08 + progress * 0.3 + celebrate * 0.3})`;
+        ctx.fillRect(-bay.w / 2, -bay.h / 2, bay.w, bay.h);
+        ctx.strokeStyle = COLORS.gold;
+        ctx.lineWidth = sim.inBay ? 3 : 2.2;
+        ctx.setLineDash(sim.ready || state === 'parked' || state === 'done' ? [] : [9, 6]);
+        ctx.lineDashOffset = reduceMotion.matches ? 0 : -clock * 14;
+        ctx.strokeRect(-bay.w / 2, -bay.h / 2, bay.w, bay.h);
+        ctx.setLineDash([]);
+        // A dock is backed into: chevrons at the door end point the way the
+        // rear of the load has to go.
+        if (bay.face) {
+          ctx.strokeStyle = 'rgba(243, 198, 35, 0.6)';
+          ctx.lineWidth = 3;
+          ctx.lineCap = 'round';
+          ctx.lineJoin = 'round';
+          for (const x of [-bay.w / 2 + 9, -bay.w / 2 + 19]) {
+            ctx.beginPath();
+            ctx.moveTo(x + 5, -bay.h / 4);
+            ctx.lineTo(x - 2, 0);
+            ctx.lineTo(x + 5, bay.h / 4);
+            ctx.stroke();
+          }
+          ctx.lineCap = 'butt';
+        }
+      });
+      // "404" painted in the bay along its length, never upside down.
+      let along = wrap(bay.a);
+      if (along > HALF_PI + 0.01) along -= Math.PI;
+      if (along < -HALF_PI - 0.01) along += Math.PI;
+      // In a dock it sits toward the open end, clear of the chevrons.
+      const shift = bay.face ? 12 : 0;
+      ctx.save();
+      ctx.translate(bay.x + Math.cos(bay.a) * shift, bay.y + Math.sin(bay.a) * shift);
+      ctx.rotate(Math.abs(Math.abs(along) - HALF_PI) < 0.01 ? -HALF_PI : along);
+      ctx.fillStyle = 'rgba(243, 198, 35, 0.4)';
+      ctx.font = `800 ${Math.min(22, bay.h * 0.5)}px Manrope, system-ui, sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('404', 0, 1);
+      ctx.restore();
+    };
+
+    /** Our ship: wake and bow wave growing with her way, then the hull, then
+     *  the rudder, so a player can see which way it is laid. */
+    const drawOurShip = () => {
+      const { vehicle } = sim;
+      const [hullBox] = bodies(sim);
+      const hw = SHIP.length / 2;
+      const hh = SHIP.beam / 2;
+      const way = Math.min(1, Math.abs(vehicle.v) / SHIP.maxAhead);
+      inBox(ctx, hullBox, () => {
+        if (way < 0.05) return;
+        ctx.strokeStyle = `rgba(255, 255, 255, ${0.18 + way * 0.4})`;
+        ctx.lineWidth = 2;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        if (vehicle.v > 0) {
+          const tail = 18 + way * 60;
+          for (const side of [-1, 1]) {
+            ctx.moveTo(-hw, side * hh * 0.6);
+            ctx.lineTo(-hw - tail, side * (hh + tail * 0.35));
+            ctx.moveTo(hw - 3, side * 3);
+            ctx.lineTo(hw - 20, side * (hh + 3 + way * 5));
+          }
+        } else {
+          for (const side of [-1, 1]) {
+            ctx.moveTo(-hw + 2, side * hh * 0.4);
+            ctx.lineTo(-hw + 16, side * (hh + 3 + way * 6));
+          }
+        }
+        ctx.stroke();
+      });
+      inBox(ctx, hullBox, () => {
+        hullPath(ctx, SHIP.length, SHIP.beam);
+        ctx.fillStyle = 'rgba(4, 8, 24, 0.3)';
+        ctx.fill();
+      }, 2, 3);
+      inBox(ctx, hullBox, () => {
+        ctx.save();
+        ctx.translate(-hw, 0);
+        ctx.rotate(-vehicle.steer);
+        ctx.strokeStyle = '#0b1338';
+        ctx.lineWidth = 2.2;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(-7, 0);
+        ctx.stroke();
+        ctx.restore();
+        drawShip(ctx, SHIP.length, SHIP.beam, COLORS.navy, 7, true);
+      });
+    };
+
+    const drawVehicle = () => {
+      const { level, vehicle: truck } = sim;
+      if (level.fleet === 'ship') return drawOurShip();
+      const artic = level.fleet === 'trailer';
+      const rig = rigOf(level);
+      const reversing = truck.v < -1;
+      const braking = (input.reverse && truck.v > 1) || (input.forward && truck.v < -1) || (input.forward && input.reverse);
+
+      ctx.fillStyle = SHADOW;
+      for (const body of bodies(sim)) {
+        inBox(ctx, body, () => {
+          roundRect(ctx, -body.w / 2, -body.h / 2, body.w, body.h, 3);
+          ctx.fill();
+        }, 3, 4);
+      }
+
+      const frame: Box = { x: truck.x, y: truck.y, w: 0, h: 0, a: truck.a };
+      inBox(ctx, frame, () => {
+        const { back, front, half, wheelbase } = rig;
+        if (truck.v > 2) headlights(ctx, rig);
+        ctx.fillStyle = '#070b18';
+        wheel(ctx, 0, -half, artic ? 11 : 12);
+        wheel(ctx, 0, half, artic ? 11 : 12);
+        wheel(ctx, wheelbase, -half + 0.5, 10, truck.steer);
+        wheel(ctx, wheelbase, half - 0.5, 10, truck.steer);
+        ctx.fillStyle = COLORS.deep;
+        ctx.fillRect(-back + 1, -half + 4, back + front - 5, half * 2 - 8);
+        if (artic) {
+          ctx.fillStyle = '#39415a'; // fifth wheel, under the trailer's nose
+          ctx.beginPath();
+          ctx.arc(0, 0, 5, 0, Math.PI * 2);
+          ctx.fill();
+        } else {
+          cargoBox(ctx, -back, front - 18, half, truck.a, 'ZMB');
+          tailLights(ctx, -back, half, braking, reversing);
+        }
+        cabin(ctx, rig);
+      });
+
+      if (!artic) return;
+      inBox(ctx, { ...frame, a: truck.trailer }, () => {
+        const { hitch, back, front, half } = TRAILER;
+        ctx.fillStyle = '#070b18';
+        for (const x of [-hitch - 5, -hitch + 5]) {
+          wheel(ctx, x, -half, 9);
+          wheel(ctx, x, half, 9);
+        }
+        cargoBox(ctx, -hitch - back, front, half, truck.trailer, 'ZMB CO');
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+        ctx.fillRect(front - 2.5, -half + 1, 2.5, half * 2 - 2);
+        tailLights(ctx, -hitch - back, half, braking, reversing);
+      });
+    };
+
+    const draw = () => {
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      const k = canvas.width / W;
+      const jolt = shake * 7;
+      const sx = jolt ? (Math.random() - 0.5) * jolt : 0;
+      const sy = jolt ? (Math.random() - 0.5) * jolt : 0;
+      ctx.fillStyle = sim.level.fleet === 'ship' ? COLORS.water : COLORS.asphalt;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      if (background.width) ctx.drawImage(background, sx * k, sy * k);
+      ctx.setTransform(k, 0, 0, k, sx * k, sy * k);
+      drawBay();
+      drawVehicle();
+      for (const d of sim.level.decor) if (d.t === 'crane') drawCrane(ctx, d.x, d.y, d.a, d.reach);
+      if (flash > 0) {
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.fillStyle = `rgba(228, 87, 46, ${flash * 0.3})`;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      }
+    };
+
+    // ---------------------------------------------------------------- loop
+    let frameId = 0;
+    let last = 0;
+    let carry = 0;
+
+    const tick = (now: number) => {
+      frameId = 0;
+      const dt = Math.min(0.05, Math.max(0, (now - last) / 1000));
+      last = now;
+      clock += dt;
+
+      if (state === 'playing') {
+        carry += dt;
+        while (carry >= STEP && state === 'playing') {
+          step();
+          carry -= STEP;
+        }
+        showTime();
+      } else carry = 0;
+      showCoach();
+
+      shake = Math.max(0, shake - dt);
+      flash = Math.max(0, flash - dt * 2.2);
+      celebrate = Math.max(0, celebrate - dt * 1.4);
+      draw();
+
+      if (state === 'playing' || shake > 0 || flash > 0 || celebrate > 0) frameId = requestAnimationFrame(tick);
+    };
+
+    function kick() {
+      if (frameId) return;
+      last = performance.now();
+      frameId = requestAnimationFrame(tick);
+    }
+
+    // --------------------------------------------------------------- sizing
+    const resize = () => {
+      const width = canvas.clientWidth;
+      if (!width) return;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const pxW = Math.round(width * dpr);
+      const pxH = Math.round(((width * H) / W) * dpr);
+      if (canvas.width !== pxW || canvas.height !== pxH) {
+        canvas.width = pxW;
+        canvas.height = pxH;
+        paintBackground();
+      }
+      draw();
+    };
+
+    // --------------------------------------------------------------- input
+    const KEYS: Record<string, Control> = {
+      ArrowUp: 'forward',
+      KeyW: 'forward',
+      ArrowDown: 'reverse',
+      KeyS: 'reverse',
+      ArrowLeft: 'left',
+      KeyA: 'left',
+      ArrowRight: 'right',
+      KeyD: 'right',
+    };
+
+    const typing = (target: EventTarget | null) =>
+      target instanceof HTMLElement &&
+      (target.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName));
+
+    /** Gets driving from a paused or waiting yard: the panel's own action. */
+    const wake = () => {
+      if (state === 'intro' || state === 'paused') play();
+      else if (state === 'crashed' && !overlay.hidden) restart(); // not before the crash has been seen
+    };
+
+    // Clicking the yard around the panel card does what its button does.
+    canvas.addEventListener('click', wake);
+
+    // Keys are matched by position (event.code), so WASD sits in the same
+    // place on a Persian or Russian layout.
+    window.addEventListener('keydown', (event) => {
+      if (event.metaKey || event.ctrlKey || event.altKey || typing(event.target)) return;
+      const active = document.activeElement;
+      if (active && active !== document.body && !root.contains(active)) return;
+      const control = KEYS[event.code];
+
+      // With focus already in the game, a drive key starts it too. From the
+      // page itself the arrows keep scrolling as usual.
+      if (control && !event.repeat && state !== 'playing' && active && root.contains(active)) wake();
+
+      if (state === 'playing') {
+        if (control) {
+          event.preventDefault();
+          input[control] = true;
+          return;
+        }
+        if (event.code === 'KeyH') horn();
+      }
+      if (event.code === 'KeyR' && (state === 'playing' || state === 'crashed')) {
+        event.preventDefault();
+        restart();
+      }
+    });
+
+    window.addEventListener('keyup', (event) => {
+      const control = KEYS[event.code];
+      if (control) input[control] = false;
+    });
+
+    root.querySelectorAll<HTMLElement>('[data-control]').forEach((key) => {
+      const control = key.dataset.control as Control;
+      const release = () => {
+        input[control] = false;
+        key.removeAttribute('data-down');
+      };
+      key.addEventListener('pointerdown', (event) => {
+        event.preventDefault();
+        wake();
+        if (state !== 'playing') return;
+        voice(); // the first touch is what unlocks audio
+        input[control] = true;
+        key.dataset.down = '';
+        key.setPointerCapture?.(event.pointerId);
+      });
+      key.addEventListener('pointerup', release);
+      key.addEventListener('pointercancel', release);
+      key.addEventListener('lostpointercapture', release);
+      key.addEventListener('contextmenu', (event) => event.preventDefault());
+    });
+
+    // Full screen, where the browser allows an element to go full screen at
+    // all (iPhone Safari, for one, does not; the button stays hidden there).
+    if (doc.fullscreenEnabled || doc.webkitFullscreenEnabled) {
+      fullscreenButton.hidden = false;
+      fullscreenButton.addEventListener('click', () => {
+        if (fullscreenElement()) {
+          if (doc.exitFullscreen) void doc.exitFullscreen().catch(() => {});
+          else doc.webkitExitFullscreen?.();
+          return;
+        }
+        const target = root as HTMLElement & { webkitRequestFullscreen?: () => void };
+        if (target.requestFullscreen) void target.requestFullscreen().catch(() => {});
+        else target.webkitRequestFullscreen?.();
+      });
+      const syncFullscreen = () => {
+        const on = fullscreenElement() === root;
+        if (on) root.dataset.fullscreen = '';
+        else delete root.dataset.fullscreen;
+        const label = on ? s.exitFullscreen : s.fullscreen;
+        fullscreenButton.setAttribute('aria-label', label);
+        fullscreenButton.title = label;
+      };
+      document.addEventListener('fullscreenchange', syncFullscreen);
+      document.addEventListener('webkitfullscreenchange', syncFullscreen);
+    }
+
+    // Stop the clock whenever the player can't be driving: another tab,
+    // another window, or the yard scrolled out of sight.
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) pause();
+    });
+    window.addEventListener('blur', pause);
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(
+        (entries) => {
+          if (entries.some((entry) => entry.intersectionRatio < 0.25)) pause();
+        },
+        { threshold: 0.25 },
+      ).observe(canvas);
+    }
+
+    new ResizeObserver(resize).observe(canvas);
+    document.fonts?.ready.then(() => {
+      paintBackground();
+      draw();
+    });
+
+    load(0);
+    resize();
+  };
+
+  const root = document.querySelector<HTMLElement>('[data-parking]');
+  if (root) init(root);
+</script>

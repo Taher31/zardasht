@@ -1,0 +1,66 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import ParkingGame from '../../components/ParkingGame.astro';
+import { getTranslation, resolveLang, withLanguagePrefix, localizedLanguages } from '../../i18n';
+
+// Builds to /404.html (English, via the shim) and /fa/404/, /ar/404/, /ru/404/.
+// Static hosts serve the root file for any missing URL; the Node server in
+// server/handler.mjs picks the one matching the missing URL's language prefix.
+export function getStaticPaths() {
+  return localizedLanguages.map((language) => ({ params: { lang: language.code } }));
+}
+
+const lang = resolveLang(Astro.props.lang ?? Astro.params.lang);
+const t = getTranslation(lang);
+const copy = t.pages.notFound;
+const prefixes = localizedLanguages.map((language) => language.code);
+---
+
+<Layout title={copy.title} lang={lang} translation={t} description={copy.intro} noindex>
+  {lang === 'en' && (
+    <script is:inline data-prefixes={prefixes.join(' ')}>
+      // A static host (or an Nginx with one error_page) answers every missing
+      // URL with this English file. When the URL was under /fa/, /ar/ or /ru/,
+      // hand over to that language's own 404 page instead (unless this already
+      // is that address, so a host missing the page can never loop).
+      (function (prefixes) {
+        var prefix = location.pathname.split('/')[1];
+        var target = '/' + prefix + '/404/';
+        if (prefixes.indexOf(prefix) !== -1 && location.pathname.replace(/\/?$/, '/') !== target) {
+          location.replace(target);
+        }
+      })(document.currentScript.dataset.prefixes.split(' '));
+    </script>
+  )}
+  <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10">
+    <div class="mx-auto max-w-2xl text-center">
+      <p class="section-eyebrow">{copy.eyebrow}</p>
+      <h1 class="section-title mt-3">{copy.heading}</h1>
+      <span class="section-accent"></span>
+      <p class="mt-5 text-base text-slate-600 sm:text-lg text-center">{copy.intro}</p>
+
+      <div class="mt-7 flex flex-wrap items-center justify-center gap-3">
+        <a
+          class="pill-link bg-[#19266A] text-white shadow-lg shadow-[#19266A]/25 hover:-translate-y-0.5 hover:bg-[#10184A]"
+          href={withLanguagePrefix(lang, '/')}
+        >
+          {copy.ctaHome}
+        </a>
+        <a
+          class="pill-link bg-white text-[#19266A] ring-1 ring-[#19266A]/15 hover:-translate-y-0.5 hover:ring-[#19266A]/35"
+          href={withLanguagePrefix(lang, '/products')}
+        >
+          {t.labels.nav.products}
+        </a>
+        <a
+          class="pill-link bg-white text-[#19266A] ring-1 ring-[#19266A]/15 hover:-translate-y-0.5 hover:ring-[#19266A]/35"
+          href={withLanguagePrefix(lang, '/contact')}
+        >
+          {t.labels.nav.contact}
+        </a>
+      </div>
+    </div>
+
+    <ParkingGame lang={lang} contactHref={withLanguagePrefix(lang, '/contact')} inquiryLabel={t.labels.trade.inquiry} />
+  </div>
+</Layout>
